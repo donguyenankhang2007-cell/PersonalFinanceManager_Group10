@@ -1,0 +1,3 @@
+C:\Qt\Tools\CMake_64\bin\cmake.exe -E rm -f CMakeFiles\PersonalFinanceManager_Group10.dir/objects.a
+C:\Qt\Tools\mingw1310_64\bin\ar.exe qc CMakeFiles\PersonalFinanceManager_Group10.dir/objects.a @CMakeFiles\PersonalFinanceManager_Group10.dir\objects1.rsp
+C:\Qt\Tools\mingw1310_64\bin\g++.exe -g -mwindows -Wl,--whole-archive CMakeFiles\PersonalFinanceManager_Group10.dir/objects.a -Wl,--no-whole-archive -o PersonalFinanceManager_Group10.exe -Wl,--out-implib,libPersonalFinanceManager_Group10.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\PersonalFinanceManager_Group10.dir\linkLibs.rsp
