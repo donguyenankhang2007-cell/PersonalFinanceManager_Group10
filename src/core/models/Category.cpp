@@ -1,26 +1,67 @@
 #include "Category.h"
 
-Category::Category(int id, const std::string& name, CategoryType type)
-    : m_id(id), m_name(name), m_type(type) {
-    if (id <= 0) {
-        throw std::invalid_argument("Id phai lon hon 0");
-    }
-    if (name.empty()) {
-        throw std::invalid_argument("Ten category khong duoc de trong");
-    }
+Category::Category()
+    : id(0),
+      name(""),
+      type(""),
+      description("")
+{
 }
 
-int Category::getId() const { return m_id; }
-std::string Category::getName() const { return m_name; }
-CategoryType Category::getType() const { return m_type; }
-
-void Category::setName(const std::string& name) {
-    if (name.empty()) {
-        throw std::invalid_argument("Ten category khong duoc de trong");
-    }
-    m_name = name;
+Category::Category(int id,
+                   const QString& name,
+                   const QString& type,
+                   const QString& description)
+    : id(id),
+      name(name),
+      type(type),
+      description(description)
+{
 }
 
-bool Category::operator==(const Category& other) const {
-    return m_id == other.m_id;
+int Category::getId() const
+{
+    return id;
+}
+
+QString Category::getName() const
+{
+    return name;
+}
+
+QString Category::getType() const
+{
+    return type;
+}
+
+QString Category::getDescription() const
+{
+    return description;
+}
+
+void Category::setId(int id)
+{
+    this->id = id;
+}
+
+void Category::setName(const QString& name)
+{
+    this->name = name;
+}
+
+void Category::setType(const QString& type)
+{
+    this->type = type;
+}
+
+void Category::setDescription(const QString& description)
+{
+    this->description = description;
+}
+
+QString Category::toString() const
+{
+    return QString("%1 (%2)")
+            .arg(name)
+            .arg(type);
 }

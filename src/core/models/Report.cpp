@@ -1,73 +1,55 @@
 #include "Report.h"
-#include <stdexcept>
 
-Report::Report(const std::vector<Transaction>& transactions, const std::vector<Budget>& budgets)
-    : m_transactions(transactions), m_budgets(budgets) {}
-
-void Report::validateMonth(const std::string& month) const {
-    if (!Budget::isValidMonthFormat(month)) {
-        throw std::invalid_argument("Month phai dung dinh dang YYYY-MM");
-    }
+Report::Report()
+    : totalIncome(0.0),
+      totalExpense(0.0),
+      remainingBalance(0.0)
+{
 }
 
-double Report::getTotalIncome(const std::string& month) const {
-    validateMonth(month);
-    double total = 0.0;
-    for (const auto& t : m_transactions) {
-        if (t.getMonthKey() == month && t.getType() == TransactionType::Income) {
-            total += t.getAmount();
-        }
-    }
-    return total;
+Report::Report(double totalIncome,
+               double totalExpense,
+               double remainingBalance)
+    : totalIncome(totalIncome),
+      totalExpense(totalExpense),
+      remainingBalance(remainingBalance)
+{
 }
 
-double Report::getTotalExpense(const std::string& month) const {
-    validateMonth(month);
-    double total = 0.0;
-    for (const auto& t : m_transactions) {
-        if (t.getMonthKey() == month && t.getType() == TransactionType::Expense) {
-            total += t.getAmount();
-        }
-    }
-    return total;
+double Report::getTotalIncome() const
+{
+    return totalIncome;
 }
 
-double Report::getBalance(const std::string& month) const {
-    // getTotalIncome/getTotalExpense đã tự validate month
-    return getTotalIncome(month) - getTotalExpense(month);
+double Report::getTotalExpense() const
+{
+    return totalExpense;
 }
 
-std::map<std::string, double> Report::getExpenseByCategory(const std::string& month) const {
-    validateMonth(month);
-    std::map<std::string, double> result;
-    for (const auto& t : m_transactions) {
-        if (t.getMonthKey() == month && t.getType() == TransactionType::Expense) {
-            result[t.getCategoryName()] += t.getAmount();
-        }
-    }
-    return result;
+double Report::getRemainingBalance() const
+{
+    return remainingBalance;
 }
 
-double Report::compareWithPreviousMonth(const std::string& currentMonth, const std::string& previousMonth) const {
-    validateMonth(currentMonth);
-    validateMonth(previousMonth);
-
-    double current = getTotalExpense(currentMonth);
-    double previous = getTotalExpense(previousMonth);
-
-    if (previous == 0.0) {
-        return (current == 0.0) ? 0.0 : 100.0;
-    }
-    return ((current - previous) / previous) * 100.0;
+void Report::setTotalIncome(double totalIncome)
+{
+    this->totalIncome = totalIncome;
 }
 
-std::vector<std::string> Report::getOverBudgetCategories(const std::string& month) const {
-    validateMonth(month);
-    std::vector<std::string> result;
-    for (const auto& b : m_budgets) {
-        if (b.getMonth() == month && b.isOverBudget(m_transactions)) {
-            result.push_back(b.getCategoryName());
-        }
-    }
-    return result;
+void Report::setTotalExpense(double totalExpense)
+{
+    this->totalExpense = totalExpense;
+}
+
+void Report::setRemainingBalance(double remainingBalance)
+{
+    this->remainingBalance = remainingBalance;
+}
+
+QString Report::toString() const
+{
+    return QString("Income: %1 | Expense: %2 | Remaining: %3")
+            .arg(totalIncome)
+            .arg(totalExpense)
+            .arg(remainingBalance);
 }

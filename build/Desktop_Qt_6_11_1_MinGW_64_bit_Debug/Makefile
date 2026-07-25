@@ -84,51 +84,6 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-.PHONY : list_install_components/fast
-
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
-	C:\Qt\Tools\CMake_64\bin\cmake.exe -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
-	C:\Qt\Tools\CMake_64\bin\cmake.exe -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
-	C:\Qt\Tools\CMake_64\bin\cmake.exe -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
-	C:\Qt\Tools\CMake_64\bin\cmake.exe -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
-
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
-	C:\Qt\Tools\CMake_64\bin\cmake.exe -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
-	C:\Qt\Tools\CMake_64\bin\cmake.exe -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
-
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start "D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" "D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\\CMakeFiles\progress.marks"
@@ -223,53 +178,221 @@ PersonalFinanceManager_Group10_autogen/mocs_compilation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/PersonalFinanceManager_Group10_autogen/mocs_compilation.cpp.s
 .PHONY : PersonalFinanceManager_Group10_autogen/mocs_compilation.cpp.s
 
-main.obj: main.cpp.obj
-.PHONY : main.obj
+src/app/AppContext.obj: src/app/AppContext.cpp.obj
+.PHONY : src/app/AppContext.obj
 
 # target to build an object file
-main.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.obj
-.PHONY : main.cpp.obj
+src/app/AppContext.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.obj
+.PHONY : src/app/AppContext.cpp.obj
 
-main.i: main.cpp.i
-.PHONY : main.i
+src/app/AppContext.i: src/app/AppContext.cpp.i
+.PHONY : src/app/AppContext.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.i
-.PHONY : main.cpp.i
+src/app/AppContext.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.i
+.PHONY : src/app/AppContext.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+src/app/AppContext.s: src/app/AppContext.cpp.s
+.PHONY : src/app/AppContext.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.s
-.PHONY : main.cpp.s
+src/app/AppContext.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.s
+.PHONY : src/app/AppContext.cpp.s
 
-mainwindow.obj: mainwindow.cpp.obj
-.PHONY : mainwindow.obj
+src/core/database/DatabaseManager.obj: src/core/database/DatabaseManager.cpp.obj
+.PHONY : src/core/database/DatabaseManager.obj
 
 # target to build an object file
-mainwindow.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.obj
-.PHONY : mainwindow.cpp.obj
+src/core/database/DatabaseManager.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.obj
+.PHONY : src/core/database/DatabaseManager.cpp.obj
 
-mainwindow.i: mainwindow.cpp.i
-.PHONY : mainwindow.i
+src/core/database/DatabaseManager.i: src/core/database/DatabaseManager.cpp.i
+.PHONY : src/core/database/DatabaseManager.i
 
 # target to preprocess a source file
-mainwindow.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.i
-.PHONY : mainwindow.cpp.i
+src/core/database/DatabaseManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.i
+.PHONY : src/core/database/DatabaseManager.cpp.i
 
-mainwindow.s: mainwindow.cpp.s
-.PHONY : mainwindow.s
+src/core/database/DatabaseManager.s: src/core/database/DatabaseManager.cpp.s
+.PHONY : src/core/database/DatabaseManager.s
 
 # target to generate assembly for a file
-mainwindow.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.s
-.PHONY : mainwindow.cpp.s
+src/core/database/DatabaseManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.s
+.PHONY : src/core/database/DatabaseManager.cpp.s
+
+src/core/models/Account.obj: src/core/models/Account.cpp.obj
+.PHONY : src/core/models/Account.obj
+
+# target to build an object file
+src/core/models/Account.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.obj
+.PHONY : src/core/models/Account.cpp.obj
+
+src/core/models/Account.i: src/core/models/Account.cpp.i
+.PHONY : src/core/models/Account.i
+
+# target to preprocess a source file
+src/core/models/Account.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.i
+.PHONY : src/core/models/Account.cpp.i
+
+src/core/models/Account.s: src/core/models/Account.cpp.s
+.PHONY : src/core/models/Account.s
+
+# target to generate assembly for a file
+src/core/models/Account.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.s
+.PHONY : src/core/models/Account.cpp.s
+
+src/core/models/Budget.obj: src/core/models/Budget.cpp.obj
+.PHONY : src/core/models/Budget.obj
+
+# target to build an object file
+src/core/models/Budget.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.obj
+.PHONY : src/core/models/Budget.cpp.obj
+
+src/core/models/Budget.i: src/core/models/Budget.cpp.i
+.PHONY : src/core/models/Budget.i
+
+# target to preprocess a source file
+src/core/models/Budget.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.i
+.PHONY : src/core/models/Budget.cpp.i
+
+src/core/models/Budget.s: src/core/models/Budget.cpp.s
+.PHONY : src/core/models/Budget.s
+
+# target to generate assembly for a file
+src/core/models/Budget.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.s
+.PHONY : src/core/models/Budget.cpp.s
+
+src/core/models/Category.obj: src/core/models/Category.cpp.obj
+.PHONY : src/core/models/Category.obj
+
+# target to build an object file
+src/core/models/Category.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.obj
+.PHONY : src/core/models/Category.cpp.obj
+
+src/core/models/Category.i: src/core/models/Category.cpp.i
+.PHONY : src/core/models/Category.i
+
+# target to preprocess a source file
+src/core/models/Category.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.i
+.PHONY : src/core/models/Category.cpp.i
+
+src/core/models/Category.s: src/core/models/Category.cpp.s
+.PHONY : src/core/models/Category.s
+
+# target to generate assembly for a file
+src/core/models/Category.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.s
+.PHONY : src/core/models/Category.cpp.s
+
+src/core/models/Report.obj: src/core/models/Report.cpp.obj
+.PHONY : src/core/models/Report.obj
+
+# target to build an object file
+src/core/models/Report.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.obj
+.PHONY : src/core/models/Report.cpp.obj
+
+src/core/models/Report.i: src/core/models/Report.cpp.i
+.PHONY : src/core/models/Report.i
+
+# target to preprocess a source file
+src/core/models/Report.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.i
+.PHONY : src/core/models/Report.cpp.i
+
+src/core/models/Report.s: src/core/models/Report.cpp.s
+.PHONY : src/core/models/Report.s
+
+# target to generate assembly for a file
+src/core/models/Report.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.s
+.PHONY : src/core/models/Report.cpp.s
+
+src/core/models/Transaction.obj: src/core/models/Transaction.cpp.obj
+.PHONY : src/core/models/Transaction.obj
+
+# target to build an object file
+src/core/models/Transaction.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.obj
+.PHONY : src/core/models/Transaction.cpp.obj
+
+src/core/models/Transaction.i: src/core/models/Transaction.cpp.i
+.PHONY : src/core/models/Transaction.i
+
+# target to preprocess a source file
+src/core/models/Transaction.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.i
+.PHONY : src/core/models/Transaction.cpp.i
+
+src/core/models/Transaction.s: src/core/models/Transaction.cpp.s
+.PHONY : src/core/models/Transaction.s
+
+# target to generate assembly for a file
+src/core/models/Transaction.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.s
+.PHONY : src/core/models/Transaction.cpp.s
+
+src/main.obj: src/main.cpp.obj
+.PHONY : src/main.obj
+
+# target to build an object file
+src/main.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.obj
+.PHONY : src/main.cpp.obj
+
+src/main.i: src/main.cpp.i
+.PHONY : src/main.i
+
+# target to preprocess a source file
+src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
+
+src/main.s: src/main.cpp.s
+.PHONY : src/main.s
+
+# target to generate assembly for a file
+src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
+
+src/ui/mainwindow.obj: src/ui/mainwindow.cpp.obj
+.PHONY : src/ui/mainwindow.obj
+
+# target to build an object file
+src/ui/mainwindow.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.obj
+.PHONY : src/ui/mainwindow.cpp.obj
+
+src/ui/mainwindow.i: src/ui/mainwindow.cpp.i
+.PHONY : src/ui/mainwindow.i
+
+# target to preprocess a source file
+src/ui/mainwindow.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.i
+.PHONY : src/ui/mainwindow.cpp.i
+
+src/ui/mainwindow.s: src/ui/mainwindow.cpp.s
+.PHONY : src/ui/mainwindow.s
+
+# target to generate assembly for a file
+src/ui/mainwindow.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\PersonalFinanceManager_Group10.dir\build.make CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.s
+.PHONY : src/ui/mainwindow.cpp.s
 
 # Help Target
 help:
@@ -278,10 +401,6 @@ help:
 	@echo ... clean
 	@echo ... depend
 	@echo ... edit_cache
-	@echo ... install
-	@echo ... install/local
-	@echo ... install/strip
-	@echo ... list_install_components
 	@echo ... rebuild_cache
 	@echo ... PersonalFinanceManager_Group10_autogen
 	@echo ... PersonalFinanceManager_Group10_autogen_timestamp_deps
@@ -289,12 +408,33 @@ help:
 	@echo ... PersonalFinanceManager_Group10_autogen/mocs_compilation.obj
 	@echo ... PersonalFinanceManager_Group10_autogen/mocs_compilation.i
 	@echo ... PersonalFinanceManager_Group10_autogen/mocs_compilation.s
-	@echo ... main.obj
-	@echo ... main.i
-	@echo ... main.s
-	@echo ... mainwindow.obj
-	@echo ... mainwindow.i
-	@echo ... mainwindow.s
+	@echo ... src/app/AppContext.obj
+	@echo ... src/app/AppContext.i
+	@echo ... src/app/AppContext.s
+	@echo ... src/core/database/DatabaseManager.obj
+	@echo ... src/core/database/DatabaseManager.i
+	@echo ... src/core/database/DatabaseManager.s
+	@echo ... src/core/models/Account.obj
+	@echo ... src/core/models/Account.i
+	@echo ... src/core/models/Account.s
+	@echo ... src/core/models/Budget.obj
+	@echo ... src/core/models/Budget.i
+	@echo ... src/core/models/Budget.s
+	@echo ... src/core/models/Category.obj
+	@echo ... src/core/models/Category.i
+	@echo ... src/core/models/Category.s
+	@echo ... src/core/models/Report.obj
+	@echo ... src/core/models/Report.i
+	@echo ... src/core/models/Report.s
+	@echo ... src/core/models/Transaction.obj
+	@echo ... src/core/models/Transaction.i
+	@echo ... src/core/models/Transaction.s
+	@echo ... src/main.obj
+	@echo ... src/main.i
+	@echo ... src/main.s
+	@echo ... src/ui/mainwindow.obj
+	@echo ... src/ui/mainwindow.i
+	@echo ... src/ui/mainwindow.s
 .PHONY : help
 
 
