@@ -1,39 +1,41 @@
 #ifndef BUDGET_H
 #define BUDGET_H
 
-#include <string>
-#include <vector>
-#include "Transaction.h"
+#include <QString>
 
-class Budget {
-public:
-    // Ném std::invalid_argument nếu limitAmount <= 0 hoặc month sai định dạng "YYYY-MM"
-    Budget(const std::string& categoryName, double limitAmount, const std::string& month);
-
-    std::string getCategoryName() const;
-    double getLimitAmount() const;
-    std::string getMonth() const;
-
-    void setLimitAmount(double limitAmount); // cũng validate
-
-    // Tổng chi tiêu thực tế của category này trong tháng, dựa trên danh sách transaction truyền vào
-    double calculateSpent(const std::vector<Transaction>& transactions) const;
-
-    // Vượt hạn mức chưa
-    bool isOverBudget(const std::vector<Transaction>& transactions) const;
-
-    // % đã dùng, 0.0 - 1.0+ (có thể > 1.0 nếu vượt)
-    double getUsagePercent(const std::vector<Transaction>& transactions) const;
-
-    // Kiểm tra định dạng "YYYY-MM" hợp lệ
-    static bool isValidMonthFormat(const std::string& month);
-
+class Budget
+{
 private:
-    std::string m_categoryName;
-    double m_limitAmount;
-    std::string m_month;
+    int id;
+    QString name;
+    double limitAmount;
+    double spentAmount;
+    QString description;
 
-    void validateLimitAmount(double limitAmount) const;
+public:
+    Budget();
+
+    Budget(int id,
+           const QString& name,
+           double limitAmount,
+           double spentAmount = 0.0,
+           const QString& description = "");
+
+    ~Budget() = default;
+
+    int getId() const;
+    QString getName() const;
+    double getLimitAmount() const;
+    double getSpentAmount() const;
+    QString getDescription() const;
+
+    void setId(int id);
+    void setName(const QString& name);
+    void setLimitAmount(double limitAmount);
+    void setSpentAmount(double spentAmount);
+    void setDescription(const QString& description);
+
+    QString toString() const;
 };
 
-#endif
+#endif // BUDGET_H

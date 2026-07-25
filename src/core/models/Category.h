@@ -1,32 +1,37 @@
 #ifndef CATEGORY_H
 #define CATEGORY_H
 
-#include <string>
-#include <stdexcept>
+#include <QString>
 
-enum class CategoryType {
-    Income,
-    Expense
-};
+class Category
+{
+private:
+    int id;
+    QString name;
+    QString type;
+    QString description;
 
-class Category {
 public:
-    // Ném std::invalid_argument nếu id <= 0 hoặc name rỗng
-    Category(int id, const std::string& name, CategoryType type);
+    Category();
+
+    Category(int id,
+             const QString& name,
+             const QString& type,
+             const QString& description = "");
+
+    ~Category() = default;
 
     int getId() const;
-    std::string getName() const;
-    CategoryType getType() const;
+    QString getName() const;
+    QString getType() const;
+    QString getDescription() const;
 
-    void setName(const std::string& name); // validate name rỗng
+    void setId(int id);
+    void setName(const QString& name);
+    void setType(const QString& type);
+    void setDescription(const QString& description);
 
-    // So sánh 2 category theo id (dùng khi cần tìm/kiểm tra trùng trong danh sách)
-    bool operator==(const Category& other) const;
-
-private:
-    int m_id;
-    std::string m_name;
-    CategoryType m_type;
+    QString toString() const;
 };
 
-#endif
+#endif // CATEGORY_H

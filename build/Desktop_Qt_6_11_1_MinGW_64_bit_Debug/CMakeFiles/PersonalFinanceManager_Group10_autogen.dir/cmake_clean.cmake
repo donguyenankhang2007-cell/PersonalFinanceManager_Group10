@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/PersonalFinanceManager_Group10_autogen"
-  "PersonalFinanceManager_Group10_autogen/include/ui_mainwindow.h"
+  "PersonalFinanceManager_Group10_autogen/include/src/ui/ui_mainwindow.h"
   "PersonalFinanceManager_Group10_autogen/mocs_compilation.cpp"
   "PersonalFinanceManager_Group10_autogen/timestamp"
 )

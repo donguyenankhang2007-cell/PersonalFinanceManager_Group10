@@ -1,66 +1,81 @@
 #include "Budget.h"
-#include <cctype>
-#include <stdexcept>
 
-bool Budget::isValidMonthFormat(const std::string& month) {
-    if (month.size() != 7) return false;
-    if (month[4] != '-') return false;
-
-    for (int i = 0; i < 7; ++i) {
-        if (i == 4) continue;
-        if (!std::isdigit(static_cast<unsigned char>(month[i]))) return false;
-    }
-
-    int m = std::stoi(month.substr(5, 2));
-    return m >= 1 && m <= 12;
+Budget::Budget()
+    : id(0),
+      name(""),
+      limitAmount(0.0),
+      spentAmount(0.0),
+      description("")
+{
 }
 
-void Budget::validateLimitAmount(double limitAmount) const {
-    if (limitAmount <= 0) {
-        throw std::invalid_argument("Limit amount phai lon hon 0");
-    }
+Budget::Budget(int id,
+               const QString& name,
+               double limitAmount,
+               double spentAmount,
+               const QString& description)
+    : id(id),
+      name(name),
+      limitAmount(limitAmount),
+      spentAmount(spentAmount),
+      description(description)
+{
 }
 
-Budget::Budget(const std::string& categoryName, double limitAmount, const std::string& month)
-    : m_categoryName(categoryName), m_limitAmount(limitAmount), m_month(month) {
-    validateLimitAmount(limitAmount);
-
-    if (categoryName.empty()) {
-        throw std::invalid_argument("Category khong duoc de trong");
-    }
-    if (!isValidMonthFormat(month)) {
-        throw std::invalid_argument("Month phai dung dinh dang YYYY-MM");
-    }
+int Budget::getId() const
+{
+    return id;
 }
 
-std::string Budget::getCategoryName() const { return m_categoryName; }
-double Budget::getLimitAmount() const { return m_limitAmount; }
-std::string Budget::getMonth() const { return m_month; }
-
-void Budget::setLimitAmount(double limitAmount) {
-    validateLimitAmount(limitAmount);
-    m_limitAmount = limitAmount;
+QString Budget::getName() const
+{
+    return name;
 }
 
-double Budget::calculateSpent(const std::vector<Transaction>& transactions) const {
-    double total = 0.0;
-    for (const auto& t : transactions) {
-        bool sameCategory = (t.getCategoryName() == m_categoryName);
-        bool sameMonth = (t.getMonthKey() == m_month);
-        bool isExpense = (t.getType() == TransactionType::Expense);
-
-        if (sameCategory && sameMonth && isExpense) {
-            total += t.getAmount();
-        }
-    }
-    return total;
+double Budget::getLimitAmount() const
+{
+    return limitAmount;
 }
 
-bool Budget::isOverBudget(const std::vector<Transaction>& transactions) const {
-    return calculateSpent(transactions) > m_limitAmount;
+double Budget::getSpentAmount() const
+{
+    return spentAmount;
 }
 
-double Budget::getUsagePercent(const std::vector<Transaction>& transactions) const {
-    // m_limitAmount luôn > 0 nhờ validate ở constructor, nên không cần check chia cho 0
-    return calculateSpent(transactions) / m_limitAmount;
+QString Budget::getDescription() const
+{
+    return description;
+}
+
+void Budget::setId(int id)
+{
+    this->id = id;
+}
+
+void Budget::setName(const QString& name)
+{
+    this->name = name;
+}
+
+void Budget::setLimitAmount(double limitAmount)
+{
+    this->limitAmount = limitAmount;
+}
+
+void Budget::setSpentAmount(double spentAmount)
+{
+    this->spentAmount = spentAmount;
+}
+
+void Budget::setDescription(const QString& description)
+{
+    this->description = description;
+}
+
+QString Budget::toString() const
+{
+    return QString("%1 | Limit: %2 | Spent: %3")
+            .arg(name)
+            .arg(limitAmount)
+            .arg(spentAmount);
 }
