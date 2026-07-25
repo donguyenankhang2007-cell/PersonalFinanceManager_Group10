@@ -83,50 +83,170 @@ CMakeFiles/PersonalFinanceManager_Group10.dir/PersonalFinanceManager_Group10_aut
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/PersonalFinanceManager_Group10_autogen/mocs_compilation.cpp.s"
 	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\PersonalFinanceManager_Group10_autogen\mocs_compilation.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\PersonalFinanceManager_Group10_autogen\mocs_compilation.cpp.s
 
-CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/flags.make
-CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/includes_CXX.rsp
-CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.obj: D:/OOP\ LAB/PersonalFinanceManager_Group10/main.cpp
-CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.obj"
-	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.obj -MF CMakeFiles\PersonalFinanceManager_Group10.dir\main.cpp.obj.d -o CMakeFiles\PersonalFinanceManager_Group10.dir\main.cpp.obj -c "D:\OOP LAB\PersonalFinanceManager_Group10\main.cpp"
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/flags.make
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/includes_CXX.rsp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.obj: D:/OOP\ LAB/PersonalFinanceManager_Group10/src/main.cpp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.obj -MF CMakeFiles\PersonalFinanceManager_Group10.dir\src\main.cpp.obj.d -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\main.cpp.obj -c "D:\OOP LAB\PersonalFinanceManager_Group10\src\main.cpp"
 
-CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.i"
-	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\OOP LAB\PersonalFinanceManager_Group10\main.cpp" > CMakeFiles\PersonalFinanceManager_Group10.dir\main.cpp.i
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\OOP LAB\PersonalFinanceManager_Group10\src\main.cpp" > CMakeFiles\PersonalFinanceManager_Group10.dir\src\main.cpp.i
 
-CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.s"
-	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\main.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\main.cpp.s
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\src\main.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\main.cpp.s
 
-CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/flags.make
-CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/includes_CXX.rsp
-CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.obj: D:/OOP\ LAB/PersonalFinanceManager_Group10/mainwindow.cpp
-CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.obj"
-	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.obj -MF CMakeFiles\PersonalFinanceManager_Group10.dir\mainwindow.cpp.obj.d -o CMakeFiles\PersonalFinanceManager_Group10.dir\mainwindow.cpp.obj -c "D:\OOP LAB\PersonalFinanceManager_Group10\mainwindow.cpp"
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/flags.make
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/includes_CXX.rsp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.obj: D:/OOP\ LAB/PersonalFinanceManager_Group10/src/app/AppContext.cpp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.obj -MF CMakeFiles\PersonalFinanceManager_Group10.dir\src\app\AppContext.cpp.obj.d -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\app\AppContext.cpp.obj -c "D:\OOP LAB\PersonalFinanceManager_Group10\src\app\AppContext.cpp"
 
-CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.i"
-	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\OOP LAB\PersonalFinanceManager_Group10\mainwindow.cpp" > CMakeFiles\PersonalFinanceManager_Group10.dir\mainwindow.cpp.i
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\OOP LAB\PersonalFinanceManager_Group10\src\app\AppContext.cpp" > CMakeFiles\PersonalFinanceManager_Group10.dir\src\app\AppContext.cpp.i
 
-CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.s"
-	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\mainwindow.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\mainwindow.cpp.s
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\src\app\AppContext.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\app\AppContext.cpp.s
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/flags.make
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/includes_CXX.rsp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.obj: D:/OOP\ LAB/PersonalFinanceManager_Group10/src/core/database/DatabaseManager.cpp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.obj -MF CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\database\DatabaseManager.cpp.obj.d -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\database\DatabaseManager.cpp.obj -c "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\database\DatabaseManager.cpp"
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\database\DatabaseManager.cpp" > CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\database\DatabaseManager.cpp.i
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\database\DatabaseManager.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\database\DatabaseManager.cpp.s
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/flags.make
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/includes_CXX.rsp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.obj: D:/OOP\ LAB/PersonalFinanceManager_Group10/src/core/models/Account.cpp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.obj -MF CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Account.cpp.obj.d -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Account.cpp.obj -c "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Account.cpp"
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Account.cpp" > CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Account.cpp.i
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Account.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Account.cpp.s
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/flags.make
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/includes_CXX.rsp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.obj: D:/OOP\ LAB/PersonalFinanceManager_Group10/src/core/models/Budget.cpp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.obj -MF CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Budget.cpp.obj.d -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Budget.cpp.obj -c "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Budget.cpp"
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Budget.cpp" > CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Budget.cpp.i
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Budget.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Budget.cpp.s
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/flags.make
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/includes_CXX.rsp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.obj: D:/OOP\ LAB/PersonalFinanceManager_Group10/src/core/models/Category.cpp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.obj -MF CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Category.cpp.obj.d -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Category.cpp.obj -c "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Category.cpp"
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Category.cpp" > CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Category.cpp.i
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Category.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Category.cpp.s
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/flags.make
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/includes_CXX.rsp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.obj: D:/OOP\ LAB/PersonalFinanceManager_Group10/src/core/models/Report.cpp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.obj -MF CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Report.cpp.obj.d -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Report.cpp.obj -c "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Report.cpp"
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Report.cpp" > CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Report.cpp.i
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Report.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Report.cpp.s
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/flags.make
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/includes_CXX.rsp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.obj: D:/OOP\ LAB/PersonalFinanceManager_Group10/src/core/models/Transaction.cpp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.obj -MF CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Transaction.cpp.obj.d -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Transaction.cpp.obj -c "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Transaction.cpp"
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Transaction.cpp" > CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Transaction.cpp.i
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\src\core\models\Transaction.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\core\models\Transaction.cpp.s
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/flags.make
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/includes_CXX.rsp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.obj: D:/OOP\ LAB/PersonalFinanceManager_Group10/src/ui/mainwindow.cpp
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.obj: CMakeFiles/PersonalFinanceManager_Group10.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.obj -MF CMakeFiles\PersonalFinanceManager_Group10.dir\src\ui\mainwindow.cpp.obj.d -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\ui\mainwindow.cpp.obj -c "D:\OOP LAB\PersonalFinanceManager_Group10\src\ui\mainwindow.cpp"
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\OOP LAB\PersonalFinanceManager_Group10\src\ui\mainwindow.cpp" > CMakeFiles\PersonalFinanceManager_Group10.dir\src\ui\mainwindow.cpp.i
+
+CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\OOP LAB\PersonalFinanceManager_Group10\src\ui\mainwindow.cpp" -o CMakeFiles\PersonalFinanceManager_Group10.dir\src\ui\mainwindow.cpp.s
 
 # Object files for target PersonalFinanceManager_Group10
 PersonalFinanceManager_Group10_OBJECTS = \
 "CMakeFiles/PersonalFinanceManager_Group10.dir/PersonalFinanceManager_Group10_autogen/mocs_compilation.cpp.obj" \
-"CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.obj" \
-"CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.obj"
+"CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.obj" \
+"CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.obj" \
+"CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.obj" \
+"CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.obj" \
+"CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.obj" \
+"CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.obj" \
+"CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.obj" \
+"CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.obj" \
+"CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.obj"
 
 # External object files for target PersonalFinanceManager_Group10
 PersonalFinanceManager_Group10_EXTERNAL_OBJECTS =
 
 PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/PersonalFinanceManager_Group10_autogen/mocs_compilation.cpp.obj
-PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/main.cpp.obj
-PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/mainwindow.cpp.obj
+PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/src/main.cpp.obj
+PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/src/app/AppContext.cpp.obj
+PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/database/DatabaseManager.cpp.obj
+PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Account.cpp.obj
+PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Budget.cpp.obj
+PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Category.cpp.obj
+PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Report.cpp.obj
+PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/src/core/models/Transaction.cpp.obj
+PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/src/ui/mainwindow.cpp.obj
 PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/build.make
 PersonalFinanceManager_Group10.exe: C:/Qt/6.11.1/mingw_64/lib/libQt6Widgets.a
+PersonalFinanceManager_Group10.exe: C:/Qt/6.11.1/mingw_64/lib/libQt6Sql.a
 PersonalFinanceManager_Group10.exe: C:/Qt/6.11.1/mingw_64/lib/libQt6Gui.a
 PersonalFinanceManager_Group10.exe: C:/Qt/6.11.1/mingw_64/lib/libQt6Core.a
 PersonalFinanceManager_Group10.exe: C:/Qt/6.11.1/mingw_64/lib/libQt6EntryPoint.a
@@ -134,7 +254,7 @@ PersonalFinanceManager_Group10.exe: PersonalFinanceManager_Group10.exe.manifest
 PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/linkLibs.rsp
 PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/objects1.rsp
 PersonalFinanceManager_Group10.exe: CMakeFiles/PersonalFinanceManager_Group10.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable PersonalFinanceManager_Group10.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="D:\OOP LAB\PersonalFinanceManager_Group10\build\Desktop_Qt_6_11_1_MinGW_64_bit_Debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable PersonalFinanceManager_Group10.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\PersonalFinanceManager_Group10.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
