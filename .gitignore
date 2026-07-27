@@ -1,0 +1,19 @@
+# Build
+build/
+
+# Qt Creator
+*.user
+*.pro.user
+.qtcreator/
+
+# SQLite database
+data/finance.db
+
+# VS Code
+.vscode/
+
+# CMake generated
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
