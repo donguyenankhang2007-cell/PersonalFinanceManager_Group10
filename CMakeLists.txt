@@ -7,6 +7,15 @@ find_package(Qt6 REQUIRED COMPONENTS Core Widgets Sql)
 qt_standard_project_setup()
 
 qt_add_executable(PersonalFinanceManager_Group10
+<<<<<<< HEAD
+    MANUAL_FINALIZATION
+    MACOSX_BUNDLE
+    WIN32
+    src/main.cpp
+    src/ui/mainwindow.cpp
+    src/ui/mainwindow.h
+    src/ui/mainwindow.ui
+=======
     WIN32
     MACOSX_BUNDLE
 
@@ -64,11 +73,31 @@ qt_add_executable(PersonalFinanceManager_Group10
     # utils
     src/utils/DateUtils.h
     src/utils/MoneyUtils.h
+>>>>>>> b91f9eb66ada4e82d1c35ca593e2eee65b5519f5
 )
-
 target_link_libraries(PersonalFinanceManager_Group10
     PRIVATE
         Qt::Core
         Qt::Widgets
+<<<<<<< HEAD
+)
+target_include_directories(PersonalFinanceManager_Group10 PRIVATE
+    src
+    src/ui
+)
+install(TARGETS PersonalFinanceManager_Group10
+    BUNDLE  DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+qt_generate_deploy_app_script(
+    TARGET PersonalFinanceManager_Group10
+    OUTPUT_SCRIPT deploy_script
+    NO_UNSUPPORTED_PLATFORM_ERROR
+)
+install(SCRIPT ${deploy_script})
+=======
         Qt::Sql
 )
+>>>>>>> b91f9eb66ada4e82d1c35ca593e2eee65b5519f5
