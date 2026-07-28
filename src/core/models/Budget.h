@@ -2,8 +2,9 @@
 #define BUDGET_H
 
 #include <QString>
+#include "BaseModel.h"
 
-class Budget
+class Budget : public BaseModel
 {
 private:
     int id;
@@ -35,7 +36,7 @@ public:
     void setSpentAmount(double spentAmount);
     void setDescription(const QString& description);
 
-    QString toString() const;
+    QString toString() const override;
 };
 
 #endif // BUDGET_H

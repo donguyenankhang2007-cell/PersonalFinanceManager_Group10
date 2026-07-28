@@ -2,8 +2,9 @@
 #define ACCOUNT_H
 
 #include <QString>
+#include "BaseModel.h"
 
-class Account
+class Account : public BaseModel
 {
 private:
     int id;
@@ -34,7 +35,7 @@ public:
     void deposit(double amount);
     bool withdraw(double amount);
 
-    QString toString() const;
+    QString toString() const override;
 };
 
 #endif

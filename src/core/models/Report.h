@@ -2,8 +2,9 @@
 #define REPORT_H
 
 #include <QString>
+#include "BaseModel.h"
 
-class Report
+class Report : public BaseModel
 {
 private:
     double totalIncome;
@@ -27,7 +28,7 @@ public:
     void setTotalExpense(double totalExpense);
     void setRemainingBalance(double remainingBalance);
 
-    QString toString() const;
+    QString toString() const override;
 };
 
 #endif // REPORT_H

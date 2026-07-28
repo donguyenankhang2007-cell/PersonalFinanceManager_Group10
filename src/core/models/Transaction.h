@@ -3,8 +3,9 @@
 
 #include <QDate>
 #include <QString>
+#include "BaseModel.h"
 
-class Transaction
+class Transaction : public BaseModel
 {
 private:
     int id;
@@ -46,7 +47,7 @@ public:
     void setNote(const QString& note);
     void setType(const QString& type);
 
-    QString toString() const;
+    QString toString() const override;
 };
 
 #endif // TRANSACTION_H
