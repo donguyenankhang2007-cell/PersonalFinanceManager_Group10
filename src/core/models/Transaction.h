@@ -3,15 +3,16 @@
 
 #include <QString>
 #include <QDate>
+#include "BaseModel.h"
 
-class Transaction
+class Transaction : public BaseModel
 {
 private:
     int id;
     int accountId;
     int categoryId;
     double amount;
-    
+
     QDate date;
     QString note;
     QString type;
@@ -29,8 +30,6 @@ public:
                 const QString& type);
 
     ~Transaction() = default;
-                const QDate& transactionDate,
-                const QString& note);
 
     int getId() const;
     int getAccountId() const;
@@ -48,8 +47,10 @@ public:
     void setDate(const QDate& date);
     void setNote(const QString& note);
     void setType(const QString& type);
-    QString toString() const override;
     void setTransactionDate(const QDate& transactionDate);
+
+    QString toString() const override;
 };
 
-#endif
+#endif // TRANSACTION_H
+

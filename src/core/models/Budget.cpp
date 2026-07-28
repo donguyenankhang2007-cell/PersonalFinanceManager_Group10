@@ -52,32 +52,6 @@ void Budget::setId(int id)
     this->id = id;
 }
 
-void Budget::setName(const QString& name)
-{
-    this->name = name;
-}
-
-void Budget::setLimitAmount(double limitAmount)
-{
-    this->limitAmount = limitAmount;
-}
-
-void Budget::setSpentAmount(double spentAmount)
-{
-    this->spentAmount = spentAmount;
-}
-
-void Budget::setDescription(const QString& description)
-{
-    this->description = description;
-}
-
-QString Budget::toString() const
-{
-    return QString("%1 | Limit: %2 | Spent: %3")
-            .arg(name)
-            .arg(limitAmount)
-            .arg(spentAmount);
 void Budget::setCategoryId(int categoryId)
 {
     this->categoryId = categoryId;
@@ -96,4 +70,14 @@ void Budget::setMonth(int month)
 void Budget::setYear(int year)
 {
     this->year = year;
+}
+
+QString Budget::toString() const
+{
+    return QString("Budget [%1] | Category: %2 | Amount: %3 | %4/%5")
+            .arg(id)
+            .arg(categoryId)
+            .arg(amount, 0, 'f', 0)
+            .arg(month)
+            .arg(year);
 }

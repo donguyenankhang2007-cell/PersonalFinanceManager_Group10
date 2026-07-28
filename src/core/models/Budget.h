@@ -8,41 +8,21 @@ class Budget : public BaseModel
 {
 private:
     int id;
-    QString name;
-    double limitAmount;
-    double spentAmount;
-    QString description;
+    int categoryId;
+    double amount;
+    int month;
+    int year;
 
 public:
     Budget();
 
     Budget(int id,
-<<<<<<< HEAD
-           const QString& name,
-           double limitAmount,
-           double spentAmount = 0.0,
-           const QString& description = "");
-
-    ~Budget() = default;
-
-    int getId() const;
-    QString getName() const;
-    double getLimitAmount() const;
-    double getSpentAmount() const;
-    QString getDescription() const;
-
-    void setId(int id);
-    void setName(const QString& name);
-    void setLimitAmount(double limitAmount);
-    void setSpentAmount(double spentAmount);
-    void setDescription(const QString& description);
-
-    QString toString() const override;
-=======
            int categoryId,
            double amount,
            int month,
            int year);
+
+    ~Budget() = default;
 
     int getId() const;
     int getCategoryId() const;
@@ -55,7 +35,8 @@ public:
     void setAmount(double amount);
     void setMonth(int month);
     void setYear(int year);
->>>>>>> Lam
+
+    QString toString() const override;
 };
 
 #endif // BUDGET_H

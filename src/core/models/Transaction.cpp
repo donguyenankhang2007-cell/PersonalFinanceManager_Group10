@@ -18,17 +18,15 @@ Transaction::Transaction(int id,
                          double amount,
                          const QDate& date,
                          const QString& note,
-                         const QString& type,
-                          const QDate& transactionDate,
-                          const QString& note)
+                         const QString& type)
     : id(id),
       accountId(accountId),
       categoryId(categoryId),
       amount(amount),
       date(date),
       note(note),
-      type(type)
-      transactionDate(transactionDate),
+      type(type),
+      transactionDate(date)
 {
 }
 
