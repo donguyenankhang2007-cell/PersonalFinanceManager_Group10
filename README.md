@@ -820,42 +820,42 @@ int value = 200;
 | Người        | Công việc                                         | File                                    | Trạng thái |
 |:-------------|:--------------------------------------------------|:----------------------------------------|:----------:|
 | **An Khang** | Tạo `BaseModel.h` với virtual destructor & toString | `src/core/models/BaseModel.h`          | ⬜ TODO     |
-| **An Khang** | Hoàn thành `Transaction.h` kế thừa BaseModel      | `src/core/models/Transaction.h`         | ⬜ TODO     |
-| **An Khang** | Hoàn thành `Category.h` kế thừa BaseModel         | `src/core/models/Category.h`            | ⬜ TODO     |
-| **An Khang** | Hoàn thành `Account.h` kế thừa BaseModel          | `src/core/models/Account.h`             | ⬜ TODO     |
-| **An Khang** | Hoàn thành `Budget.h` kế thừa BaseModel           | `src/core/models/Budget.h`              | ⬜ TODO     |
-| **An Khang** | Viết `AppContext.h/.cpp` (Singleton Pattern)       | `src/app/AppContext.h/.cpp`             | ⬜ TODO     |
-| **Hữu Lam** | Viết `database_schema.sql` (CREATE TABLE)          | `data/database_schema.sql`              | ⬜ TODO     |
-| **Hữu Lam** | Viết `DatabaseManager.h/.cpp` (kết nối SQLite)     | `src/core/database/DatabaseManager.h/.cpp` | ⬜ TODO  |
+| **An Khang** | Hoàn thành `Transaction.h` kế thừa BaseModel      | `src/core/models/Transaction.h`         | ✅ DONE     |
+| **An Khang** | Hoàn thành `Category.h` kế thừa BaseModel         | `src/core/models/Category.h`            | ✅ DONE     |
+| **An Khang** | Hoàn thành `Account.h` kế thừa BaseModel          | `src/core/models/Account.h`             | ✅ DONE     |
+| **An Khang** | Hoàn thành `Budget.h` kế thừa BaseModel           | `src/core/models/Budget.h`              | ✅ DONE     |
+| **An Khang** | Viết `AppContext.h/.cpp` (Singleton Pattern)       | `src/app/AppContext.h/.cpp`             | ✅ DONE     |
+| **Hữu Lam** | Viết `database_schema.sql` (CREATE TABLE)          | `data/database_schema.sql`              | ✅ DONE     |
+| **Hữu Lam** | Viết `DatabaseManager.h/.cpp` (kết nối SQLite)     | `src/core/database/DatabaseManager.h/.cpp` | ✅ DONE  |
 
 ### Giai đoạn 2: Tầng dữ liệu & Logic — Cần GĐ1 xong trước
 
 | Người         | Công việc                                          | File                                     | Trạng thái |
 |:--------------|:---------------------------------------------------|:-----------------------------------------|:----------:|
-| **Hữu Lam**  | Viết `TransactionRepository.h` (CRUD giao dịch)    | `src/core/repositories/TransactionRepository.h` | ⬜ TODO |
-| **Hữu Lam**  | Viết `CategoryRepository.h` (CRUD danh mục)        | `src/core/repositories/CategoryRepository.h`    | ⬜ TODO |
-| **Hữu Lam**  | Viết `AccountRepository.h` (CRUD tài khoản)        | `src/core/repositories/AccountRepository.h`     | ⬜ TODO |
-| **Minh Hạo**  | Viết `TransactionService.h` (thêm/xóa/sửa + signal) | `src/core/services/TransactionService.h`     | ⬜ TODO |
-| **Minh Hạo**  | Viết `BudgetService.h` (kiểm tra ngân sách)        | `src/core/services/BudgetService.h`           | ⬜ TODO |
-| **Minh Hạo**  | Viết `ReportService.h` (thống kê thu/chi)           | `src/core/services/ReportService.h`           | ⬜ TODO |
-| **Minh Hạo**  | Viết `DateUtils.h` + `MoneyUtils.h`                 | `src/utils/DateUtils.h`, `MoneyUtils.h`       | ⬜ TODO |
+| **Hữu Lam**  | Viết `TransactionRepository.h` (CRUD giao dịch)    | `src/core/repositories/TransactionRepository.h` | ✅ DONE |
+| **Hữu Lam**  | Viết `CategoryRepository.h` (CRUD danh mục)        | `src/core/repositories/CategoryRepository.h`    | ✅ DONE |
+| **Hữu Lam**  | Viết `AccountRepository.h` (CRUD tài khoản)        | `src/core/repositories/AccountRepository.h`     | ✅ DONE |
+| **Minh Hạo**  | Viết `TransactionService.h` (thêm/xóa/sửa + signal) | `src/core/services/TransactionService.h`     | ✅ DONE |
+| **Minh Hạo**  | Viết `BudgetService.h` (kiểm tra ngân sách)        | `src/core/services/BudgetService.h`           | ✅ DONE |
+| **Minh Hạo**  | Viết `ReportService.h` (thống kê thu/chi)           | `src/core/services/ReportService.h`           | ✅ DONE |
+| **Minh Hạo**  | Viết `DateUtils.h` + `MoneyUtils.h`                 | `src/utils/DateUtils.h`, `MoneyUtils.h`       | ✅ DONE |
 
 ### Giai đoạn 3: Giao diện (UI) — Cần GĐ2 xong trước
 
 | Người           | Công việc                                         | File                                     | Trạng thái |
 |:----------------|:--------------------------------------------------|:-----------------------------------------|:----------:|
-| **Việt Tường**  | Thiết kế `DashboardPage` (tổng quan tài chính)     | `src/ui/pages/DashboardPage.h`           | ⬜ TODO     |
-| **Việt Tường**  | Thiết kế `TransactionPage` (danh sách giao dịch)   | `src/ui/pages/TransactionPage.h`         | ⬜ TODO     |
-| **Việt Tường**  | Thiết kế `CategoryPage` (quản lý danh mục)         | `src/ui/pages/CategoryPage.h`            | ⬜ TODO     |
-| **Việt Tường**  | Thiết kế `ReportPage` (biểu đồ thống kê)           | `src/ui/pages/ReportPage.h`              | ⬜ TODO     |
-| **Việt Tường**  | Thiết kế `TransactionDialog` (popup thêm/sửa)      | `src/ui/dialogs/TransactionDialog.h`     | ⬜ TODO     |
-| **Việt Tường**  | Thiết kế `CategoryDialog` (popup thêm/sửa danh mục)| `src/ui/dialogs/CategoryDialog.h`        | ⬜ TODO     |
+| **Việt Tường**  | Thiết kế `DashboardPage` (tổng quan tài chính)     | `src/ui/pages/DashboardPage.h`           | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `TransactionPage` (danh sách giao dịch)   | `src/ui/pages/TransactionPage.h`         | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `CategoryPage` (quản lý danh mục)         | `src/ui/pages/CategoryPage.h`            | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `ReportPage` (biểu đồ thống kê)           | `src/ui/pages/ReportPage.h`              | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `TransactionDialog` (popup thêm/sửa)      | `src/ui/dialogs/TransactionDialog.h`     | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `CategoryDialog` (popup thêm/sửa danh mục)| `src/ui/dialogs/CategoryDialog.h`        | ✅ DONE     |
 
 ### Giai đoạn 4: Ghép code & Kiểm thử — Song song với GĐ3
 
 | Người          | Công việc                                          | File / Hành động                          | Trạng thái |
 |:---------------|:---------------------------------------------------|:------------------------------------------|:----------:|
-| **Gia Hưng**   | Ghép code GĐ1 + GĐ2 + GĐ3 vào branch Hung        | Merge branches                            | ⬜ TODO     |
+| **Gia Hưng**   | Ghép code GĐ1 + GĐ2 + GĐ3 vào branch Hung        | Merge branches                            | ✅ DONE     |
 | **Gia Hưng**   | Cập nhật `CMakeLists.txt` thêm tất cả file .cpp     | `CMakeLists.txt`                          | ⬜ TODO     |
 | **Gia Hưng**   | Viết unit test cho `TransactionService`              | `tests/TransactionServiceTest.cpp`        | ⬜ TODO     |
 | **Gia Hưng**   | Viết unit test cho `BudgetService`                   | `tests/BudgetServiceTest.cpp`             | ⬜ TODO     |

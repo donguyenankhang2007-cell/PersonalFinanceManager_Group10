@@ -7,17 +7,9 @@ find_package(Qt6 REQUIRED COMPONENTS Core Widgets Sql)
 qt_standard_project_setup()
 
 qt_add_executable(PersonalFinanceManager_Group10
-<<<<<<< HEAD
     MANUAL_FINALIZATION
     MACOSX_BUNDLE
     WIN32
-    src/main.cpp
-    src/ui/mainwindow.cpp
-    src/ui/mainwindow.h
-    src/ui/mainwindow.ui
-=======
-    WIN32
-    MACOSX_BUNDLE
 
     # main
     src/main.cpp
@@ -53,8 +45,11 @@ qt_add_executable(PersonalFinanceManager_Group10
 
     # services
     src/core/services/BudgetService.h
+    src/core/services/BudgetService.cpp
     src/core/services/ReportService.h
+    src/core/services/ReportService.cpp
     src/core/services/TransactionService.h
+    src/core/services/TransactionService.cpp
 
     # ui
     src/ui/mainwindow.cpp
@@ -73,18 +68,20 @@ qt_add_executable(PersonalFinanceManager_Group10
     # utils
     src/utils/DateUtils.h
     src/utils/MoneyUtils.h
->>>>>>> b91f9eb66ada4e82d1c35ca593e2eee65b5519f5
 )
+
 target_link_libraries(PersonalFinanceManager_Group10
     PRIVATE
         Qt::Core
         Qt::Widgets
-<<<<<<< HEAD
+        Qt::Sql
 )
+
 target_include_directories(PersonalFinanceManager_Group10 PRIVATE
     src
     src/ui
 )
+
 install(TARGETS PersonalFinanceManager_Group10
     BUNDLE  DESTINATION .
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -97,7 +94,8 @@ qt_generate_deploy_app_script(
     NO_UNSUPPORTED_PLATFORM_ERROR
 )
 install(SCRIPT ${deploy_script})
-=======
-        Qt::Sql
-)
->>>>>>> b91f9eb66ada4e82d1c35ca593e2eee65b5519f5
+
+qt_finalize_executable(PersonalFinanceManager_Group10)
+
+# Thêm cấu hình build cho thư mục tests
+add_subdirectory(tests)
