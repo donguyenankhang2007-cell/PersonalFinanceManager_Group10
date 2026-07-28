@@ -2,9 +2,8 @@
 #define ACCOUNT_H
 
 #include <QString>
-#include "BaseModel.h"
 
-class Account : public BaseModel
+class Account
 {
 private:
     int id;

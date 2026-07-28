@@ -4,35 +4,46 @@
 #include <QString>
 #include "BaseModel.h"
 
+
+enum class CategoryType
+{
+    Income,
+    Expense
+};
+
 class Category : public BaseModel
 {
 private:
     int id;
     QString name;
-    QString type;
-    QString description;
+    CategoryType type;
+    QString color;
+    QString icon;
 
 public:
     Category();
 
     Category(int id,
              const QString& name,
-             const QString& type,
-             const QString& description = "");
-
-    ~Category() = default;
+             CategoryType type,
+             const QString& color,
+             const QString& icon);
 
     int getId() const;
     QString getName() const;
-    QString getType() const;
-    QString getDescription() const;
+    CategoryType getType() const;
+    QString getColor() const;
+    QString getIcon() const;
 
     void setId(int id);
     void setName(const QString& name);
-    void setType(const QString& type);
-    void setDescription(const QString& description);
+    void setType(CategoryType type);
+    void setColor(const QString& color);
+    void setIcon(const QString& icon);
 
-    QString toString() const override;
+    
+    QString typeToString() const;
+    static CategoryType stringToType(const QString &type);
 };
 
-#endif // CATEGORY_H
+#endif

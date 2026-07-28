@@ -2,23 +2,23 @@
 
 Budget::Budget()
     : id(0),
-      name(""),
-      limitAmount(0.0),
-      spentAmount(0.0),
-      description("")
+    categoryId(0),
+    amount(0.0),
+    month(1),
+    year(2000)
 {
 }
 
 Budget::Budget(int id,
-               const QString& name,
-               double limitAmount,
-               double spentAmount,
-               const QString& description)
+               int categoryId,
+               double amount,
+               int month,
+               int year)
     : id(id),
-      name(name),
-      limitAmount(limitAmount),
-      spentAmount(spentAmount),
-      description(description)
+    categoryId(categoryId),
+    amount(amount),
+    month(month),
+    year(year)
 {
 }
 
@@ -27,24 +27,24 @@ int Budget::getId() const
     return id;
 }
 
-QString Budget::getName() const
+int Budget::getCategoryId() const
 {
-    return name;
+    return categoryId;
 }
 
-double Budget::getLimitAmount() const
+double Budget::getAmount() const
 {
-    return limitAmount;
+    return amount;
 }
 
-double Budget::getSpentAmount() const
+int Budget::getMonth() const
 {
-    return spentAmount;
+    return month;
 }
 
-QString Budget::getDescription() const
+int Budget::getYear() const
 {
-    return description;
+    return year;
 }
 
 void Budget::setId(int id)
@@ -78,4 +78,22 @@ QString Budget::toString() const
             .arg(name)
             .arg(limitAmount)
             .arg(spentAmount);
+void Budget::setCategoryId(int categoryId)
+{
+    this->categoryId = categoryId;
+}
+
+void Budget::setAmount(double amount)
+{
+    this->amount = amount;
+}
+
+void Budget::setMonth(int month)
+{
+    this->month = month;
+}
+
+void Budget::setYear(int year)
+{
+    this->year = year;
 }

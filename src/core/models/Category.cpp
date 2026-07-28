@@ -2,20 +2,23 @@
 
 Category::Category()
     : id(0),
-      name(""),
-      type(""),
-      description("")
+    name(""),
+    type(CategoryType::Expense),
+    color(""),
+    icon("")
 {
 }
 
 Category::Category(int id,
                    const QString& name,
-                   const QString& type,
-                   const QString& description)
+                   CategoryType type,
+                   const QString& color,
+                   const QString& icon)
     : id(id),
-      name(name),
-      type(type),
-      description(description)
+    name(name),
+    type(type),
+    color(color),
+    icon(icon)
 {
 }
 
@@ -29,14 +32,19 @@ QString Category::getName() const
     return name;
 }
 
-QString Category::getType() const
+CategoryType Category::getType() const
 {
     return type;
 }
 
-QString Category::getDescription() const
+QString Category::getColor() const
 {
-    return description;
+    return color;
+}
+
+QString Category::getIcon() const
+{
+    return icon;
 }
 
 void Category::setId(int id)
@@ -49,19 +57,32 @@ void Category::setName(const QString& name)
     this->name = name;
 }
 
-void Category::setType(const QString& type)
+void Category::setType(CategoryType type)
 {
     this->type = type;
 }
 
-void Category::setDescription(const QString& description)
+void Category::setColor(const QString& color)
 {
-    this->description = description;
+    this->color = color;
 }
 
-QString Category::toString() const
+void Category::setIcon(const QString& icon)
 {
-    return QString("%1 (%2)")
-            .arg(name)
-            .arg(type);
+    this->icon = icon;
+}
+
+QString Category::typeToString() const
+{
+    return (type == CategoryType::Income)
+               ? "Income"
+               : "Expense";
+}
+
+CategoryType Category::stringToType(const QString &type)
+{
+    if (type == "Income")
+        return CategoryType::Income;
+
+    return CategoryType::Expense;
 }
