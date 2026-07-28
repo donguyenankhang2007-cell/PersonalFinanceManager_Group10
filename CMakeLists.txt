@@ -8,45 +8,44 @@ find_package(Qt6 REQUIRED COMPONENTS
 )
 
 qt_standard_project_setup()
-
-set(CMAKE_AUTORCC ON) 
+set(CMAKE_AUTORCC ON)
 
 qt_add_executable(PersonalFinanceManager_Group10
     WIN32 MACOSX_BUNDLE
-
     src/main.cpp
-
     src/ui/mainwindow.cpp
     src/ui/mainwindow.h
     src/ui/mainwindow.ui
-
     src/core/database/DatabaseManager.h
     src/core/database/DatabaseManager.cpp
-
     src/core/models/Transaction.h
     src/core/models/Transaction.cpp
-
     src/core/models/Category.h
     src/core/models/Category.cpp
-
     src/core/models/Account.h
     src/core/models/Account.cpp
-
     src/core/models/Budget.h
     src/core/models/Budget.cpp
-
     src/core/repositories/AccountRepository.h
     src/core/repositories/AccountRepository.cpp
-
     src/core/repositories/CategoryRepository.h
     src/core/repositories/CategoryRepository.cpp
-
     src/core/repositories/TransactionRepository.h
     src/core/repositories/TransactionRepository.cpp
-
     src/core/repositories/BudgetRepository.h
     src/core/repositories/BudgetRepository.cpp
-
+    src/core/services/BudgetService.h
+    src/core/services/ReportService.h
+    src/core/services/TransactionService.h
+    src/ui/dialogs/CategoryDialog.h
+    src/ui/dialogs/TransactionDialog.h
+    src/ui/pages/BudgetPage.h
+    src/ui/pages/CategoryPage.h
+    src/ui/pages/DashboardPage.h
+    src/ui/pages/ReportPage.h
+    src/ui/pages/TransactionPage.h
+    src/utils/DateUtils.h
+    src/utils/MoneyUtils.h
     resources/app.qrc
 )
 
@@ -55,6 +54,11 @@ target_link_libraries(PersonalFinanceManager_Group10
         Qt::Core
         Qt::Widgets
         Qt::Sql
+)
+
+target_include_directories(PersonalFinanceManager_Group10 PRIVATE
+    src
+    src/ui
 )
 
 install(TARGETS PersonalFinanceManager_Group10
