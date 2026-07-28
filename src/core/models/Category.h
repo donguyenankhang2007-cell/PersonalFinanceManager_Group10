@@ -2,8 +2,9 @@
 #define CATEGORY_H
 
 #include <QString>
+#include "BaseModel.h"
 
-class Category
+class Category : public BaseModel
 {
 private:
     int id;
@@ -31,7 +32,7 @@ public:
     void setType(const QString& type);
     void setDescription(const QString& description);
 
-    QString toString() const;
+    QString toString() const override;
 };
 
 #endif // CATEGORY_H
