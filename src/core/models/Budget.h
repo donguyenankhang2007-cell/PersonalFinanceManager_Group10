@@ -2,40 +2,41 @@
 #define BUDGET_H
 
 #include <QString>
+#include "BaseModel.h"
 
-class Budget
+class Budget : public BaseModel
 {
 private:
     int id;
-    QString name;
-    double limitAmount;
-    double spentAmount;
-    QString description;
+    int categoryId;
+    double amount;
+    int month;
+    int year;
 
 public:
     Budget();
 
     Budget(int id,
-           const QString& name,
-           double limitAmount,
-           double spentAmount = 0.0,
-           const QString& description = "");
+           int categoryId,
+           double amount,
+           int month,
+           int year);
 
     ~Budget() = default;
 
     int getId() const;
-    QString getName() const;
-    double getLimitAmount() const;
-    double getSpentAmount() const;
-    QString getDescription() const;
+    int getCategoryId() const;
+    double getAmount() const;
+    int getMonth() const;
+    int getYear() const;
 
     void setId(int id);
-    void setName(const QString& name);
-    void setLimitAmount(double limitAmount);
-    void setSpentAmount(double spentAmount);
-    void setDescription(const QString& description);
+    void setCategoryId(int categoryId);
+    void setAmount(double amount);
+    void setMonth(int month);
+    void setYear(int year);
 
-    QString toString() const;
+    QString toString() const override;
 };
 
 #endif // BUDGET_H

@@ -1,21 +1,22 @@
 #ifndef TRANSACTION_H
 #define TRANSACTION_H
 
-#include <QDate>
 #include <QString>
+#include <QDate>
+#include "BaseModel.h"
 
-class Transaction
+class Transaction : public BaseModel
 {
 private:
     int id;
     int accountId;
     int categoryId;
-
     double amount;
-    QDate date;
 
+    QDate date;
     QString note;
     QString type;
+    QDate transactionDate;
 
 public:
     Transaction();
@@ -37,6 +38,7 @@ public:
     QDate getDate() const;
     QString getNote() const;
     QString getType() const;
+    QDate getTransactionDate() const;
 
     void setId(int id);
     void setAccountId(int accountId);
@@ -45,8 +47,10 @@ public:
     void setDate(const QDate& date);
     void setNote(const QString& note);
     void setType(const QString& type);
+    void setTransactionDate(const QDate& transactionDate);
 
-    QString toString() const;
+    QString toString() const override;
 };
 
 #endif // TRANSACTION_H
+

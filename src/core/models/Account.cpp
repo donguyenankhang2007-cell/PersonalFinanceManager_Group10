@@ -1,21 +1,21 @@
 #include "Account.h"
 
 Account::Account()
-    : id(0),
-      name(""),
-      balance(0.0),
-      description("")
 {
+    id = 0;
+    name = "";
+    balance = 0.0;
+    description = "";
 }
 
 Account::Account(int id,
-                 const QString& name,
+                 const QString &name,
                  double balance,
-                 const QString& description)
+                 const QString &description)
     : id(id),
-      name(name),
-      balance(balance),
-      description(description)
+    name(name),
+    balance(balance),
+    description(description)
 {
 }
 
@@ -44,7 +44,7 @@ void Account::setId(int id)
     this->id = id;
 }
 
-void Account::setName(const QString& name)
+void Account::setName(const QString &name)
 {
     this->name = name;
 }
@@ -54,32 +54,7 @@ void Account::setBalance(double balance)
     this->balance = balance;
 }
 
-void Account::setDescription(const QString& description)
+void Account::setDescription(const QString &description)
 {
     this->description = description;
-}
-
-void Account::deposit(double amount)
-{
-    if (amount > 0)
-        balance += amount;
-}
-
-bool Account::withdraw(double amount)
-{
-    if (amount <= 0)
-        return false;
-
-    if (amount > balance)
-        return false;
-
-    balance -= amount;
-    return true;
-}
-
-QString Account::toString() const
-{
-    return QString("%1 | Balance: %2")
-            .arg(name)
-            .arg(balance);
 }

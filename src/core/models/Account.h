@@ -34,7 +34,7 @@ public:
     void deposit(double amount);
     bool withdraw(double amount);
 
-    QString toString() const;
+    QString toString() const override;
 };
 
 #endif

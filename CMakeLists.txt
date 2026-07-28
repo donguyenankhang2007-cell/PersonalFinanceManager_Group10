@@ -2,14 +2,22 @@ cmake_minimum_required(VERSION 3.19)
 
 project(PersonalFinanceManager_Group10 LANGUAGES CXX)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Sql)
+include(GNUInstallDirs)
+
+find_package(Qt6 REQUIRED COMPONENTS
+    Core
+    Widgets
+    Sql
+)
 
 qt_standard_project_setup()
 
+set(CMAKE_AUTORCC ON)
+
 qt_add_executable(PersonalFinanceManager_Group10
     MANUAL_FINALIZATION
-    MACOSX_BUNDLE
     WIN32
+    MACOSX_BUNDLE
 
     # main
     src/main.cpp
@@ -25,49 +33,49 @@ qt_add_executable(PersonalFinanceManager_Group10
     # models
     src/core/models/Account.cpp
     src/core/models/Account.h
-
     src/core/models/Budget.cpp
     src/core/models/Budget.h
-
     src/core/models/Category.cpp
     src/core/models/Category.h
-
     src/core/models/Report.cpp
     src/core/models/Report.h
-
     src/core/models/Transaction.cpp
     src/core/models/Transaction.h
 
     # repositories
+    src/core/repositories/AccountRepository.cpp
     src/core/repositories/AccountRepository.h
+    src/core/repositories/BudgetRepository.cpp
+    src/core/repositories/BudgetRepository.h
+    src/core/repositories/CategoryRepository.cpp
     src/core/repositories/CategoryRepository.h
+    src/core/repositories/TransactionRepository.cpp
     src/core/repositories/TransactionRepository.h
 
     # services
-    src/core/services/BudgetService.h
     src/core/services/BudgetService.cpp
-    src/core/services/ReportService.h
+    src/core/services/BudgetService.h
     src/core/services/ReportService.cpp
-    src/core/services/TransactionService.h
+    src/core/services/ReportService.h
     src/core/services/TransactionService.cpp
+    src/core/services/TransactionService.h
 
     # ui
     src/ui/mainwindow.cpp
     src/ui/mainwindow.h
     src/ui/mainwindow.ui
-
     src/ui/dialogs/CategoryDialog.h
     src/ui/dialogs/TransactionDialog.h
-
     src/ui/pages/BudgetPage.h
     src/ui/pages/CategoryPage.h
     src/ui/pages/DashboardPage.h
     src/ui/pages/ReportPage.h
     src/ui/pages/TransactionPage.h
 
-    # utils
+    # utils and resources
     src/utils/DateUtils.h
     src/utils/MoneyUtils.h
+    resources/app.qrc
 )
 
 target_link_libraries(PersonalFinanceManager_Group10
@@ -77,13 +85,14 @@ target_link_libraries(PersonalFinanceManager_Group10
         Qt::Sql
 )
 
-target_include_directories(PersonalFinanceManager_Group10 PRIVATE
-    src
-    src/ui
+target_include_directories(PersonalFinanceManager_Group10
+    PRIVATE
+        src
+        src/ui
 )
 
 install(TARGETS PersonalFinanceManager_Group10
-    BUNDLE  DESTINATION .
+    BUNDLE DESTINATION .
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
