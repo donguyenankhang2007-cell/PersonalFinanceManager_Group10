@@ -19,30 +19,33 @@ double BudgetService::calculateSpent(const Budget& budget,
 }
 
 bool BudgetService::isOverBudget(const Budget& budget,
-                                  int categoryId,
-                                  const QList<Transaction>& transactions) const
+                                   int categoryId,
+                                   const QList<Transaction>& transactions) const
 {
     double spent = calculateSpent(budget, categoryId, transactions);
-    return spent > budget.getLimitAmount();
+    // getAmount() là hạn mức ngân sách (limitAmount) của Budget
+    return spent > budget.getAmount();
 }
 
 double BudgetService::getUsagePercent(const Budget& budget,
                                        int categoryId,
                                        const QList<Transaction>& transactions) const
 {
-    if (budget.getLimitAmount() == 0.0) {
+    // getAmount() là hạn mức ngân sách
+    if (budget.getAmount() == 0.0) {
         return 0.0;
     }
     double spent = calculateSpent(budget, categoryId, transactions);
-    return spent / budget.getLimitAmount();
+    return spent / budget.getAmount();
 }
 
-Budget BudgetService::refreshSpentAmount(const Budget& budget,
-                                          int categoryId,
-                                          const QList<Transaction>& transactions) const
+// Tính ra số tiền đã chi thực tế cho budget này
+// Vì Budget model không có field spentAmount riêng,
+// hàm này trả về double thay vì Budget để tránh nhầm lẫn.
+// Caller tự dùng giá trị này để hiển thị hoặc so sánh.
+double BudgetService::getSpentAmount(const Budget& budget,
+                                      int categoryId,
+                                      const QList<Transaction>& transactions) const
 {
-    Budget updated = budget;
-    double spent = calculateSpent(budget, categoryId, transactions);
-    updated.setSpentAmount(spent);
-    return updated;
+    return calculateSpent(budget, categoryId, transactions);
 }
