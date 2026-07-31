@@ -1,7 +1,3 @@
-.DS_Store
-build/
-.qtcreator/
-build/
 # Build
 build/
 
@@ -15,6 +11,9 @@ data/finance.db
 
 # VS Code
 .vscode/
+
+# MacOS
+.DS_Store
 
 # CMake generated
 CMakeCache.txt

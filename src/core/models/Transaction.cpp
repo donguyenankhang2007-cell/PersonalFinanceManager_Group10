@@ -5,10 +5,10 @@ Transaction::Transaction()
       accountId(0),
       categoryId(0),
       amount(0.0),
+      transactionDate(QDate::currentDate()),
       date(QDate::currentDate()),
       note(""),
-      type(""),
-      transactionDate(QDate::currentDate())
+      type("")
 {
 }
 
@@ -16,17 +16,17 @@ Transaction::Transaction(int id,
                          int accountId,
                          int categoryId,
                          double amount,
-                         const QDate& date,
+                         const QDate& transactionDate,
                          const QString& note,
                          const QString& type)
     : id(id),
       accountId(accountId),
       categoryId(categoryId),
       amount(amount),
-      date(date),
+      transactionDate(transactionDate),
+      date(transactionDate),
       note(note),
-      type(type),
-      transactionDate(date)
+      type(type)
 {
 }
 
@@ -52,7 +52,7 @@ double Transaction::getAmount() const
 
 QDate Transaction::getDate() const
 {
-    return date;
+    return date.isValid() ? date : transactionDate;
 }
 
 QDate Transaction::getTransactionDate() const
@@ -93,10 +93,15 @@ void Transaction::setAmount(double amount)
 void Transaction::setDate(const QDate& date)
 {
     this->date = date;
+    if (!transactionDate.isValid()) {
+        this->transactionDate = date;
+    }
 }
+
 void Transaction::setTransactionDate(const QDate& transactionDate)
 {
     this->transactionDate = transactionDate;
+    this->date = transactionDate;
 }
 
 void Transaction::setNote(const QString& note)
@@ -112,7 +117,7 @@ void Transaction::setType(const QString& type)
 QString Transaction::toString() const
 {
     return QString("%1 | %2 | %3")
-            .arg(date.toString("dd/MM/yyyy"))
+            .arg(transactionDate.toString("dd/MM/yyyy"))
             .arg(amount)
             .arg(note);
 }

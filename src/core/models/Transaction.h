@@ -12,11 +12,10 @@ private:
     int accountId;
     int categoryId;
     double amount;
-
+    QDate transactionDate;
     QDate date;
     QString note;
     QString type;
-    QDate transactionDate;
 
 public:
     Transaction();
@@ -25,9 +24,9 @@ public:
                 int accountId,
                 int categoryId,
                 double amount,
-                const QDate& date,
+                const QDate& transactionDate,
                 const QString& note,
-                const QString& type);
+                const QString& type = "");
 
     ~Transaction() = default;
 
@@ -35,22 +34,21 @@ public:
     int getAccountId() const;
     int getCategoryId() const;
     double getAmount() const;
+    QDate getTransactionDate() const;
     QDate getDate() const;
     QString getNote() const;
     QString getType() const;
-    QDate getTransactionDate() const;
 
     void setId(int id);
     void setAccountId(int accountId);
     void setCategoryId(int categoryId);
     void setAmount(double amount);
+    void setTransactionDate(const QDate& transactionDate);
     void setDate(const QDate& date);
     void setNote(const QString& note);
     void setType(const QString& type);
-    void setTransactionDate(const QDate& transactionDate);
 
     QString toString() const override;
 };
 
 #endif // TRANSACTION_H
-

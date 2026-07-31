@@ -95,4 +95,4 @@ QString Category::toString() const
         .arg(typeToString())
         .arg(color)
         .arg(icon);
-}
+}

@@ -84,4 +84,4 @@ QString Account::toString() const
         .arg(name)
         .arg(balance)
         .arg(description);
-}
+}

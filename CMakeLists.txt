@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.19)
-
 project(PersonalFinanceManager_Group10 LANGUAGES CXX)
 
 include(GNUInstallDirs)
@@ -11,7 +10,6 @@ find_package(Qt6 REQUIRED COMPONENTS
 )
 
 qt_standard_project_setup()
-
 set(CMAKE_AUTORCC ON)
 
 qt_add_executable(PersonalFinanceManager_Group10
@@ -65,10 +63,14 @@ qt_add_executable(PersonalFinanceManager_Group10
     src/ui/mainwindow.cpp
     src/ui/mainwindow.h
     src/ui/mainwindow.ui
+
+    # dialogs
     src/ui/dialogs/CategoryDialog.h
     src/ui/dialogs/CategoryDialog.cpp
     src/ui/dialogs/TransactionDialog.h
     src/ui/dialogs/TransactionDialog.cpp
+
+    # pages
     src/ui/pages/BudgetPage.h
     src/ui/pages/BudgetPage.cpp
     src/ui/pages/CategoryPage.h
@@ -114,5 +116,5 @@ install(SCRIPT ${deploy_script})
 
 qt_finalize_executable(PersonalFinanceManager_Group10)
 
-# # Thêm cấu hình build cho thư mục tests
+# Thêm cấu hình build cho thư mục tests nếu cần
 # add_subdirectory(tests)

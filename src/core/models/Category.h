@@ -4,8 +4,7 @@
 #include <QString>
 #include "BaseModel.h"
 
-
-enum class CategoryType 
+enum class CategoryType
 {
     Income,
     Expense
@@ -41,12 +40,10 @@ public:
     void setColor(const QString& color);
     void setIcon(const QString& icon);
 
-    
     QString typeToString() const;
     static CategoryType stringToType(const QString &type);
 
     QString toString() const override;
-    
 };
 
 #endif
