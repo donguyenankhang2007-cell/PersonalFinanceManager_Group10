@@ -5,7 +5,7 @@
 #include "BaseModel.h"
 
 
-enum class CategoryType
+enum class CategoryType 
 {
     Income,
     Expense
@@ -44,6 +44,7 @@ public:
     
     QString typeToString() const;
     static CategoryType stringToType(const QString &type);
+    
 };
 
 #endif
