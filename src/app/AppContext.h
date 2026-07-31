@@ -34,8 +34,6 @@ private:
     AppContext& operator=(const AppContext&) = delete;
 
 private:
-    DatabaseManager m_database;
-
     AccountRepository m_accountRepository;
     CategoryRepository m_categoryRepository;
     TransactionRepository m_transactionRepository;

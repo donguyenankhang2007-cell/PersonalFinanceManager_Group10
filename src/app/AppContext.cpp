@@ -16,7 +16,7 @@ AppContext& AppContext::instance()
 
 DatabaseManager& AppContext::database()
 {
-    return m_database;
+    return DatabaseManager::instance();
 }
 
 AccountRepository& AppContext::accountRepository()

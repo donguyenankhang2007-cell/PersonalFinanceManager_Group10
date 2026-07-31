@@ -86,3 +86,13 @@ CategoryType Category::stringToType(const QString &type)
 
     return CategoryType::Expense;
 }
+
+QString Category::toString() const
+{
+    return QString("Category(id=%1, name=%2, type=%3, color=%4, icon=%5)")
+        .arg(id)
+        .arg(name)
+        .arg(typeToString())
+        .arg(color)
+        .arg(icon);
+}

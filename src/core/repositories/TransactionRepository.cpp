@@ -107,7 +107,8 @@ QVector<Transaction> TransactionRepository::getAllTransactions()
             QDate::fromString(
                 query.value("transactionDate").toString(),
                 Qt::ISODate),
-            query.value("note").toString()
+            query.value("note").toString(),
+            QString()
             );
 
         transactions.push_back(transaction);
@@ -141,7 +142,8 @@ Transaction TransactionRepository::getTransactionById(int id)
             QDate::fromString(
                 query.value("transactionDate").toString(),
                 Qt::ISODate),
-            query.value("note").toString()
+            query.value("note").toString(),
+            QString()
             );
     }
 

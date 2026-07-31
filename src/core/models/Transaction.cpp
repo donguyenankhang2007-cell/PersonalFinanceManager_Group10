@@ -50,6 +50,11 @@ double Transaction::getAmount() const
     return amount;
 }
 
+QDate Transaction::getDate() const
+{
+    return date;
+}
+
 QDate Transaction::getTransactionDate() const
 {
     return transactionDate;

@@ -30,4 +30,4 @@ private:
     QScrollArea *m_scrollArea;
 };
 
-#endif // BUDGETPAGE_H
+#endif
