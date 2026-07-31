@@ -1,48 +1,97 @@
 #include "TransactionDialog.h"
+#include "../../app/AppContext.h"
 
 #include <QVBoxLayout>
+#include <QFormLayout>
+#include <QDialogButtonBox>
 #include <QLabel>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QDateEdit>
-#include <QPushButton>
 
 TransactionDialog::TransactionDialog(QWidget *parent)
     : QDialog(parent)
 {
+    setWindowTitle("Add Transaction");
+    setMinimumWidth(400);
+
     QVBoxLayout *layout = new QVBoxLayout(this);
+    QFormLayout *formLayout = new QFormLayout();
 
-    QLabel *title = new QLabel("Add Transaction");
+    amountSpin = new QDoubleSpinBox();
+    amountSpin->setRange(1, 999999999);
+    amountSpin->setDecimals(0);
+    amountSpin->setSuffix(" VND");
+    amountSpin->setValue(0);
 
-    QLineEdit *amount = new QLineEdit();
-    amount->setPlaceholderText("Enter amount");
+    accountCombo = new QComboBox();
+    categoryCombo = new QComboBox();
 
-    QComboBox *category = new QComboBox();
-    category->addItems({
-        "Food",
-        "Transportation",
-        "Shopping",
-        "Entertainment"
-    });
+    dateEdit = new QDateEdit(QDate::currentDate());
+    dateEdit->setCalendarPopup(true);
+    dateEdit->setDisplayFormat("dd/MM/yyyy");
 
-    QDateEdit *date = new QDateEdit();
-    date->setCalendarPopup(true);
+    noteEdit = new QLineEdit();
+    noteEdit->setPlaceholderText("Enter note (optional)");
 
-    QComboBox *type = new QComboBox();
-    type->addItems({
-        "Income",
-        "Expense"
-    });
+    typeCombo = new QComboBox();
+    typeCombo->addItems({"expense", "income"});
 
-    QPushButton *saveButton =
-        new QPushButton("Save");
+    formLayout->addRow("Amount:", amountSpin);
+    formLayout->addRow("Account:", accountCombo);
+    formLayout->addRow("Category:", categoryCombo);
+    formLayout->addRow("Date:", dateEdit);
+    formLayout->addRow("Type:", typeCombo);
+    formLayout->addRow("Note:", noteEdit);
 
-    layout->addWidget(title);
-    layout->addWidget(amount);
-    layout->addWidget(category);
-    layout->addWidget(date);
-    layout->addWidget(type);
-    layout->addWidget(saveButton);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(
+        QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+    layout->addLayout(formLayout);
+    layout->addWidget(buttonBox);
 
     setLayout(layout);
+
+    loadAccounts();
+    loadCategories();
+}
+
+void TransactionDialog::loadAccounts()
+{
+    accountCombo->clear();
+    QVector<Account> accounts =
+        AppContext::instance().accountRepository().getAllAccounts();
+
+    for (const Account &acc : accounts) {
+        accountCombo->addItem(acc.getName(), acc.getId());
+    }
+}
+
+void TransactionDialog::loadCategories()
+{
+    categoryCombo->clear();
+    QVector<Category> categories =
+        AppContext::instance().categoryRepository().getAllCategories();
+
+    for (const Category &cat : categories) {
+        QString display = QString("%1 (%2)")
+                              .arg(cat.getName())
+                              .arg(cat.typeToString());
+        categoryCombo->addItem(display, cat.getId());
+    }
+}
+
+Transaction TransactionDialog::getTransaction() const
+{
+    int accountId = accountCombo->currentData().toInt();
+    int categoryId = categoryCombo->currentData().toInt();
+
+    return Transaction(
+        0,
+        accountId,
+        categoryId,
+        amountSpin->value(),
+        dateEdit->date(),
+        noteEdit->text(),
+        typeCombo->currentText());
 }

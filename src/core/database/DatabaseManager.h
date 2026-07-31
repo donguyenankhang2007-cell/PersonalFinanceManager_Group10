@@ -6,6 +6,8 @@
 class DatabaseManager
 {
 public:
+    DatabaseManager();
+
     static DatabaseManager& instance();
 
     bool openDatabase();
@@ -17,8 +19,6 @@ public:
     QSqlDatabase database();
 
 private:
-    DatabaseManager();
-
     QSqlDatabase db;
 };
 

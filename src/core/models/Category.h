@@ -44,7 +44,8 @@ public:
     
     QString typeToString() const;
     static CategoryType stringToType(const QString &type);
-    
+
+    QString toString() const override;
 };
 
 #endif
