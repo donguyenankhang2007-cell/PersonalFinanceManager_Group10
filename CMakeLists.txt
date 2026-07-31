@@ -69,16 +69,16 @@ qt_add_executable(PersonalFinanceManager_Group10
     src/ui/dialogs/CategoryDialog.cpp
     src/ui/dialogs/TransactionDialog.h
     src/ui/dialogs/TransactionDialog.cpp
-    src/ui/pages/BudgetPage.cpp
     src/ui/pages/BudgetPage.h
-    src/ui/pages/CategoryPage.cpp
+    src/ui/pages/BudgetPage.cpp
     src/ui/pages/CategoryPage.h
-    src/ui/pages/DashboardPage.cpp
+    src/ui/pages/CategoryPage.cpp
     src/ui/pages/DashboardPage.h
-    src/ui/pages/ReportPage.cpp
+    src/ui/pages/DashboardPage.cpp
     src/ui/pages/ReportPage.h
-    src/ui/pages/TransactionPage.cpp
+    src/ui/pages/ReportPage.cpp
     src/ui/pages/TransactionPage.h
+    src/ui/pages/TransactionPage.cpp
 
     # utils and resources
     src/utils/DateUtils.h
