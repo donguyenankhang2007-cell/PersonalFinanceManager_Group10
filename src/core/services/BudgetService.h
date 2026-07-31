@@ -27,11 +27,12 @@ public:
                             int categoryId,
                             const QList<Transaction>& transactions) const;
 
-    // Cap nhat lai spentAmount cua budget dua tren danh sach transaction hien tai
-    // Tra ve budget moi (khong sua truc tiep tham so dau vao)
-    Budget refreshSpentAmount(const Budget& budget,
-                               int categoryId,
-                               const QList<Transaction>& transactions) const;
+    // Tinh tong tien da chi thuc te cho budget nay (tra ve double)
+    // Vi Budget model khong co field spentAmount rieng,
+    // ham nay tra ve gia tri double de caller tu xu ly (hien thi / so sanh)
+    double getSpentAmount(const Budget& budget,
+                          int categoryId,
+                          const QList<Transaction>& transactions) const;
 };
 
 #endif // BUDGETSERVICE_H
