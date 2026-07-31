@@ -1,14 +1,30 @@
-#ifndef CATEGORYDIALOG_H
-#define CATEGORYDIALOG_H
+#include "CategoryDialog.h"
 
-#include <QDialog>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
 
-class CategoryDialog : public QDialog
+CategoryDialog::CategoryDialog(QWidget *parent)
+    : QDialog(parent)
 {
-    Q_OBJECT
+    QVBoxLayout *layout = new QVBoxLayout(this);
 
-public:
-    explicit CategoryDialog(QWidget *parent = nullptr);
-};
+    QLabel *title =
+        new QLabel("Add Category");
 
-#endif // CATEGORYDIALOG_H
+    QLineEdit *categoryName =
+        new QLineEdit();
+
+    categoryName->setPlaceholderText(
+        "Enter category name");
+
+    QPushButton *saveButton =
+        new QPushButton("Save");
+
+    layout->addWidget(title);
+    layout->addWidget(categoryName);
+    layout->addWidget(saveButton);
+
+    setLayout(layout);
+}
