@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QScrollArea>
 #include <QDate>
+#include <QMap>
 
 BudgetPage::BudgetPage(QWidget *parent)
     : QWidget(parent)

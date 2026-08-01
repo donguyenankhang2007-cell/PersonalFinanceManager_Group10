@@ -5,6 +5,7 @@
 #include <QStackedWidget>
 #include <QPushButton>
 
+#include "pages/AccountPage.h"
 #include "pages/DashboardPage.h"
 #include "pages/TransactionPage.h"
 #include "pages/CategoryPage.h"
@@ -27,6 +28,7 @@ public:
 
 private slots:
     void showDashboard();
+    void showAccounts();
     void showTransaction();
     void showCategory();
     void showBudget();
@@ -38,12 +40,14 @@ private:
     QStackedWidget *stackedWidget;
 
     DashboardPage *dashboard;
+    AccountPage *accountPage;
     TransactionPage *transaction;
     CategoryPage *category;
     BudgetPage *budget;
     ReportPage *report;
 
     QPushButton *btnDashboard;
+    QPushButton *btnAccounts;
     QPushButton *btnTransaction;
     QPushButton *btnCategory;
     QPushButton *btnBudget;

@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     setWindowTitle("Personal Finance Manager");
-    resize(1000, 650);
+    resize(1050, 680);
 
     setupPages();
     setupConnections();
@@ -72,15 +72,17 @@ void MainWindow::setupPages()
     );
 
     btnDashboard   = new QPushButton("   Dashboard");
-    btnTransaction = new QPushButton("   Transactions");
+    btnAccounts    = new QPushButton("   Accounts");
     btnCategory    = new QPushButton("   Categories");
+    btnTransaction = new QPushButton("   Transactions");
     btnBudget      = new QPushButton("   Budget");
     btnReport      = new QPushButton("   Reports");
 
     sidebarLayout->addWidget(appTitle);
     sidebarLayout->addWidget(btnDashboard);
-    sidebarLayout->addWidget(btnTransaction);
+    sidebarLayout->addWidget(btnAccounts);
     sidebarLayout->addWidget(btnCategory);
+    sidebarLayout->addWidget(btnTransaction);
     sidebarLayout->addWidget(btnBudget);
     sidebarLayout->addWidget(btnReport);
     sidebarLayout->addStretch();
@@ -148,19 +150,55 @@ void MainWindow::setupPages()
         "   background-color: #0be881;"
         "   border-radius: 8px;"
         "}"
+        "QComboBox, QSpinBox, QDoubleSpinBox, QLineEdit, QDateEdit {"
+        "   background-color: #ffffff;"
+        "   color: #2f3640;"
+        "   border: 1px solid #dcdde1;"
+        "   border-radius: 4px;"
+        "   padding: 6px 10px;"
+        "   font-size: 13px;"
+        "}"
+        "QComboBox:hover, QSpinBox:hover, QDoubleSpinBox:hover,"
+        "QLineEdit:hover, QDateEdit:hover {"
+        "   border: 1px solid #0be881;"
+        "}"
+        "QComboBox::drop-down {"
+        "   border: none;"
+        "}"
+        "QGroupBox {"
+        "   font-weight: bold;"
+        "   font-size: 14px;"
+        "   color: #1e272e;"
+        "   background-color: #ffffff;"
+        "   border: 1px solid #dcdde1;"
+        "   border-radius: 8px;"
+        "   padding-top: 20px;"
+        "   margin-top: 10px;"
+        "}"
+        "QGroupBox::title {"
+        "   subcontrol-origin: margin;"
+        "   left: 15px;"
+        "   padding: 0 5px;"
+        "}"
+        "QScrollArea {"
+        "   border: none;"
+        "   background-color: transparent;"
+        "}"
     );
 
     dashboard   = new DashboardPage();
-    transaction = new TransactionPage();
+    accountPage = new AccountPage();
     category    = new CategoryPage();
+    transaction = new TransactionPage();
     budget      = new BudgetPage();
     report      = new ReportPage();
 
     stackedWidget->addWidget(dashboard);     // index 0
-    stackedWidget->addWidget(transaction);   // index 1
+    stackedWidget->addWidget(accountPage);   // index 1
     stackedWidget->addWidget(category);      // index 2
-    stackedWidget->addWidget(budget);        // index 3
-    stackedWidget->addWidget(report);        // index 4
+    stackedWidget->addWidget(transaction);   // index 3
+    stackedWidget->addWidget(budget);        // index 4
+    stackedWidget->addWidget(report);        // index 5
 
     // Thêm sidebar và stacked widget vào layout chính
     mainLayout->addWidget(sidebar);
@@ -175,8 +213,9 @@ void MainWindow::setupPages()
 void MainWindow::setupConnections()
 {
     connect(btnDashboard, &QPushButton::clicked, this, &MainWindow::showDashboard);
-    connect(btnTransaction, &QPushButton::clicked, this, &MainWindow::showTransaction);
+    connect(btnAccounts, &QPushButton::clicked, this, &MainWindow::showAccounts);
     connect(btnCategory, &QPushButton::clicked, this, &MainWindow::showCategory);
+    connect(btnTransaction, &QPushButton::clicked, this, &MainWindow::showTransaction);
     connect(btnBudget, &QPushButton::clicked, this, &MainWindow::showBudget);
     connect(btnReport, &QPushButton::clicked, this, &MainWindow::showReport);
 }
@@ -186,7 +225,7 @@ void MainWindow::showDashboard()
     stackedWidget->setCurrentIndex(0);
 }
 
-void MainWindow::showTransaction()
+void MainWindow::showAccounts()
 {
     stackedWidget->setCurrentIndex(1);
 }
@@ -196,12 +235,17 @@ void MainWindow::showCategory()
     stackedWidget->setCurrentIndex(2);
 }
 
-void MainWindow::showBudget()
+void MainWindow::showTransaction()
 {
     stackedWidget->setCurrentIndex(3);
 }
 
-void MainWindow::showReport()
+void MainWindow::showBudget()
 {
     stackedWidget->setCurrentIndex(4);
+}
+
+void MainWindow::showReport()
+{
+    stackedWidget->setCurrentIndex(5);
 }

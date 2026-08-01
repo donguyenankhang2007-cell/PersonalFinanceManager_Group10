@@ -65,10 +65,14 @@ qt_add_executable(PersonalFinanceManager_Group10
     src/ui/mainwindow.cpp
     src/ui/mainwindow.h
     src/ui/mainwindow.ui
+    src/ui/dialogs/AccountDialog.h
+    src/ui/dialogs/AccountDialog.cpp
     src/ui/dialogs/CategoryDialog.h
     src/ui/dialogs/CategoryDialog.cpp
     src/ui/dialogs/TransactionDialog.h
     src/ui/dialogs/TransactionDialog.cpp
+    src/ui/pages/AccountPage.cpp
+    src/ui/pages/AccountPage.h
     src/ui/pages/BudgetPage.cpp
     src/ui/pages/BudgetPage.h
     src/ui/pages/CategoryPage.cpp

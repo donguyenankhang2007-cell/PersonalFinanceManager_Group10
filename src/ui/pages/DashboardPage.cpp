@@ -5,6 +5,7 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QLocale>
 
 DashboardPage::DashboardPage(QWidget *parent)
     : QWidget(parent)

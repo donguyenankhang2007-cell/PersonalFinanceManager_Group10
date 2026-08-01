@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QMap>
 
 TransactionPage::TransactionPage(QWidget *parent)
     : QWidget(parent)

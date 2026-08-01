@@ -60,9 +60,3 @@ CREATE TABLE IF NOT EXISTS Budget
     FOREIGN KEY(categoryId)
         REFERENCES Category(id)
 );
-
-INSERT OR IGNORE INTO Account(id, name, balance, description)
-    VALUES(1, 'Cash', 0, 'Tien mat');
-
-INSERT OR IGNORE INTO Account(id, name, balance, description)
-    VALUES(2, 'Bank', 0, 'Tai khoan ngan hang');
