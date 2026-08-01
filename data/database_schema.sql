@@ -36,6 +36,8 @@ CREATE TABLE IF NOT EXISTS Transactions
 
     note TEXT,
 
+    type TEXT NOT NULL DEFAULT 'expense',
+
     FOREIGN KEY(accountId)
         REFERENCES Account(id),
 

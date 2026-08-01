@@ -4,6 +4,7 @@
 #include "../core/database/DatabaseManager.h"
 
 #include "../core/repositories/AccountRepository.h"
+#include "../core/repositories/BudgetRepository.h"
 #include "../core/repositories/CategoryRepository.h"
 #include "../core/repositories/TransactionRepository.h"
 
@@ -19,6 +20,7 @@ public:
     DatabaseManager& database();
 
     AccountRepository& accountRepository();
+    BudgetRepository& budgetRepository();
     CategoryRepository& categoryRepository();
     TransactionRepository& transactionRepository();
 
@@ -37,6 +39,7 @@ private:
     DatabaseManager m_database;
 
     AccountRepository m_accountRepository;
+    BudgetRepository m_budgetRepository;
     CategoryRepository m_categoryRepository;
     TransactionRepository m_transactionRepository;
 

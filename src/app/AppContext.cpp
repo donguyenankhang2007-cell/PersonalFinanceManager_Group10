@@ -24,6 +24,11 @@ AccountRepository& AppContext::accountRepository()
     return m_accountRepository;
 }
 
+BudgetRepository& AppContext::budgetRepository()
+{
+    return m_budgetRepository;
+}
+
 CategoryRepository& AppContext::categoryRepository()
 {
     return m_categoryRepository;

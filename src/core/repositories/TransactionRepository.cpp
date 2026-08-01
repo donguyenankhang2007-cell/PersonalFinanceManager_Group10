@@ -16,8 +16,8 @@ bool TransactionRepository::addTransaction(const Transaction &transaction)
     QSqlQuery query(DatabaseManager::instance().database());
 
     query.prepare(
-        "INSERT INTO Transactions(accountId, categoryId, amount, transactionDate, note) "
-        "VALUES(:accountId, :categoryId, :amount, :transactionDate, :note)");
+        "INSERT INTO Transactions(accountId, categoryId, amount, transactionDate, note, type) "
+        "VALUES(:accountId, :categoryId, :amount, :transactionDate, :note, :type)");
 
     query.bindValue(":accountId", transaction.getAccountId());
     query.bindValue(":categoryId", transaction.getCategoryId());
@@ -25,6 +25,7 @@ bool TransactionRepository::addTransaction(const Transaction &transaction)
     query.bindValue(":transactionDate",
                     transaction.getTransactionDate().toString(Qt::ISODate));
     query.bindValue(":note", transaction.getNote());
+    query.bindValue(":type", transaction.getType());
 
     if(!query.exec())
     {
@@ -45,7 +46,8 @@ bool TransactionRepository::updateTransaction(const Transaction &transaction)
         "categoryId = :categoryId, "
         "amount = :amount, "
         "transactionDate = :transactionDate, "
-        "note = :note "
+        "note = :note, "
+        "type = :type "
         "WHERE id = :id");
 
     query.bindValue(":id", transaction.getId());
@@ -55,6 +57,7 @@ bool TransactionRepository::updateTransaction(const Transaction &transaction)
     query.bindValue(":transactionDate",
                     transaction.getTransactionDate().toString(Qt::ISODate));
     query.bindValue(":note", transaction.getNote());
+    query.bindValue(":type", transaction.getType());
 
     if(!query.exec())
     {
@@ -107,7 +110,8 @@ QVector<Transaction> TransactionRepository::getAllTransactions()
             QDate::fromString(
                 query.value("transactionDate").toString(),
                 Qt::ISODate),
-            query.value("note").toString()
+            query.value("note").toString(),
+            query.value("type").toString()
             );
 
         transactions.push_back(transaction);
@@ -141,7 +145,8 @@ Transaction TransactionRepository::getTransactionById(int id)
             QDate::fromString(
                 query.value("transactionDate").toString(),
                 Qt::ISODate),
-            query.value("note").toString()
+            query.value("note").toString(),
+            query.value("type").toString()
             );
     }
 

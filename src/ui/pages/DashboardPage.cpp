@@ -1,190 +1,180 @@
-// ============================================
-// File: src/ui/pages/DashboardPage.cpp
-// Nguoi viet: Viet Tuong (GUI Developer)
-// Mo ta: Trang tong quan tai chinh —
-//        hien thi tong thu/chi/so du va giao dich gan day
-// ============================================
 #include "DashboardPage.h"
+#include "../../app/AppContext.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QFrame>
-#include <QHeaderView>
-#include <QDate>
-#include <QMap>
-#include <QFont>
-
-#include "core/repositories/TransactionRepository.h"
-#include "core/repositories/CategoryRepository.h"
-#include "core/services/ReportService.h"
-#include "utils/MoneyUtils.h"
-#include "utils/DateUtils.h"
+#include <QGridLayout>
+#include <QPushButton>
+#include <QLocale>
 
 DashboardPage::DashboardPage(QWidget *parent)
     : QWidget(parent)
 {
-    setupUI();
-}
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->setContentsMargins(25, 25, 25, 25);
+    layout->setSpacing(20);
 
-// ==================== SETUP GIAO DIEN ====================
-void DashboardPage::setupUI()
-{
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(25, 25, 25, 25);
-    mainLayout->setSpacing(20);
-
-    // Tieu de trang
+    // Tiêu đề
     QLabel *title = new QLabel("Dashboard");
-    title->setStyleSheet("color: #1A237E; font-size: 22px; font-weight: bold;");
-    QLabel *subtitle = new QLabel("Tong quan tai chinh cua ban trong thang nay");
-    subtitle->setStyleSheet("color: #757575; font-size: 13px;");
-    mainLayout->addWidget(title);
-    mainLayout->addWidget(subtitle);
+    title->setStyleSheet(
+        "font-size: 22px;"
+        "font-weight: bold;"
+        "color: #1e272e;"
+        "padding-bottom: 5px;");
 
-    // === 4 THE TONG QUAN ===
-    QHBoxLayout *cardsLayout = new QHBoxLayout();
-    cardsLayout->setSpacing(15);
+    // Style chung cho card
+    QString cardStyle =
+        "font-size: 16px;"
+        "color: #2f3640;"
+        "background-color: #ffffff;"
+        "padding: 20px;"
+        "border-radius: 10px;"
+        "border: 1px solid #dcdde1;";
 
-    // The 1: Tong thu nhap
-    m_totalIncomeValue = new QLabel("0 VND");
-    cardsLayout->addWidget(
-        createSummaryCard("TONG THU NHAP", m_totalIncomeValue, "#2E7D32"));
+    QString valueStyle =
+        "font-size: 24px;"
+        "font-weight: bold;"
+        "color: #1e272e;"
+        "background-color: transparent;"
+        "border: none;"
+        "padding: 0px;";
 
-    // The 2: Tong chi tieu
-    m_totalExpenseValue = new QLabel("0 VND");
-    cardsLayout->addWidget(
-        createSummaryCard("TONG CHI TIEU", m_totalExpenseValue, "#C62828"));
+    QString subtitleStyle =
+        "font-size: 12px;"
+        "color: #808e9b;"
+        "background-color: transparent;"
+        "border: none;"
+        "padding: 0px;";
 
-    // The 3: So du
-    m_balanceValue = new QLabel("0 VND");
-    cardsLayout->addWidget(
-        createSummaryCard("SO DU", m_balanceValue, "#1565C0"));
+    // === Grid layout cho cards ===
+    QGridLayout *grid = new QGridLayout();
+    grid->setSpacing(15);
 
-    // The 4: So luong giao dich
-    m_transactionCountValue = new QLabel("0");
-    cardsLayout->addWidget(
-        createSummaryCard("SO GIAO DICH", m_transactionCountValue, "#6A1B9A"));
+    // Card 1 - Accounts
+    QWidget *card1 = new QWidget();
+    card1->setStyleSheet(cardStyle);
+    QVBoxLayout *c1Layout = new QVBoxLayout(card1);
+    QLabel *c1Title = new QLabel("Accounts");
+    c1Title->setStyleSheet(subtitleStyle);
+    accountCountLabel = new QLabel("0");
+    accountCountLabel->setStyleSheet(valueStyle);
+    c1Layout->addWidget(c1Title);
+    c1Layout->addWidget(accountCountLabel);
 
-    mainLayout->addLayout(cardsLayout);
+    // Card 2 - Categories
+    QWidget *card2 = new QWidget();
+    card2->setStyleSheet(cardStyle);
+    QVBoxLayout *c2Layout = new QVBoxLayout(card2);
+    QLabel *c2Title = new QLabel("Categories");
+    c2Title->setStyleSheet(subtitleStyle);
+    categoryCountLabel = new QLabel("0");
+    categoryCountLabel->setStyleSheet(valueStyle);
+    c2Layout->addWidget(c2Title);
+    c2Layout->addWidget(categoryCountLabel);
 
-    // === BANG GIAO DICH GAN DAY ===
-    QLabel *recentTitle = new QLabel("Giao dich gan day");
-    recentTitle->setStyleSheet(
-        "font-size: 16px; font-weight: bold; color: #1A237E; padding-top: 10px;");
-    mainLayout->addWidget(recentTitle);
+    // Card 3 - Transactions
+    QWidget *card3 = new QWidget();
+    card3->setStyleSheet(cardStyle);
+    QVBoxLayout *c3Layout = new QVBoxLayout(card3);
+    QLabel *c3Title = new QLabel("Transactions");
+    c3Title->setStyleSheet(subtitleStyle);
+    transactionCountLabel = new QLabel("0");
+    transactionCountLabel->setStyleSheet(valueStyle);
+    c3Layout->addWidget(c3Title);
+    c3Layout->addWidget(transactionCountLabel);
 
-    m_recentTable = new QTableWidget();
-    m_recentTable->setColumnCount(5);
-    m_recentTable->setHorizontalHeaderLabels(
-        {"Ngay", "Loai", "Danh muc", "Ghi chu", "So tien"});
-    m_recentTable->horizontalHeader()->setStretchLastSection(true);
-    m_recentTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    m_recentTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    m_recentTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_recentTable->verticalHeader()->setVisible(false);
-    m_recentTable->setAlternatingRowColors(true);
-    m_recentTable->setStyleSheet("alternate-background-color: #F8F9FA;");
-    mainLayout->addWidget(m_recentTable, 1);
+    // Card 4 - Total Income
+    QWidget *card4 = new QWidget();
+    card4->setStyleSheet(cardStyle);
+    QVBoxLayout *c4Layout = new QVBoxLayout(card4);
+    QLabel *c4Title = new QLabel("Total Income");
+    c4Title->setStyleSheet(subtitleStyle);
+    totalIncomeLabel = new QLabel("0 VND");
+    totalIncomeLabel->setStyleSheet(
+        "font-size: 20px; font-weight: bold; color: #0be881;"
+        "background-color: transparent; border: none; padding: 0px;");
+    c4Layout->addWidget(c4Title);
+    c4Layout->addWidget(totalIncomeLabel);
+
+    // Card 5 - Total Expense
+    QWidget *card5 = new QWidget();
+    card5->setStyleSheet(cardStyle);
+    QVBoxLayout *c5Layout = new QVBoxLayout(card5);
+    QLabel *c5Title = new QLabel("Total Expense");
+    c5Title->setStyleSheet(subtitleStyle);
+    totalExpenseLabel = new QLabel("0 VND");
+    totalExpenseLabel->setStyleSheet(
+        "font-size: 20px; font-weight: bold; color: #ff3f34;"
+        "background-color: transparent; border: none; padding: 0px;");
+    c5Layout->addWidget(c5Title);
+    c5Layout->addWidget(totalExpenseLabel);
+
+    // Card 6 - Balance
+    QWidget *card6 = new QWidget();
+    card6->setStyleSheet(cardStyle);
+    QVBoxLayout *c6Layout = new QVBoxLayout(card6);
+    QLabel *c6Title = new QLabel("Balance");
+    c6Title->setStyleSheet(subtitleStyle);
+    balanceLabel = new QLabel("0 VND");
+    balanceLabel->setStyleSheet(
+        "font-size: 20px; font-weight: bold; color: #3742fa;"
+        "background-color: transparent; border: none; padding: 0px;");
+    c6Layout->addWidget(c6Title);
+    c6Layout->addWidget(balanceLabel);
+
+    grid->addWidget(card1, 0, 0);
+    grid->addWidget(card2, 0, 1);
+    grid->addWidget(card3, 0, 2);
+    grid->addWidget(card4, 1, 0);
+    grid->addWidget(card5, 1, 1);
+    grid->addWidget(card6, 1, 2);
+
+    // Nút refresh
+    QPushButton *btnRefresh = new QPushButton("Refresh Data");
+    btnRefresh->setFixedWidth(150);
+    connect(btnRefresh, &QPushButton::clicked,
+            this, &DashboardPage::loadData);
+
+    layout->addWidget(title);
+    layout->addLayout(grid);
+    layout->addWidget(btnRefresh);
+    layout->addStretch();
+
+    setLayout(layout);
+
+    // Load dữ liệu
+    loadData();
 }
 
-// ==================== TAO THE TONG QUAN ====================
-QWidget* DashboardPage::createSummaryCard(const QString &title,
-                                            QLabel *valueLabel,
-                                            const QString &accentColor)
+void DashboardPage::loadData()
 {
-    QFrame *card = new QFrame();
-    card->setStyleSheet(QString(
-        "QFrame { background: white; border: 1px solid #E8EAF6; "
-        "border-radius: 10px; padding: 18px; border-top: 3px solid %1; }"
-    ).arg(accentColor));
+    QVector<Account> accounts =
+        AppContext::instance().accountRepository().getAllAccounts();
+    QVector<Category> categories =
+        AppContext::instance().categoryRepository().getAllCategories();
+    QVector<Transaction> transactions =
+        AppContext::instance().transactionRepository().getAllTransactions();
 
-    QVBoxLayout *layout = new QVBoxLayout(card);
-    layout->setSpacing(8);
+    accountCountLabel->setText(QString::number(accounts.size()));
+    categoryCountLabel->setText(QString::number(categories.size()));
+    transactionCountLabel->setText(QString::number(transactions.size()));
 
-    QLabel *titleLabel = new QLabel(title);
-    titleLabel->setStyleSheet(
-        "color: #757575; font-size: 11px; font-weight: 600; letter-spacing: 0.5px;");
+    double totalIncome = 0;
+    double totalExpense = 0;
 
-    valueLabel->setStyleSheet(QString(
-        "font-size: 22px; font-weight: bold; color: %1;").arg(accentColor));
-
-    layout->addWidget(titleLabel);
-    layout->addWidget(valueLabel);
-
-    return card;
-}
-
-// ==================== LAM MOI DU LIEU ====================
-void DashboardPage::refreshData()
-{
-    // Lay du lieu tu Repository va Service
-    TransactionRepository transRepo;
-    CategoryRepository catRepo;
-    ReportService reportService;
-
-    QVector<Transaction> transactions = transRepo.getAllTransactions();
-    QVector<Category> categories = catRepo.getAllCategories();
-
-    // Tao bang tra cuu ten danh muc theo ID
-    QMap<int, QString> categoryNames;
-    for (const Category &cat : categories) {
-        categoryNames[cat.getId()] = cat.getName();
+    for (const Transaction &t : transactions) {
+        if (t.getType() == "income") {
+            totalIncome += t.getAmount();
+        } else if (t.getType() == "expense") {
+            totalExpense += t.getAmount();
+        }
     }
 
-    // Tinh tong thu/chi cho thang hien tai
-    QDate today = QDate::currentDate();
-    QDate monthStart = DateUtils::firstDayOfMonth(today.year(), today.month());
-    QDate monthEnd = DateUtils::lastDayOfMonth(today.year(), today.month());
-
-    // Chuyen QVector sang QList de truyen vao ReportService
-    QList<Transaction> txList(transactions.begin(), transactions.end());
-
-    double totalIncome  = reportService.getTotalIncome(txList, monthStart, monthEnd);
-    double totalExpense = reportService.getTotalExpense(txList, monthStart, monthEnd);
-    double balance      = totalIncome - totalExpense;
-
-    // Cap nhat cac the tong quan
-    m_totalIncomeValue->setText(MoneyUtils::formatVND(totalIncome));
-    m_totalExpenseValue->setText(MoneyUtils::formatVND(totalExpense));
-    m_balanceValue->setText(MoneyUtils::formatVND(balance));
-    m_transactionCountValue->setText(QString::number(transactions.size()));
-
-    // Hien thi 10 giao dich gan nhat
-    int rowCount = qMin(transactions.size(), 10);
-    m_recentTable->setRowCount(rowCount);
-
-    for (int i = 0; i < rowCount; ++i) {
-        // Lay tu cuoi danh sach (moi nhat truoc)
-        int idx = transactions.size() - 1 - i;
-        const Transaction &t = transactions[idx];
-
-        // Cot Ngay
-        m_recentTable->setItem(i, 0, new QTableWidgetItem(
-            DateUtils::formatDisplay(t.getDate())));
-
-        // Cot Loai (mau xanh cho thu nhap, do cho chi tieu)
-        QString typeText = (t.getType() == "income") ? "Thu nhap" : "Chi tieu";
-        QTableWidgetItem *typeItem = new QTableWidgetItem(typeText);
-        typeItem->setForeground(
-            t.getType() == "income" ? QColor("#2E7D32") : QColor("#C62828"));
-        QFont boldFont;
-        boldFont.setBold(true);
-        typeItem->setFont(boldFont);
-        m_recentTable->setItem(i, 1, typeItem);
-
-        // Cot Danh muc
-        QString catName = categoryNames.value(t.getCategoryId(), "Khong ro");
-        m_recentTable->setItem(i, 2, new QTableWidgetItem(catName));
-
-        // Cot Ghi chu
-        m_recentTable->setItem(i, 3, new QTableWidgetItem(t.getNote()));
-
-        // Cot So tien (canh phai, co mau)
-        QTableWidgetItem *amountItem = new QTableWidgetItem(
-            MoneyUtils::formatVND(t.getAmount()));
-        amountItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        amountItem->setForeground(
-            t.getType() == "income" ? QColor("#2E7D32") : QColor("#C62828"));
-        m_recentTable->setItem(i, 4, amountItem);
-    }
+    QLocale locale(QLocale::Vietnamese, QLocale::Vietnam);
+    totalIncomeLabel->setText(
+        locale.toString(totalIncome, 'f', 0) + " VND");
+    totalExpenseLabel->setText(
+        locale.toString(totalExpense, 'f', 0) + " VND");
+    balanceLabel->setText(
+        locale.toString(totalIncome - totalExpense, 'f', 0) + " VND");
 }

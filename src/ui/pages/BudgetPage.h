@@ -3,7 +3,9 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
-#include <QScrollArea>
+#include <QComboBox>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QPushButton>
 
 class BudgetPage : public QWidget
@@ -14,20 +16,21 @@ public:
     explicit BudgetPage(QWidget *parent = nullptr);
 
 public slots:
-    // Tai va hien thi du lieu ngan sach
-    void loadData();
+    void loadBudgets();
 
 private slots:
-    void onAddClicked();
+    void onAddBudget();
+    void onDeleteBudget();
 
 private:
-    void setupUI();
-    QWidget* createBudgetCard(const QString &categoryName,
-                               double budgetAmount, double spentAmount);
+    QVBoxLayout *budgetListLayout;
+    QComboBox *categoryCombo;
+    QDoubleSpinBox *amountSpin;
+    QSpinBox *monthSpin;
+    QSpinBox *yearSpin;
+    QPushButton *btnAdd;
 
-    QVBoxLayout *m_cardsLayout;
-    QPushButton *m_btnAdd;
-    QScrollArea *m_scrollArea;
+    QWidget *budgetListWidget;
 };
 
 #endif // BUDGETPAGE_H

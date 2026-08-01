@@ -13,21 +13,16 @@ public:
     explicit TransactionPage(QWidget *parent = nullptr);
 
 public slots:
-    // Tai du lieu giao dich tu database len bang
-    void loadData();
+    void loadTransactions();
 
 private slots:
-    void onAddClicked();
-    void onEditClicked();
-    void onDeleteClicked();
+    void onAddTransaction();
+    void onDeleteTransaction();
 
 private:
-    void setupUI();
-
-    QTableWidget *m_table;
-    QPushButton  *m_btnAdd;
-    QPushButton  *m_btnEdit;
-    QPushButton  *m_btnDelete;
+    QTableWidget *table;
+    QPushButton *btnAdd;
+    QPushButton *btnDelete;
 };
 
 #endif // TRANSACTIONPAGE_H

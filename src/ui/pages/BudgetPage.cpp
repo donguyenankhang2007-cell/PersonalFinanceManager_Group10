@@ -6,286 +6,248 @@
 //        Ket noi BudgetRepository, BudgetService
 // ============================================
 #include "BudgetPage.h"
+#include "../../app/AppContext.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QFormLayout>
 #include <QLabel>
 #include <QProgressBar>
-#include <QFrame>
-#include <QSpinBox>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QDate>
+#include <QGroupBox>
 #include <QMessageBox>
-#include <QDialog>
-
-#include "core/repositories/BudgetRepository.h"
-#include "core/repositories/CategoryRepository.h"
-#include "core/repositories/TransactionRepository.h"
-#include "core/services/BudgetService.h"
-#include "utils/MoneyUtils.h"
+#include <QScrollArea>
+#include <QDate>
+#include <QMap>
 
 BudgetPage::BudgetPage(QWidget *parent)
     : QWidget(parent)
-{
-    setupUI();
-}
-
-// ==================== SETUP GIAO DIEN ====================
-void BudgetPage::setupUI()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(25, 25, 25, 25);
     mainLayout->setSpacing(15);
 
-    // Tieu de
-    QLabel *title = new QLabel("Ngan sach hang thang");
-    title->setStyleSheet("color: #1A237E; font-size: 22px; font-weight: bold;");
-    QLabel *subtitle = new QLabel("Theo doi chi tieu theo tung danh muc");
-    subtitle->setStyleSheet("color: #757575; font-size: 13px;");
+    // Tiêu đề
+    QLabel *title = new QLabel("Budget Management");
+    title->setStyleSheet(
+        "font-size: 22px;"
+        "font-weight: bold;"
+        "color: #1e272e;"
+        "padding-bottom: 10px;");
+
+    // === Form thêm budget ===
+    QGroupBox *formGroup = new QGroupBox("Add New Budget");
+    formGroup->setStyleSheet(
+        "QGroupBox { font-weight: bold; font-size: 14px; "
+        "color: #1e272e; background-color: #ffffff; "
+        "border: 1px solid #dcdde1; border-radius: 8px; "
+        "padding-top: 20px; margin-top: 10px; }"
+        "QGroupBox::title { subcontrol-origin: margin; "
+        "left: 15px; padding: 0 5px; }");
+
+    QFormLayout *formLayout = new QFormLayout(formGroup);
+
+    categoryCombo = new QComboBox();
+    amountSpin = new QDoubleSpinBox();
+    amountSpin->setRange(1, 999999999);
+    amountSpin->setDecimals(0);
+    amountSpin->setSuffix(" VND");
+
+    monthSpin = new QSpinBox();
+    monthSpin->setRange(1, 12);
+    monthSpin->setValue(QDate::currentDate().month());
+
+    yearSpin = new QSpinBox();
+    yearSpin->setRange(2020, 2030);
+    yearSpin->setValue(QDate::currentDate().year());
+
+    btnAdd = new QPushButton("+ Add Budget");
+
+    formLayout->addRow("Category:", categoryCombo);
+    formLayout->addRow("Limit Amount:", amountSpin);
+    formLayout->addRow("Month:", monthSpin);
+    formLayout->addRow("Year:", yearSpin);
+    formLayout->addRow("", btnAdd);
+
+    // === Danh sách budget ===
+    QScrollArea *scrollArea = new QScrollArea();
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setStyleSheet(
+        "QScrollArea { border: none; background-color: transparent; }");
+
+    budgetListWidget = new QWidget();
+    budgetListLayout = new QVBoxLayout(budgetListWidget);
+    budgetListLayout->setSpacing(10);
+    budgetListLayout->addStretch();
+
+    scrollArea->setWidget(budgetListWidget);
+
     mainLayout->addWidget(title);
-    mainLayout->addWidget(subtitle);
+    mainLayout->addWidget(formGroup);
+    mainLayout->addWidget(scrollArea);
 
-    // Nut them ngan sach
-    QHBoxLayout *actionLayout = new QHBoxLayout();
-    m_btnAdd = new QPushButton("+ Them ngan sach");
-    m_btnAdd->setObjectName("primaryBtn");
-    m_btnAdd->setCursor(Qt::PointingHandCursor);
-    actionLayout->addWidget(m_btnAdd);
-    actionLayout->addStretch();
-    mainLayout->addLayout(actionLayout);
+    setLayout(mainLayout);
 
-    // Vung cuon chua cac the ngan sach
-    m_scrollArea = new QScrollArea();
-    m_scrollArea->setWidgetResizable(true);
+    // Kết nối
+    connect(btnAdd, &QPushButton::clicked,
+            this, &BudgetPage::onAddBudget);
 
-    QWidget *scrollContent = new QWidget();
-    scrollContent->setStyleSheet("background: transparent;");
-    m_cardsLayout = new QVBoxLayout(scrollContent);
-    m_cardsLayout->setSpacing(12);
-    m_cardsLayout->addStretch();
-
-    m_scrollArea->setWidget(scrollContent);
-    mainLayout->addWidget(m_scrollArea, 1);
-
-    connect(m_btnAdd, &QPushButton::clicked, this, &BudgetPage::onAddClicked);
+    // Load dữ liệu
+    loadBudgets();
 }
 
-// ==================== TAO THE NGAN SACH ====================
-QWidget* BudgetPage::createBudgetCard(const QString &categoryName,
-                                        double budgetAmount, double spentAmount)
+void BudgetPage::loadBudgets()
 {
-    QFrame *card = new QFrame();
-    card->setStyleSheet(
-        "QFrame { background: white; border: 1px solid #E8EAF6; "
-        "border-radius: 10px; padding: 16px; }");
-
-    QVBoxLayout *layout = new QVBoxLayout(card);
-    layout->setSpacing(10);
-
-    // Header: ten danh muc + so tien
-    QHBoxLayout *headerLayout = new QHBoxLayout();
-
-    QLabel *nameLabel = new QLabel(categoryName);
-    nameLabel->setStyleSheet(
-        "font-size: 15px; font-weight: bold; color: #1A237E;");
-
-    double percent = (budgetAmount > 0)
-        ? (spentAmount / budgetAmount * 100.0) : 0;
-
-    QLabel *amountLabel = new QLabel(
-        QString("%1 / %2")
-            .arg(MoneyUtils::formatVND(spentAmount))
-            .arg(MoneyUtils::formatVND(budgetAmount)));
-    amountLabel->setStyleSheet("font-size: 12px; color: #757575;");
-    amountLabel->setAlignment(Qt::AlignRight);
-
-    headerLayout->addWidget(nameLabel);
-    headerLayout->addWidget(amountLabel);
-    layout->addLayout(headerLayout);
-
-    // Thanh tien do (Progress bar)
-    QProgressBar *progress = new QProgressBar();
-    progress->setRange(0, 100);
-    progress->setValue(qMin(static_cast<int>(percent), 100));
-    progress->setFormat(QString::number(percent, 'f', 1) + "%");
-
-    // Mau thanh thay doi theo muc su dung:
-    // Xanh duong (< 70%) → Cam (70-90%) → Do (> 90%)
-    QString chunkColor;
-    if (percent > 90) {
-        chunkColor = "#E53935";  // Do — vuot ngan sach
-    } else if (percent > 70) {
-        chunkColor = "#FF9800";  // Cam — canh bao
-    } else {
-        chunkColor = "#1976D2";  // Xanh — binh thuong
-    }
-
-    progress->setStyleSheet(QString(
-        "QProgressBar { border: 1px solid #E0E0E0; border-radius: 8px; "
-        "background: #F5F5F5; height: 24px; text-align: center; "
-        "font-size: 12px; font-weight: bold; }"
-        "QProgressBar::chunk { border-radius: 7px; background: %1; }"
-    ).arg(chunkColor));
-
-    layout->addWidget(progress);
-
-    // Canh bao neu vuot ngan sach
-    if (percent > 100) {
-        QLabel *warning = new QLabel(
-            QString("Vuot ngan sach %1!")
-                .arg(MoneyUtils::formatVND(spentAmount - budgetAmount)));
-        warning->setStyleSheet(
-            "color: #E53935; font-size: 12px; font-weight: bold;");
-        layout->addWidget(warning);
-    }
-
-    return card;
-}
-
-// ==================== TAI DU LIEU ====================
-void BudgetPage::loadData()
-{
-    // Xoa cac the cu (giu lai stretch o cuoi)
-    while (m_cardsLayout->count() > 1) {
-        QLayoutItem *item = m_cardsLayout->takeAt(0);
-        if (item->widget()) {
-            delete item->widget();
+    // Clear danh sách cũ
+    QLayoutItem *child;
+    while ((child = budgetListLayout->takeAt(0)) != nullptr) {
+        if (child->widget()) {
+            delete child->widget();
         }
-        delete item;
+        delete child;
     }
 
-    BudgetRepository budgetRepo;
-    CategoryRepository catRepo;
-    TransactionRepository transRepo;
-    BudgetService budgetService;
-
-    QVector<Budget> budgets = budgetRepo.getAllBudgets();
-    QVector<Category> categories = catRepo.getAllCategories();
-    QVector<Transaction> transactions = transRepo.getAllTransactions();
-
-    // Bang tra cuu ten danh muc
+    // Load categories for combo box
+    categoryCombo->clear();
+    QVector<Category> categories =
+        AppContext::instance().categoryRepository().getAllCategories();
     QMap<int, QString> categoryNames;
     for (const Category &cat : categories) {
+        categoryCombo->addItem(cat.getName(), cat.getId());
         categoryNames[cat.getId()] = cat.getName();
     }
 
-    // Chuyen sang QList cho BudgetService
-    QList<Transaction> txList(transactions.begin(), transactions.end());
+    // Load budgets
+    QVector<Budget> budgets =
+        AppContext::instance().budgetRepository().getAllBudgets();
 
-    if (budgets.isEmpty()) {
-        QLabel *emptyLabel = new QLabel(
-            "Chua co ngan sach nao.\nBam '+ Them ngan sach' de bat dau thiet lap.");
-        emptyLabel->setStyleSheet(
-            "color: #757575; font-size: 14px; padding: 30px;");
-        emptyLabel->setAlignment(Qt::AlignCenter);
-        m_cardsLayout->insertWidget(0, emptyLabel);
+    // Load transactions for calculating spent
+    QVector<Transaction> allTransactions =
+        AppContext::instance().transactionRepository().getAllTransactions();
+
+    for (const Budget &b : budgets) {
+        // Tính tổng chi tiêu thực tế
+        double spent = 0;
+        for (const Transaction &t : allTransactions) {
+            if (t.getCategoryId() == b.getCategoryId()
+                && t.getType() == "expense"
+                && t.getDate().month() == b.getMonth()
+                && t.getDate().year() == b.getYear()) {
+                spent += t.getAmount();
+            }
+        }
+
+        int percent = (b.getAmount() > 0)
+                          ? qMin(100, (int)(spent / b.getAmount() * 100))
+                          : 0;
+
+        // Card cho mỗi budget
+        QWidget *card = new QWidget();
+        card->setStyleSheet(
+            "background-color: #ffffff;"
+            "border: 1px solid #dcdde1;"
+            "border-radius: 8px;"
+            "padding: 12px;");
+
+        QVBoxLayout *cardLayout = new QVBoxLayout(card);
+
+        QString catName = categoryNames.value(b.getCategoryId(), "Unknown");
+
+        QLabel *label = new QLabel(
+            QString("%1  —  %2 / %3 VND  (%4/%5)")
+                .arg(catName)
+                .arg(QString::number(spent, 'f', 0))
+                .arg(QString::number(b.getAmount(), 'f', 0))
+                .arg(b.getMonth())
+                .arg(b.getYear()));
+        label->setStyleSheet(
+            "font-size: 13px; color: #2f3640; font-weight: bold;"
+            "border: none;");
+
+        QProgressBar *bar = new QProgressBar();
+        bar->setRange(0, 100);
+        bar->setValue(percent);
+
+        if (percent >= 90) {
+            bar->setStyleSheet(
+                "QProgressBar { background-color: #dcdde1; border: none; "
+                "border-radius: 8px; height: 18px; text-align: center; }"
+                "QProgressBar::chunk { background-color: #ff3f34; "
+                "border-radius: 8px; }");
+        } else if (percent >= 70) {
+            bar->setStyleSheet(
+                "QProgressBar { background-color: #dcdde1; border: none; "
+                "border-radius: 8px; height: 18px; text-align: center; }"
+                "QProgressBar::chunk { background-color: #ffa801; "
+                "border-radius: 8px; }");
+        }
+
+        QPushButton *btnDel = new QPushButton("Delete");
+        btnDel->setStyleSheet(
+            "background-color: #ff3f34; color: white;"
+            "border: none; padding: 5px 12px;"
+            "font-size: 11px; border-radius: 4px;");
+        btnDel->setFixedWidth(70);
+        btnDel->setProperty("budgetId", b.getId());
+
+        connect(btnDel, &QPushButton::clicked,
+                this, &BudgetPage::onDeleteBudget);
+
+        cardLayout->addWidget(label);
+        cardLayout->addWidget(bar);
+        cardLayout->addWidget(btnDel);
+
+        budgetListLayout->insertWidget(
+            budgetListLayout->count() - 1, card);
+    }
+
+    // Thêm stretch ở cuối
+    budgetListLayout->addStretch();
+}
+
+void BudgetPage::onAddBudget()
+{
+    if (categoryCombo->count() == 0) {
+        QMessageBox::warning(this, "Error",
+                             "Please add categories first!");
         return;
     }
 
-    // Tao the cho tung budget
-    for (const Budget &budget : budgets) {
-        QString catName = categoryNames.value(
-            budget.getCategoryId(), "Khong ro");
-        double spent = budgetService.getSpentAmount(
-            budget, budget.getCategoryId(), txList);
+    int categoryId = categoryCombo->currentData().toInt();
+    double amount = amountSpin->value();
+    int month = monthSpin->value();
+    int year = yearSpin->value();
 
-        QWidget *card = createBudgetCard(catName, budget.getAmount(), spent);
-        // Chen truoc stretch
-        m_cardsLayout->insertWidget(m_cardsLayout->count() - 1, card);
+    if (amount <= 0) {
+        QMessageBox::warning(this, "Error",
+                             "Budget amount must be greater than 0!");
+        return;
+    }
+
+    Budget budget(0, categoryId, amount, month, year);
+
+    if (AppContext::instance().budgetRepository().addBudget(budget)) {
+        loadBudgets();
+    } else {
+        QMessageBox::warning(this, "Error",
+                             "Failed to add budget!");
     }
 }
 
-// ==================== THEM NGAN SACH (INLINE DIALOG) ====================
-void BudgetPage::onAddClicked()
+void BudgetPage::onDeleteBudget()
 {
-    QDialog dialog(this);
-    dialog.setWindowTitle("Them ngan sach moi");
-    dialog.setMinimumWidth(380);
+    QPushButton *btn = qobject_cast<QPushButton *>(sender());
+    if (!btn) return;
 
-    QVBoxLayout *layout = new QVBoxLayout(&dialog);
-    layout->setContentsMargins(25, 25, 25, 25);
-    layout->setSpacing(12);
+    int id = btn->property("budgetId").toInt();
 
-    // Tieu de
-    QLabel *dlgTitle = new QLabel("Them ngan sach moi");
-    dlgTitle->setStyleSheet(
-        "font-size: 18px; font-weight: bold; color: #1A237E;");
-    layout->addWidget(dlgTitle);
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this, "Confirm",
+        "Are you sure you want to delete this budget?",
+        QMessageBox::Yes | QMessageBox::No);
 
-    // Chon danh muc
-    QLabel *catLabel = new QLabel("Danh muc:");
-    catLabel->setStyleSheet("font-weight: bold; color: #424242;");
-    QComboBox *catCombo = new QComboBox();
-    CategoryRepository catRepo;
-    QVector<Category> categories = catRepo.getAllCategories();
-    for (const Category &cat : categories) {
-        catCombo->addItem(cat.getName(), cat.getId());
-    }
-    layout->addWidget(catLabel);
-    layout->addWidget(catCombo);
-
-    // So tien han muc
-    QLabel *amountLabel = new QLabel("Han muc ngan sach (VND):");
-    amountLabel->setStyleSheet("font-weight: bold; color: #424242;");
-    QLineEdit *amountEdit = new QLineEdit();
-    amountEdit->setPlaceholderText("VD: 5000000");
-    layout->addWidget(amountLabel);
-    layout->addWidget(amountEdit);
-
-    // Thang
-    QLabel *monthLabel = new QLabel("Thang:");
-    monthLabel->setStyleSheet("font-weight: bold; color: #424242;");
-    QSpinBox *monthSpin = new QSpinBox();
-    monthSpin->setRange(1, 12);
-    monthSpin->setValue(QDate::currentDate().month());
-    layout->addWidget(monthLabel);
-    layout->addWidget(monthSpin);
-
-    // Nam
-    QLabel *yearLabel = new QLabel("Nam:");
-    yearLabel->setStyleSheet("font-weight: bold; color: #424242;");
-    QSpinBox *yearSpin = new QSpinBox();
-    yearSpin->setRange(2020, 2030);
-    yearSpin->setValue(QDate::currentDate().year());
-    layout->addWidget(yearLabel);
-    layout->addWidget(yearSpin);
-
-    // Nut Luu / Huy
-    QHBoxLayout *btnLayout = new QHBoxLayout();
-    btnLayout->addStretch();
-
-    QPushButton *cancelBtn = new QPushButton("Huy");
-    cancelBtn->setStyleSheet(
-        "QPushButton { background: #EEEEEE; color: #424242; border: none; "
-        "border-radius: 6px; padding: 8px 20px; font-size: 13px; }"
-        "QPushButton:hover { background: #E0E0E0; }");
-    connect(cancelBtn, &QPushButton::clicked, &dialog, &QDialog::reject);
-
-    QPushButton *saveBtn = new QPushButton("Luu");
-    saveBtn->setObjectName("primaryBtn");
-    connect(saveBtn, &QPushButton::clicked, &dialog, &QDialog::accept);
-
-    btnLayout->addWidget(cancelBtn);
-    btnLayout->addWidget(saveBtn);
-    layout->addLayout(btnLayout);
-
-    if (dialog.exec() == QDialog::Accepted) {
-        bool ok;
-        double amount = amountEdit->text().toDouble(&ok);
-        if (!ok || amount <= 0) {
-            QMessageBox::warning(this, "Loi", "So tien khong hop le!");
-            return;
+    if (reply == QMessageBox::Yes) {
+        if (AppContext::instance().budgetRepository().deleteBudget(id)) {
+            loadBudgets();
         }
-
-        int categoryId = catCombo->currentData().toInt();
-        int month = monthSpin->value();
-        int year  = yearSpin->value();
-
-        Budget newBudget(0, categoryId, amount, month, year);
-        BudgetRepository budgetRepo;
-        budgetRepo.addBudget(newBudget);
-
-        loadData();
     }
 }
