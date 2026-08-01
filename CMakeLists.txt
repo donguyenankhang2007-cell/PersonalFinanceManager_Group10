@@ -83,7 +83,6 @@ qt_add_executable(PersonalFinanceManager_Group10
     src/ui/pages/ReportPage.h
     src/ui/pages/TransactionPage.cpp
     src/ui/pages/TransactionPage.h
-    src/ui/pages/TransactionPage.cpp
 
     # utils and resources
     src/utils/DateUtils.h

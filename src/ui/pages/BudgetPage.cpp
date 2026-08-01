@@ -72,11 +72,14 @@ BudgetPage::BudgetPage(QWidget *parent)
     QScrollArea *scrollArea = new QScrollArea();
     scrollArea->setWidgetResizable(true);
     scrollArea->setStyleSheet(
-        "QScrollArea { border: none; background-color: transparent; }");
+        "QScrollArea { border: 1px solid #E0E0E0; border-radius: 8px;"
+        "  background-color: #F5F5F5; }");
 
     budgetListWidget = new QWidget();
+    budgetListWidget->setStyleSheet("background-color: #F5F5F5;");
     budgetListLayout = new QVBoxLayout(budgetListWidget);
     budgetListLayout->setSpacing(10);
+    budgetListLayout->setContentsMargins(10, 10, 10, 10);
     budgetListLayout->addStretch();
 
     scrollArea->setWidget(budgetListWidget);

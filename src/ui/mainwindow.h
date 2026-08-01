@@ -12,13 +12,11 @@
 #include "pages/BudgetPage.h"
 #include "pages/ReportPage.h"
 
-// Forward declarations — cac trang duoc tao trong .cpp
-class DashboardPage;
-class TransactionPage;
-class CategoryPage;
-class BudgetPage;
-class ReportPage;
-
+QT_BEGIN_NAMESPACE
+namespace Ui {
+class MainWindow;
+}
+QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
