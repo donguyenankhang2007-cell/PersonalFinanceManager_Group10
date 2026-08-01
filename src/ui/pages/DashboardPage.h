@@ -23,4 +23,4 @@ private:
     QLabel *balanceLabel;
 };
 
-#endif
+#endif // DASHBOARDPAGE_H

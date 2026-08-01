@@ -1,3 +1,10 @@
+// ============================================
+// File: src/ui/pages/BudgetPage.cpp
+// Nguoi viet: Viet Tuong (GUI Developer)
+// Mo ta: Trang ngan sach — hien thi tien do
+//        chi tieu theo tung danh muc bang progress bar
+//        Ket noi BudgetRepository, BudgetService
+// ============================================
 #include "BudgetPage.h"
 #include "../../app/AppContext.h"
 

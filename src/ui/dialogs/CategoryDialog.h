@@ -12,6 +12,7 @@ class CategoryDialog : public QDialog
     Q_OBJECT
 
 public:
+    // Constructor cho THEM MOI
     explicit CategoryDialog(QWidget *parent = nullptr);
 
     Category getCategory() const;

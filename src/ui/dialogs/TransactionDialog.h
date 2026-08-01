@@ -14,6 +14,7 @@ class TransactionDialog : public QDialog
     Q_OBJECT
 
 public:
+    // Constructor cho THEM MOI
     explicit TransactionDialog(QWidget *parent = nullptr);
 
     Transaction getTransaction() const;
