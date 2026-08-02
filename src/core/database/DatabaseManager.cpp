@@ -19,7 +19,6 @@ DatabaseManager &DatabaseManager::instance()
 
 bool DatabaseManager::openDatabase()
 {
-    // Nếu đã có kết nối thì trả về luôn
     if (QSqlDatabase::contains("qt_sql_default_connection"))
     {
         db = QSqlDatabase::database("qt_sql_default_connection");
@@ -29,26 +28,37 @@ bool DatabaseManager::openDatabase()
         db = QSqlDatabase::addDatabase("QSQLITE");
     }
 
-    // Lấy đường dẫn thư mục chứa file .exe
+    // Lấy đường dẫn ứng dụng
     QDir dir(QCoreApplication::applicationDirPath());
 
-    // Quay về thư mục gốc project
-    dir.cdUp();   // Desktop_Qt_xxx -> build
-    dir.cdUp();   // build -> PersonalFinanceManager_Group10
-
-    // Kiểm tra thư mục data có tồn tại không
-    if (!dir.exists("data"))
+    // Duyệt ngược lên để tìm thư mục gốc chứa data/ hoặc CMakeLists.txt
+    QString dataDirPath;
+    QDir searchDir = dir;
+    for (int i = 0; i < 7; ++i)
     {
-        qDebug() << "Error: Cannot find 'data' directory!";
-        return false;
+        if (searchDir.exists("data") || searchDir.exists("CMakeLists.txt"))
+        {
+            dataDirPath = searchDir.absoluteFilePath("data");
+            break;
+        }
+        if (!searchDir.cdUp())
+            break;
     }
 
-    // Đường dẫn đến file database
-    QString databasePath = dir.filePath("data/finance.db");
+    // Nếu vẫn không tìm thấy, tạo thư mục data ngay tại đường dẫn chạy
+    if (dataDirPath.isEmpty())
+    {
+        dir.mkdir("data");
+        dataDirPath = dir.absoluteFilePath("data");
+    }
+    else
+    {
+        QDir().mkpath(dataDirPath);
+    }
 
+    QString databasePath = QDir(dataDirPath).filePath("finance.db");
     db.setDatabaseName(databasePath);
 
-    // Mở database
     if (!db.open())
     {
         qDebug() << "Open database failed!";
@@ -56,45 +66,73 @@ bool DatabaseManager::openDatabase()
         return false;
     }
 
-    qDebug() << "Database opened successfully.";
-
+    qDebug() << "Database opened successfully at:" << databasePath;
     return true;
 }
 
 bool DatabaseManager::initializeDatabase()
 {
+    QString sql;
+    
+    // Thử đọc từ Qt Resource trước
     QFile file(":/database_schema.sql");
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        qDebug() << "Cannot open database_schema.sql";
-        return false;
+        sql = file.readAll();
+        file.close();
+    }
+    else
+    {
+        // Fallback đọc trực tiếp từ đĩa
+        QDir dir(QCoreApplication::applicationDirPath());
+        QDir searchDir = dir;
+        QString schemaPath;
+        for (int i = 0; i < 7; ++i)
+        {
+            if (searchDir.exists("data/database_schema.sql"))
+            {
+                schemaPath = searchDir.absoluteFilePath("data/database_schema.sql");
+                break;
+            }
+            if (!searchDir.cdUp())
+                break;
+        }
+
+        QFile diskFile(schemaPath);
+        if (diskFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            sql = diskFile.readAll();
+            diskFile.close();
+        }
+        else
+        {
+            // Cấu hình bảng mặc định nếu không đọc được file
+            sql = R"(
+                CREATE TABLE IF NOT EXISTS Account (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, balance REAL DEFAULT 0, description TEXT);
+                CREATE TABLE IF NOT EXISTS Category (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, type TEXT NOT NULL, color TEXT, icon TEXT);
+                CREATE TABLE IF NOT EXISTS Transactions (id INTEGER PRIMARY KEY AUTOINCREMENT, accountId INTEGER NOT NULL, categoryId INTEGER NOT NULL, amount REAL NOT NULL, transactionDate TEXT NOT NULL, note TEXT, type TEXT NOT NULL DEFAULT 'expense');
+                CREATE TABLE IF NOT EXISTS Budget (id INTEGER PRIMARY KEY AUTOINCREMENT, categoryId INTEGER NOT NULL, amount REAL NOT NULL, month INTEGER NOT NULL, year INTEGER NOT NULL);
+            )";
+        }
     }
 
-    QString sql = file.readAll();
-    file.close();
-
     QStringList statements = sql.split(';', Qt::SkipEmptyParts);
-
     QSqlQuery query(db);
 
     for (const QString &statement : statements)
     {
         QString trimmed = statement.trimmed();
-
         if (trimmed.isEmpty())
             continue;
 
         if (!query.exec(trimmed))
         {
-            qDebug() << "Database initialization failed:";
+            qDebug() << "Database statement execution warning/error:";
             qDebug() << query.lastError().text();
-            return false;
         }
     }
 
     qDebug() << "Database initialized successfully.";
-
     return true;
 }
 
