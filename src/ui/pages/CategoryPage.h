@@ -2,7 +2,7 @@
 #define CATEGORYPAGE_H
 
 #include <QWidget>
-#include <QTableWidget>
+#include <QListWidget>
 #include <QPushButton>
 
 class CategoryPage : public QWidget
@@ -13,21 +13,16 @@ public:
     explicit CategoryPage(QWidget *parent = nullptr);
 
 public slots:
-    // Tai du lieu danh muc tu database
-    void loadData();
+    void loadCategories();
 
 private slots:
-    void onAddClicked();
-    void onEditClicked();
-    void onDeleteClicked();
+    void onAddCategory();
+    void onDeleteCategory();
 
 private:
-    void setupUI();
-
-    QTableWidget *m_table;
-    QPushButton  *m_btnAdd;
-    QPushButton  *m_btnEdit;
-    QPushButton  *m_btnDelete;
+    QListWidget *categoryList;
+    QPushButton *btnAdd;
+    QPushButton *btnDelete;
 };
 
 #endif // CATEGORYPAGE_H

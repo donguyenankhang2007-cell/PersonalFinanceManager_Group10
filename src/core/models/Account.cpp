@@ -58,3 +58,28 @@ void Account::setDescription(const QString &description)
 {
     this->description = description;
 }
+
+void Account::deposit(double amount)
+{
+    if (amount > 0) {
+        balance += amount;
+    }
+}
+
+bool Account::withdraw(double amount)
+{
+    if (amount > 0 && balance >= amount) {
+        balance -= amount;
+        return true;
+    }
+    return false;
+}
+
+QString Account::toString() const
+{
+    return QString("Account [%1] %2 | Balance: %3 | %4")
+            .arg(id)
+            .arg(name)
+            .arg(balance, 0, 'f', 0)
+            .arg(description);
+}

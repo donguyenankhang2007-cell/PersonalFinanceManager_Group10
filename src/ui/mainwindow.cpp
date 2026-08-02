@@ -1,167 +1,132 @@
 // ============================================
 // File: src/ui/mainwindow.cpp
-// Nguoi viet: Viet Tuong (GUI Developer)
 // Mo ta: Cua so chinh voi sidebar navigation
 //        va QStackedWidget chuyen trang
 // ============================================
 #include "mainwindow.h"
-#include "pages/DashboardPage.h"
-#include "pages/TransactionPage.h"
-#include "pages/CategoryPage.h"
-#include "pages/BudgetPage.h"
-#include "pages/ReportPage.h"
+#include "ui_mainwindow.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QLabel>
 #include <QFrame>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , m_currentIndex(0)
-    , m_dashboardPage(nullptr)
-    , m_transactionPage(nullptr)
-    , m_categoryPage(nullptr)
-    , m_budgetPage(nullptr)
-    , m_reportPage(nullptr)
+    , ui(new Ui::MainWindow)
 {
-    setStyleSheet(getGlobalStylesheet());
-    setupUI();
+    ui->setupUi(this);
+
     setWindowTitle("Personal Finance Manager — Group 10");
     resize(1100, 700);
     setMinimumSize(900, 600);
+
+    setupPages();
+    setupConnections();
 }
 
-MainWindow::~MainWindow() {}
-
-// ==================== SETUP UI ====================
-void MainWindow::setupUI()
+MainWindow::~MainWindow()
 {
-    QWidget *centralWidget = new QWidget(this);
-    setCentralWidget(centralWidget);
+    delete ui;
+}
 
-    QHBoxLayout *mainLayout = new QHBoxLayout(centralWidget);
+// ==================== SETUP PAGES ====================
+void MainWindow::setupPages()
+{
+    // Widget trung tâm
+    QWidget *central = new QWidget(this);
+    QHBoxLayout *mainLayout = new QHBoxLayout(central);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 
-    // === SIDEBAR (ben trai) ===
+    // === SIDEBAR ===
     QWidget *sidebar = new QWidget();
     sidebar->setObjectName("sidebar");
-    sidebar->setFixedWidth(230);
-    createSidebar(sidebar);
-    mainLayout->addWidget(sidebar);
+    sidebar->setFixedWidth(210);
 
-    // === CONTENT AREA (ben phai) ===
-    m_stackedWidget = new QStackedWidget();
-    m_stackedWidget->setObjectName("contentArea");
-    createPages();
-    mainLayout->addWidget(m_stackedWidget, 1);
+    QVBoxLayout *sidebarLayout = new QVBoxLayout(sidebar);
+    sidebarLayout->setContentsMargins(0, 0, 0, 0);
+    sidebarLayout->setSpacing(0);
 
-    // Mac dinh hien Dashboard
-    setActivePage(0);
-}
+    // Tiêu đề sidebar
+    QLabel *appTitle = new QLabel("  Finance Manager");
+    appTitle->setObjectName("sidebarTitle");
 
-// ==================== SIDEBAR ====================
-void MainWindow::createSidebar(QWidget *sidebarWidget)
-{
-    QVBoxLayout *layout = new QVBoxLayout(sidebarWidget);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(2);
-
-    // Tieu de ung dung
-    QLabel *titleLabel = new QLabel("Personal\nFinance Manager");
-    titleLabel->setObjectName("sidebarTitle");
-    titleLabel->setAlignment(Qt::AlignCenter);
-    layout->addWidget(titleLabel);
-
-    // Duong ke ngang
+    // Đường kẻ phân cách
     QFrame *line = new QFrame();
-    line->setFrameShape(QFrame::HLine);
     line->setObjectName("sidebarLine");
-    layout->addWidget(line);
+    line->setFrameShape(QFrame::HLine);
 
-    layout->addSpacing(10);
+    // Navigation buttons
+    btnDashboard   = new QPushButton("   Dashboard");
+    btnAccounts    = new QPushButton("   Accounts");
+    btnCategory    = new QPushButton("   Categories");
+    btnTransaction = new QPushButton("   Transactions");
+    btnBudget      = new QPushButton("   Budget");
+    btnReport      = new QPushButton("   Reports");
 
-    // Cac nut dieu huong
-    QStringList labels = {
-        "   Dashboard",
-        "   Giao dich",
-        "   Danh muc",
-        "   Ngan sach",
-        "   Bao cao"
-    };
+    // Đặt objectName cho styling
+    btnDashboard->setObjectName("navButton");
+    btnAccounts->setObjectName("navButton");
+    btnCategory->setObjectName("navButton");
+    btnTransaction->setObjectName("navButton");
+    btnBudget->setObjectName("navButton");
+    btnReport->setObjectName("navButton");
 
-    for (int i = 0; i < labels.size(); ++i) {
-        QPushButton *btn = new QPushButton(labels[i]);
-        btn->setObjectName("navButton");
-        btn->setCheckable(true);
-        btn->setCursor(Qt::PointingHandCursor);
-        btn->setMinimumHeight(48);
+    // Cho phép toggle checked state
+    btnDashboard->setCheckable(true);
+    btnAccounts->setCheckable(true);
+    btnCategory->setCheckable(true);
+    btnTransaction->setCheckable(true);
+    btnBudget->setCheckable(true);
+    btnReport->setCheckable(true);
 
-        // Ket noi signal/slot — khi bam nut thi chuyen trang
-        connect(btn, &QPushButton::clicked, this, [this, i]() {
-            onNavButtonClicked(i);
-        });
+    // Dashboard mặc định được chọn
+    btnDashboard->setChecked(true);
 
-        m_navButtons.append(btn);
-        layout->addWidget(btn);
-    }
-
-    layout->addStretch();
-
-    // Footer phien ban
-    QLabel *footer = new QLabel("v1.0 — OOP Group 10");
+    // Footer
+    QLabel *footer = new QLabel("Group 10 — OOP Lab");
     footer->setObjectName("sidebarFooter");
     footer->setAlignment(Qt::AlignCenter);
-    layout->addWidget(footer);
-    layout->addSpacing(15);
-}
 
-// ==================== PAGES ====================
-void MainWindow::createPages()
-{
-    m_dashboardPage   = new DashboardPage();
-    m_transactionPage = new TransactionPage();
-    m_categoryPage    = new CategoryPage();
-    m_budgetPage      = new BudgetPage();
-    m_reportPage      = new ReportPage();
+    sidebarLayout->addWidget(appTitle);
+    sidebarLayout->addWidget(line);
+    sidebarLayout->addWidget(btnDashboard);
+    sidebarLayout->addWidget(btnAccounts);
+    sidebarLayout->addWidget(btnCategory);
+    sidebarLayout->addWidget(btnTransaction);
+    sidebarLayout->addWidget(btnBudget);
+    sidebarLayout->addWidget(btnReport);
+    sidebarLayout->addStretch();
+    sidebarLayout->addWidget(footer);
 
-    m_stackedWidget->addWidget(m_dashboardPage);
-    m_stackedWidget->addWidget(m_transactionPage);
-    m_stackedWidget->addWidget(m_categoryPage);
-    m_stackedWidget->addWidget(m_budgetPage);
-    m_stackedWidget->addWidget(m_reportPage);
-}
+    // === CONTENT AREA (Stacked Widget) ===
+    stackedWidget = new QStackedWidget();
+    stackedWidget->setObjectName("contentArea");
 
-// ==================== NAVIGATION ====================
-void MainWindow::onNavButtonClicked(int index)
-{
-    setActivePage(index);
-}
+    dashboard   = new DashboardPage();
+    accountPage = new AccountPage();
+    category    = new CategoryPage();
+    transaction = new TransactionPage();
+    budget      = new BudgetPage();
+    report      = new ReportPage();
 
-void MainWindow::setActivePage(int index)
-{
-    m_currentIndex = index;
-    m_stackedWidget->setCurrentIndex(index);
+    stackedWidget->addWidget(dashboard);     // index 0
+    stackedWidget->addWidget(accountPage);   // index 1
+    stackedWidget->addWidget(category);      // index 2
+    stackedWidget->addWidget(transaction);   // index 3
+    stackedWidget->addWidget(budget);        // index 4
+    stackedWidget->addWidget(report);        // index 5
 
-    // Cap nhat trang thai cac nut (checked/unchecked)
-    for (int i = 0; i < m_navButtons.size(); ++i) {
-        m_navButtons[i]->setChecked(i == index);
-    }
+    // Layout chính
+    mainLayout->addWidget(sidebar);
+    mainLayout->addWidget(stackedWidget);
 
-    // Lam moi du lieu khi chuyen trang
-    switch (index) {
-    case 0: m_dashboardPage->refreshData(); break;
-    case 1: m_transactionPage->loadData(); break;
-    case 2: m_categoryPage->loadData(); break;
-    case 3: m_budgetPage->loadData(); break;
-    case 4: m_reportPage->generateReport(); break;
-    }
-}
+    setCentralWidget(central);
+    stackedWidget->setCurrentIndex(0);
 
-// ==================== GLOBAL STYLESHEET (BLUE THEME) ====================
-QString MainWindow::getGlobalStylesheet() const
-{
-    return R"(
+    // === GLOBAL STYLESHEET (Blue Theme) ===
+    setStyleSheet(R"(
 
         /* ===== SIDEBAR ===== */
         #sidebar {
@@ -257,6 +222,7 @@ QString MainWindow::getGlobalStylesheet() const
             border-radius: 8px;
             gridline-color: #F0F0F0;
             font-size: 13px;
+            color: #212121;
         }
         QTableWidget::item {
             padding: 8px;
@@ -274,6 +240,30 @@ QString MainWindow::getGlobalStylesheet() const
             font-size: 13px;
         }
 
+        /* ===== LABELS ===== */
+        QLabel {
+            color: #212121;
+            font-size: 13px;
+        }
+
+        /* ===== LIST WIDGETS ===== */
+        QListWidget {
+            background-color: #ffffff;
+            color: #212121;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            font-size: 13px;
+            padding: 5px;
+        }
+        QListWidget::item {
+            padding: 8px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+        QListWidget::item:selected {
+            background-color: #BBDEFB;
+            color: #1A237E;
+        }
+
         /* ===== PROGRESS BARS ===== */
         QProgressBar {
             border: 1px solid #E0E0E0;
@@ -282,6 +272,7 @@ QString MainWindow::getGlobalStylesheet() const
             background: #F5F5F5;
             height: 22px;
             font-size: 12px;
+            color: #212121;
         }
         QProgressBar::chunk {
             border-radius: 7px;
@@ -290,19 +281,38 @@ QString MainWindow::getGlobalStylesheet() const
         }
 
         /* ===== INPUTS ===== */
-        QLineEdit, QComboBox, QDateEdit, QSpinBox {
+        QLineEdit, QComboBox, QDateEdit, QSpinBox, QDoubleSpinBox {
             border: 1px solid #BDBDBD;
             border-radius: 6px;
             padding: 8px 12px;
             font-size: 13px;
             background: white;
+            color: #212121;
         }
-        QLineEdit:focus, QComboBox:focus, QDateEdit:focus, QSpinBox:focus {
+        QLineEdit:focus, QComboBox:focus, QDateEdit:focus,
+        QSpinBox:focus, QDoubleSpinBox:focus {
             border: 2px solid #1976D2;
         }
         QComboBox::drop-down {
             border: none;
             padding-right: 10px;
+        }
+
+        /* ===== GROUP BOX ===== */
+        QGroupBox {
+            font-weight: bold;
+            font-size: 14px;
+            color: #212121;
+            background-color: #ffffff;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding-top: 20px;
+            margin-top: 10px;
+        }
+        QGroupBox::title {
+            subcontrol-origin: margin;
+            left: 15px;
+            padding: 0 5px;
         }
 
         /* ===== DIALOGS ===== */
@@ -315,5 +325,80 @@ QString MainWindow::getGlobalStylesheet() const
             border: none;
             background: transparent;
         }
-    )";
+
+        /* ===== GENERAL PUSH BUTTONS (content area) ===== */
+        #contentArea QPushButton {
+            background-color: #1976D2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 9px 22px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        #contentArea QPushButton:hover {
+            background-color: #1565C0;
+        }
+    )");
+}
+
+// ==================== CONNECTIONS ====================
+void MainWindow::setupConnections()
+{
+    connect(btnDashboard, &QPushButton::clicked, this, &MainWindow::showDashboard);
+    connect(btnAccounts, &QPushButton::clicked, this, &MainWindow::showAccounts);
+    connect(btnCategory, &QPushButton::clicked, this, &MainWindow::showCategory);
+    connect(btnTransaction, &QPushButton::clicked, this, &MainWindow::showTransaction);
+    connect(btnBudget, &QPushButton::clicked, this, &MainWindow::showBudget);
+    connect(btnReport, &QPushButton::clicked, this, &MainWindow::showReport);
+}
+
+// ==================== NAVIGATION SLOTS ====================
+static void updateNavButtons(QPushButton* buttons[], int count, int active)
+{
+    for (int i = 0; i < count; ++i) {
+        buttons[i]->setChecked(i == active);
+    }
+}
+
+void MainWindow::showDashboard()
+{
+    stackedWidget->setCurrentIndex(0);
+    QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
+    updateNavButtons(btns, 6, 0);
+}
+
+void MainWindow::showAccounts()
+{
+    stackedWidget->setCurrentIndex(1);
+    QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
+    updateNavButtons(btns, 6, 1);
+}
+
+void MainWindow::showCategory()
+{
+    stackedWidget->setCurrentIndex(2);
+    QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
+    updateNavButtons(btns, 6, 2);
+}
+
+void MainWindow::showTransaction()
+{
+    stackedWidget->setCurrentIndex(3);
+    QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
+    updateNavButtons(btns, 6, 3);
+}
+
+void MainWindow::showBudget()
+{
+    stackedWidget->setCurrentIndex(4);
+    QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
+    updateNavButtons(btns, 6, 4);
+}
+
+void MainWindow::showReport()
+{
+    stackedWidget->setCurrentIndex(5);
+    QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
+    updateNavButtons(btns, 6, 5);
 }

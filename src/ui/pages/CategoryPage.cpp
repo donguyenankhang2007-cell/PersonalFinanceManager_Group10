@@ -1,184 +1,122 @@
-// ============================================
-// File: src/ui/pages/CategoryPage.cpp
-// Nguoi viet: Viet Tuong (GUI Developer)
-// Mo ta: Trang quan ly danh muc — CRUD day du
-//        Ket noi CategoryRepository
-// ============================================
 #include "CategoryPage.h"
+#include "../dialogs/CategoryDialog.h"
+#include "../../app/AppContext.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QHeaderView>
-#include <QMessageBox>
 #include <QLabel>
-
-#include "core/repositories/CategoryRepository.h"
-#include "dialogs/CategoryDialog.h"
+#include <QMessageBox>
 
 CategoryPage::CategoryPage(QWidget *parent)
     : QWidget(parent)
 {
-    setupUI();
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->setContentsMargins(25, 25, 25, 25);
+    layout->setSpacing(15);
+
+    // Tiêu đề
+    QLabel *title = new QLabel("Category Management");
+    title->setStyleSheet(
+        "font-size: 22px;"
+        "font-weight: bold;"
+        "color: #1e272e;"
+        "padding-bottom: 10px;");
+
+    // Buttons
+    QHBoxLayout *btnLayout = new QHBoxLayout();
+    btnAdd = new QPushButton("+ Add Category");
+    btnDelete = new QPushButton("Delete Selected");
+    btnDelete->setStyleSheet(
+        "background-color: #ff3f34; color: white;"
+        "border: none; padding: 10px 20px;"
+        "font-size: 13px; font-weight: bold; border-radius: 5px;");
+
+    btnLayout->addWidget(btnAdd);
+    btnLayout->addWidget(btnDelete);
+    btnLayout->addStretch();
+
+    // Danh sách
+    categoryList = new QListWidget();
+
+    layout->addWidget(title);
+    layout->addLayout(btnLayout);
+    layout->addWidget(categoryList);
+
+    setLayout(layout);
+
+    // Kết nối signals
+    connect(btnAdd, &QPushButton::clicked,
+            this, &CategoryPage::onAddCategory);
+    connect(btnDelete, &QPushButton::clicked,
+            this, &CategoryPage::onDeleteCategory);
+
+    // Load dữ liệu từ DB
+    loadCategories();
 }
 
-// ==================== SETUP GIAO DIEN ====================
-void CategoryPage::setupUI()
+void CategoryPage::loadCategories()
 {
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(25, 25, 25, 25);
-    mainLayout->setSpacing(15);
+    categoryList->clear();
 
-    // Tieu de
-    QLabel *title = new QLabel("Quan ly Danh muc");
-    title->setStyleSheet("color: #1A237E; font-size: 22px; font-weight: bold;");
-    QLabel *subtitle = new QLabel("Quan ly cac danh muc thu chi cua ban");
-    subtitle->setStyleSheet("color: #757575; font-size: 13px;");
-    mainLayout->addWidget(title);
-    mainLayout->addWidget(subtitle);
+    QVector<Category> categories =
+        AppContext::instance().categoryRepository().getAllCategories();
 
-    // === CAC NUT HANH DONG ===
-    QHBoxLayout *actionLayout = new QHBoxLayout();
+    for (const Category &cat : categories) {
+        QString display = QString("%1  (%2)")
+                              .arg(cat.getName())
+                              .arg(cat.typeToString());
 
-    m_btnAdd = new QPushButton("+ Them danh muc");
-    m_btnAdd->setObjectName("primaryBtn");
-    m_btnAdd->setCursor(Qt::PointingHandCursor);
-
-    m_btnEdit = new QPushButton("Sua");
-    m_btnEdit->setObjectName("editBtn");
-    m_btnEdit->setCursor(Qt::PointingHandCursor);
-
-    m_btnDelete = new QPushButton("Xoa");
-    m_btnDelete->setObjectName("deleteBtn");
-    m_btnDelete->setCursor(Qt::PointingHandCursor);
-
-    actionLayout->addWidget(m_btnAdd);
-    actionLayout->addWidget(m_btnEdit);
-    actionLayout->addWidget(m_btnDelete);
-    actionLayout->addStretch();
-    mainLayout->addLayout(actionLayout);
-
-    // === BANG DANH MUC ===
-    m_table = new QTableWidget();
-    m_table->setColumnCount(5);
-    m_table->setHorizontalHeaderLabels(
-        {"ID", "Ten danh muc", "Loai", "Mau", "Icon"});
-    m_table->horizontalHeader()->setStretchLastSection(true);
-    m_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    m_table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_table->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_table->verticalHeader()->setVisible(false);
-    m_table->setAlternatingRowColors(true);
-    m_table->setStyleSheet("alternate-background-color: #F8F9FA;");
-    m_table->setColumnHidden(0, true);
-    mainLayout->addWidget(m_table, 1);
-
-    // Ket noi signal/slot
-    connect(m_btnAdd,    &QPushButton::clicked, this, &CategoryPage::onAddClicked);
-    connect(m_btnEdit,   &QPushButton::clicked, this, &CategoryPage::onEditClicked);
-    connect(m_btnDelete, &QPushButton::clicked, this, &CategoryPage::onDeleteClicked);
-}
-
-// ==================== TAI DU LIEU ====================
-void CategoryPage::loadData()
-{
-    CategoryRepository catRepo;
-    QVector<Category> categories = catRepo.getAllCategories();
-
-    m_table->setRowCount(categories.size());
-
-    for (int i = 0; i < categories.size(); ++i) {
-        const Category &cat = categories[i];
-
-        // Cot ID (an)
-        m_table->setItem(i, 0,
-            new QTableWidgetItem(QString::number(cat.getId())));
-
-        // Cot Ten
-        m_table->setItem(i, 1,
-            new QTableWidgetItem(cat.getName()));
-
-        // Cot Loai (mau xanh/do)
-        QString typeText = (cat.getType() == CategoryType::Income)
-            ? "Thu nhap" : "Chi tieu";
-        QTableWidgetItem *typeItem = new QTableWidgetItem(typeText);
-        typeItem->setForeground(
-            cat.getType() == CategoryType::Income
-                ? QColor("#2E7D32") : QColor("#C62828"));
-        m_table->setItem(i, 2, typeItem);
-
-        // Cot Mau
-        QTableWidgetItem *colorItem = new QTableWidgetItem(cat.getColor());
-        if (!cat.getColor().isEmpty()) {
-            colorItem->setBackground(QColor(cat.getColor()));
-        }
-        m_table->setItem(i, 3, colorItem);
-
-        // Cot Icon
-        m_table->setItem(i, 4,
-            new QTableWidgetItem(cat.getIcon()));
+        QListWidgetItem *item = new QListWidgetItem(display);
+        item->setData(Qt::UserRole, cat.getId());
+        categoryList->addItem(item);
     }
 }
 
-// ==================== THEM DANH MUC ====================
-void CategoryPage::onAddClicked()
+void CategoryPage::onAddCategory()
 {
     CategoryDialog dialog(this);
-    dialog.setWindowTitle("Them danh muc moi");
 
     if (dialog.exec() == QDialog::Accepted) {
-        Category newCat = dialog.getCategory();
-        CategoryRepository repo;
-        repo.addCategory(newCat);
-        loadData();
+        Category cat = dialog.getCategory();
+
+        if (cat.getName().trimmed().isEmpty()) {
+            QMessageBox::warning(this, "Error",
+                                 "Category name cannot be empty!");
+            return;
+        }
+
+        if (AppContext::instance().categoryRepository().addCategory(cat)) {
+            loadCategories();
+        } else {
+            QMessageBox::warning(this, "Error",
+                                 "Failed to add category!");
+        }
     }
 }
 
-// ==================== SUA DANH MUC ====================
-void CategoryPage::onEditClicked()
+void CategoryPage::onDeleteCategory()
 {
-    int currentRow = m_table->currentRow();
-    if (currentRow < 0) {
-        QMessageBox::information(this, "Thong bao",
-            "Vui long chon mot danh muc trong bang de sua.");
+    QListWidgetItem *current = categoryList->currentItem();
+
+    if (!current) {
+        QMessageBox::information(this, "Info",
+                                 "Please select a category to delete.");
         return;
     }
 
-    int catId = m_table->item(currentRow, 0)->text().toInt();
-    CategoryRepository repo;
-    Category cat = repo.getCategoryById(catId);
-
-    CategoryDialog dialog(cat, this);
-    dialog.setWindowTitle("Sua danh muc");
-
-    if (dialog.exec() == QDialog::Accepted) {
-        Category updatedCat = dialog.getCategory();
-        repo.updateCategory(updatedCat);
-        loadData();
-    }
-}
-
-// ==================== XOA DANH MUC ====================
-void CategoryPage::onDeleteClicked()
-{
-    int currentRow = m_table->currentRow();
-    if (currentRow < 0) {
-        QMessageBox::information(this, "Thong bao",
-            "Vui long chon mot danh muc trong bang de xoa.");
-        return;
-    }
-
-    int catId = m_table->item(currentRow, 0)->text().toInt();
+    int id = current->data(Qt::UserRole).toInt();
 
     QMessageBox::StandardButton reply = QMessageBox::question(
-        this, "Xac nhan xoa",
-        "Ban co chac chan muon xoa danh muc nay?\n"
-        "Cac giao dich thuoc danh muc nay co the bi anh huong.",
+        this, "Confirm",
+        "Are you sure you want to delete this category?",
         QMessageBox::Yes | QMessageBox::No);
 
     if (reply == QMessageBox::Yes) {
-        CategoryRepository repo;
-        repo.deleteCategory(catId);
-        loadData();
+        if (AppContext::instance().categoryRepository().deleteCategory(id)) {
+            loadCategories();
+        } else {
+            QMessageBox::warning(this, "Error",
+                                 "Failed to delete category!");
+        }
     }
 }

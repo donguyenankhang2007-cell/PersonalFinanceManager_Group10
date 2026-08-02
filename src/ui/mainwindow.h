@@ -4,15 +4,19 @@
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QPushButton>
-#include <QLabel>
 
-// Forward declarations — cac trang duoc tao trong .cpp
-class DashboardPage;
-class TransactionPage;
-class CategoryPage;
-class BudgetPage;
-class ReportPage;
+#include "pages/AccountPage.h"
+#include "pages/DashboardPage.h"
+#include "pages/TransactionPage.h"
+#include "pages/CategoryPage.h"
+#include "pages/BudgetPage.h"
+#include "pages/ReportPage.h"
 
+QT_BEGIN_NAMESPACE
+namespace Ui {
+class MainWindow;
+}
+QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -22,27 +26,34 @@ public:
     ~MainWindow() override;
 
 private slots:
-    // Xu ly khi nguoi dung bam nut navigation
-    void onNavButtonClicked(int index);
+    void showDashboard();
+    void showAccounts();
+    void showTransaction();
+    void showCategory();
+    void showBudget();
+    void showReport();
 
 private:
-    void setupUI();
-    void createSidebar(QWidget *sidebarWidget);
-    void createPages();
-    void setActivePage(int index);
-    QString getGlobalStylesheet() const;
+    Ui::MainWindow *ui;
 
-    // Navigation
-    QStackedWidget *m_stackedWidget;
-    QList<QPushButton*> m_navButtons;
-    int m_currentIndex;
+    QStackedWidget *stackedWidget;
 
-    // Cac trang chinh
-    DashboardPage   *m_dashboardPage;
-    TransactionPage *m_transactionPage;
-    CategoryPage    *m_categoryPage;
-    BudgetPage      *m_budgetPage;
-    ReportPage      *m_reportPage;
+    DashboardPage *dashboard;
+    AccountPage *accountPage;
+    TransactionPage *transaction;
+    CategoryPage *category;
+    BudgetPage *budget;
+    ReportPage *report;
+
+    QPushButton *btnDashboard;
+    QPushButton *btnAccounts;
+    QPushButton *btnTransaction;
+    QPushButton *btnCategory;
+    QPushButton *btnBudget;
+    QPushButton *btnReport;
+
+    void setupPages();
+    void setupConnections();
 };
 
 #endif // MAINWINDOW_H
