@@ -1,38 +1,49 @@
 #ifndef BUDGETSERVICE_H
 #define BUDGETSERVICE_H
 
+#include <QObject>
 #include <QList>
 #include "../models/Budget.h"
 #include "../models/Transaction.h"
+#include "../repositories/BudgetRepository.h"
 
-class BudgetService
+class BudgetService : public QObject
 {
-public:
-    BudgetService();
-    ~BudgetService() = default;
+    Q_OBJECT
 
-    // Tính tổng chi tiêu thực tế cho 1 budget, dựa trên category (categoryId)
-    // và danh sách transaction được truyền vào (do noi goi lay tu Repository)
+public:
+    explicit BudgetService(QObject* parent = nullptr);
+
+    // === CRUD ===
+    bool addBudget(const Budget& budget, QString* errorMessage = nullptr);
+    bool updateBudget(const Budget& budget, QString* errorMessage = nullptr);
+    bool removeBudget(int id, QString* errorMessage = nullptr);
+
+    QVector<Budget> getAllBudgets();
+
+    // === Tính toán ngân sách ===
+    // Tổng chi tiêu thực tế của budget (theo categoryId + tháng/năm của budget)
     double calculateSpent(const Budget& budget,
-                           int categoryId,
+                          const QList<Transaction>& transactions) const;
+
+    // Kiểm tra budget có bị vượt hạn mức không
+    bool isOverBudget(const Budget& budget,
+                      const QList<Transaction>& transactions) const;
+
+    // % đã dùng, 0.0 - 1.0+ (có thể > 1.0 nếu vượt)
+    double getUsagePercent(const Budget& budget,
                            const QList<Transaction>& transactions) const;
 
-    // Kiem tra budget co bi vuot han muc khong
-    bool isOverBudget(const Budget& budget,
-                       int categoryId,
-                       const QList<Transaction>& transactions) const;
-
-    // % da dung, 0.0 - 1.0+ (co the > 1.0 neu vuot)
-    double getUsagePercent(const Budget& budget,
-                            int categoryId,
-                            const QList<Transaction>& transactions) const;
-
-    // Tinh tong tien da chi thuc te cho budget nay (tra ve double)
-    // Vi Budget model khong co field spentAmount rieng,
-    // ham nay tra ve gia tri double de caller tu xu ly (hien thi / so sanh)
     double getSpentAmount(const Budget& budget,
-                          int categoryId,
                           const QList<Transaction>& transactions) const;
+
+signals:
+    void budgetAdded(const Budget& budget);
+    void budgetUpdated(const Budget& budget);
+    void budgetRemoved(int budgetId);
+
+private:
+    BudgetRepository m_budgetRepo;
 };
 
 #endif // BUDGETSERVICE_H

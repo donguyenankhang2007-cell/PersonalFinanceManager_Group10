@@ -2,6 +2,7 @@
 #define DATABASEMANAGER_H
 
 #include <QSqlDatabase>
+#include <QString>
 
 class DatabaseManager
 {
@@ -11,6 +12,7 @@ public:
     static DatabaseManager& instance();
 
     bool openDatabase();
+    bool openDatabase(const QString& databasePath);
 
     bool initializeDatabase();
 

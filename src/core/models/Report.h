@@ -29,6 +29,7 @@ public:
     void setRemainingBalance(double remainingBalance);
 
     QString toString() const override;
+    QString getDisplayName() const override { return "Report"; }
 };
 
 #endif // REPORT_H

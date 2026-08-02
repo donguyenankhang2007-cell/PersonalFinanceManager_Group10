@@ -10,13 +10,13 @@
 // Nguoi viet: Minh Hao
 // Mo ta: Cac ham tien ich dinh dang so tien VND,
 //         phuc vu hien thi cho GUI (Viet Tuong)
-//         va ReportService
+//         và ReportService
 // ============================================
 
 class MoneyUtils
 {
 public:
-    // Dinh dang so tien VND co dau phan cach hang nghin
+    // Định dạng số tiền VND có dấu phân cách hàng nghìn
     // VD: 1500000 -> "1.500.000 VND"
     //     -50000  -> "-50.000 VND"
     static QString formatVND(double amount)
@@ -38,9 +38,9 @@ public:
         QString sign = (amount < 0) ? "-" : "";
 
         if (abs >= 1000000000.0) {
-            return sign + QString::number(abs / 1000000000.0, 'f', 1) + "B";
+            return sign + QString::number(abs / 1000000000.0, 'f', 1) + " tỷ";
         } else if (abs >= 1000000.0) {
-            return sign + QString::number(abs / 1000000.0, 'f', 1) + "M";
+            return sign + QString::number(abs / 1000000.0, 'f', 1) + "tr";
         } else if (abs >= 1000.0) {
             return sign + QString::number(abs / 1000.0, 'f', 0) + "K";
         } else {
@@ -63,7 +63,7 @@ public:
     }
 
     // Tinh so du = thu nhap - chi tieu
-    // Tra ve am neu chi vuot qua thu
+    // Trả về âm nếu chi vượt quá thu
     static double calcBalance(double totalIncome, double totalExpense)
     {
         return totalIncome - totalExpense;

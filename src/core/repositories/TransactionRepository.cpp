@@ -11,7 +11,7 @@ TransactionRepository::TransactionRepository()
 {
 }
 
-bool TransactionRepository::addTransaction(const Transaction &transaction)
+int TransactionRepository::addTransaction(const Transaction &transaction)
 {
     QSqlQuery query(DatabaseManager::instance().database());
 
@@ -30,10 +30,10 @@ bool TransactionRepository::addTransaction(const Transaction &transaction)
     if(!query.exec())
     {
         qDebug() << query.lastError().text();
-        return false;
+        return 0;
     }
 
-    return true;
+    return query.lastInsertId().toInt();
 }
 
 bool TransactionRepository::updateTransaction(const Transaction &transaction)

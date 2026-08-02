@@ -8,7 +8,7 @@
 // File: src/utils/DateUtils.h
 // Nguoi viet: Minh Hao
 // Mo ta: Cac ham tien ich xu ly ngay thang,
-//         phuc vu cho ReportService va BudgetService
+//         phục vụ cho ReportService và BudgetService
 // ============================================
 
 class DateUtils
@@ -66,7 +66,7 @@ public:
         }
     }
 
-    // Kiem tra nam nhuan
+    // Kiểm tra năm nhuận
     static bool isLeapYear(int year)
     {
         return QDate::isLeapYear(year);

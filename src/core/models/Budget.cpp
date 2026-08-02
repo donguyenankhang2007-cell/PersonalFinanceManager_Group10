@@ -1,11 +1,11 @@
 #include "Budget.h"
 
 Budget::Budget()
-    : id(0),
-    categoryId(0),
-    amount(0.0),
-    month(1),
-    year(2000)
+    : BaseModel(),
+      categoryId(0),
+      amount(0.0),
+      month(1),
+      year(2000)
 {
 }
 
@@ -14,17 +14,12 @@ Budget::Budget(int id,
                double amount,
                int month,
                int year)
-    : id(id),
-    categoryId(categoryId),
-    amount(amount),
-    month(month),
-    year(year)
+    : BaseModel(id),
+      categoryId(categoryId),
+      amount(amount),
+      month(month),
+      year(year)
 {
-}
-
-int Budget::getId() const
-{
-    return id;
 }
 
 int Budget::getCategoryId() const
@@ -45,11 +40,6 @@ int Budget::getMonth() const
 int Budget::getYear() const
 {
     return year;
-}
-
-void Budget::setId(int id)
-{
-    this->id = id;
 }
 
 void Budget::setCategoryId(int categoryId)
@@ -75,7 +65,7 @@ void Budget::setYear(int year)
 QString Budget::toString() const
 {
     return QString("Budget [%1] | Category: %2 | Amount: %3 | %4/%5")
-            .arg(id)
+            .arg(m_id)
             .arg(categoryId)
             .arg(amount, 0, 'f', 0)
             .arg(month)

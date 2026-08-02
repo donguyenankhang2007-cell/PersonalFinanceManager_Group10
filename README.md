@@ -1,7 +1,7 @@
 # 💰 Personal Finance Manager — Group 10
 
-> **Môn học:** Lập trình Hướng đối tượng (OOP)  
-> **Ngôn ngữ:** C++ 17 · **Framework:** Qt 6 · **Database:** SQLite  
+> **Môn học:** Lập trình Hướng đối tượng (OOP)
+> **Ngôn ngữ:** C++ 17 · **Framework:** Qt 6 (Widgets) · **Database:** SQLite
 > **Build System:** CMake ≥ 3.19
 
 ---
@@ -41,15 +41,20 @@ Dự án sử dụng kiến trúc **Layered Architecture** (kiến trúc phân t
 ┌──────────────────────────────────────────────────┐
 │                 PRESENTATION LAYER                │
 │        (Qt Widgets: Pages + Dialogs)              │
-│   DashboardPage │ TransactionPage │ ReportPage    │
+│   Dashboard │ Transaction │ Budget │ Recurring    │
+│   Account │ Category │ Report │ Settings          │
+├──────────────────────────────────────────────────┤
+│                  AppContext (Singleton)           │
 ├──────────────────────────────────────────────────┤
 │                  SERVICE LAYER                    │
-│        (Business Logic / Nghiệp vụ)              │
+│        (Business Logic / Nghiệp vụ + Signals)    │
 │  TransactionService │ BudgetService │ ReportService│
+│  RecurringTransactionService                       │
 ├──────────────────────────────────────────────────┤
 │                REPOSITORY LAYER                   │
 │      (Truy vấn dữ liệu / Data Access)            │
 │ TransactionRepo │ CategoryRepo │ AccountRepo      │
+│ BudgetRepo │ RecurringTransactionRepo              │
 ├──────────────────────────────────────────────────┤
 │                  DATA LAYER                       │
 │     (SQLite Database + DatabaseManager)           │
@@ -62,6 +67,11 @@ Dự án sử dụng kiến trúc **Layered Architecture** (kiến trúc phân t
 [Người dùng nhấn nút] → Page/Dialog → Service → Repository → DatabaseManager → SQLite
 ```
 
+**Luồng cập nhật UI (Observer):**
+```
+Service (thêm/sửa/xóa) → emit signal → các Page đăng ký lắng nghe → tự gọi loadData()
+```
+
 ---
 
 ## 3. 📂 Cây thư mục dự án
@@ -69,72 +79,80 @@ Dự án sử dụng kiến trúc **Layered Architecture** (kiến trúc phân t
 ```
 PersonalFinanceManager_Group10/
 │
-├── main.cpp                      # Entry point — khởi tạo QApplication
-├── mainwindow.h / .cpp / .ui     # Cửa sổ chính (chứa menu, navigation)
 ├── CMakeLists.txt                # Cấu hình build CMake
-│
-├── src/                          # ★ TOÀN BỘ MÃ NGUỒN CHÍNH
-│   ├── app/                      # Quản lý vòng đời ứng dụng
-│   │   ├── AppContext.h          # Singleton — giữ tham chiếu tới tất cả Service
-│   │   └── AppContext.cpp
-│   │
-│   ├── core/                     # Tầng logic & dữ liệu
-│   │   ├── models/               # ★ Data Models (các lớp dữ liệu)
-│   │   │   ├── Transaction.h     # Giao dịch thu/chi
-│   │   │   ├── Category.h        # Danh mục (Ăn uống, Di chuyển,...)
-│   │   │   ├── Account.h         # Tài khoản (Tiền mặt, Ngân hàng,...)
-│   │   │   └── Budget.h          # Ngân sách theo danh mục
-│   │   │
-│   │   ├── repositories/         # ★ Data Access Layer (CRUD với DB)
-│   │   │   ├── TransactionRepository.h
-│   │   │   ├── CategoryRepository.h
-│   │   │   └── AccountRepository.h
-│   │   │
-│   │   ├── services/             # ★ Business Logic Layer (xử lý nghiệp vụ)
-│   │   │   ├── TransactionService.h
-│   │   │   ├── BudgetService.h
-│   │   │   └── ReportService.h
-│   │   │
-│   │   └── database/             # Kết nối & quản lý SQLite
-│   │       ├── DatabaseManager.h
-│   │       └── DatabaseManager.cpp
-│   │
-│   ├── ui/                       # Tầng giao diện Qt
-│   │   ├── pages/                # Các trang chính
-│   │   │   ├── DashboardPage.h   # Trang tổng quan
-│   │   │   ├── TransactionPage.h # Trang danh sách giao dịch
-│   │   │   ├── CategoryPage.h    # Trang quản lý danh mục
-│   │   │   └── ReportPage.h      # Trang báo cáo thống kê
-│   │   │
-│   │   └── dialogs/              # Hộp thoại popup
-│   │       ├── TransactionDialog.h  # Thêm/Sửa giao dịch
-│   │       └── CategoryDialog.h     # Thêm/Sửa danh mục
-│   │
-│   ├── utils/                    # Hàm tiện ích dùng chung
-│   │   ├── DateUtils.h           # Xử lý ngày tháng
-│   │   └── MoneyUtils.h          # Định dạng tiền tệ
-│   │
-│   └── main.cpp                  # (Placeholder — chưa sử dụng)
-│
 ├── data/                         # File dữ liệu
 │   └── database_schema.sql       # SQL tạo bảng ban đầu
 │
-├── resources/                    # Tài nguyên (icon, ảnh, ...)
-│   ├── app.qrc                   # Qt Resource File
-│   └── icons/                    # Thư mục chứa icon
+├── src/                          # ★ TOÀN BỘ MÃ NGUỒN CHÍNH
+│   ├── main.cpp                  # Entry point — khởi tạo QApplication + MainWindow
+│   ├── app/
+│   │   └── AppContext.h/.cpp     # Singleton — cung cấp toàn bộ Service/Repository
+│   │
+│   ├── core/
+│   │   ├── models/               # ★ Data Models (kế thừa BaseModel)
+│   │   │   ├── BaseModel.h       # Lớp cơ sở: m_id, getId/setId, toString()...
+│   │   │   ├── Account.h/.cpp    # Tài khoản (Tiền mặt, Ngân hàng,...)
+│   │   │   ├── Category.h/.cpp   # Danh mục thu/chi
+│   │   │   ├── Transaction.h/.cpp# Giao dịch thu/chi
+│   │   │   ├── Budget.h/.cpp     # Ngân sách theo danh mục
+│   │   │   ├── RecurringTransaction.h/.cpp # Giao dịch định kỳ (daily/weekly/monthly/yearly)
+│   │   │   └── Report.h/.cpp     # Kết quả báo cáo
+│   │   ├── repositories/         # ★ Data Access Layer (CRUD với DB)
+│   │   │   ├── AccountRepository.h/.cpp
+│   │   │   ├── CategoryRepository.h/.cpp
+│   │   │   ├── TransactionRepository.h/.cpp
+│   │   │   ├── BudgetRepository.h/.cpp
+│   │   │   └── RecurringTransactionRepository.h/.cpp
+│   │   ├── services/             # ★ Business Logic Layer (xử lý nghiệp vụ)
+│   │   │   ├── TransactionService.h/.cpp
+│   │   │   ├── BudgetService.h/.cpp
+│   │   │   ├── RecurringTransactionService.h/.cpp # Sinh giao dịch đến hạn + catch-up
+│   │   │   └── ReportService.h/.cpp
+│   │   └── database/             # Kết nối & quản lý SQLite
+│   │       └── DatabaseManager.h/.cpp
+│   │
+│   ├── ui/
+│   │   ├── mainwindow.h/.cpp     # Cửa sổ chính (sidebar icon thu gọn + QStackedWidget)
+│   │   ├── RowActions.h/.cpp     # Icon Edit/Delete cho từng hàng của bảng
+│   │   ├── theme/
+│   │   │   └── ThemeManager.h/.cpp # Giao diện: 6 accent, Light/Dark mode, density, QSS, QSettings
+│   │   ├── pages/                # Các trang chính
+│   │   │   ├── DashboardPage.h/.cpp   # Tổng quan: 6 thẻ + budget alerts + top 5 + gần đây + Qt Charts
+│   │   │   ├── AccountPage.h/.cpp     # Quản lý tài khoản
+│   │   │   ├── CategoryPage.h/.cpp    # Quản lý danh mục
+│   │   │   ├── TransactionPage.h/.cpp # Giao dịch + thanh lọc (loại/tài khoản/danh mục/tìm kiếm/khoảng thời gian)
+│   │   │   ├── BudgetPage.h/.cpp      # Quản lý ngân sách
+│   │   │   ├── ReportPage.h/.cpp      # Báo cáo thống kê + donut + Export CSV
+│   │   │   ├── RecurringPage.h/.cpp   # Quản lý giao dịch định kỳ + "Generate due now"
+│   │   │   └── SettingsPage.h/.cpp    # Cài đặt: accent, Light/Dark, density, charts, backup/restore DB
+│   │   └── dialogs/              # Hộp thoại popup (thêm/sửa)
+│   │       ├── AccountDialog.h/.cpp
+│   │       ├── CategoryDialog.h/.cpp
+│   │       ├── TransactionDialog.h/.cpp
+│   │       ├── BudgetDialog.h/.cpp
+│   │       └── RecurringTransactionDialog.h/.cpp
+│   │
+│   └── utils/
+│       ├── DateUtils.h           # Xử lý ngày tháng
+│       └── MoneyUtils.h          # Định dạng tiền tệ VND
+│
+├── resources/
+│   ├── app.qrc                   # Qt Resource File (chứa database_schema.sql)
+│   └── icons/*.svg               # Icon SVG (nav, avatar, edit/delete)
 │
 ├── tests/                        # Unit Tests
-│   ├── CMakeLists.txt            # Cấu hình build cho test
-│   └── TransactionServiceTest.cpp
+│   ├── CMakeLists.txt
+│   ├── TransactionServiceTest.cpp
+│   └── BudgetServiceTest.cpp
 │
 ├── docs/                         # Tài liệu dự án
-│   ├── architecture.md           # Mô tả kiến trúc
-│   └── coding-convention.md      # Quy tắc code
+│   ├── architecture.md
+│   └── coding-convention.md
 │
 └── build/                        # Thư mục build (TỰ SINH — KHÔNG COMMIT)
 ```
 
-> ⚠️ **Lưu ý:** Thư mục `build/` là do CMake tự sinh ra. **KHÔNG BAO GIỜ** commit thư mục này lên Git.
+> ⚠️ **Lưu ý:** Thư mục `build/` là do CMake tự sinh ra. **KHÔNG BAO GIỜ** commit thư mục này lên Git. Giao diện được dựng hoàn toàn bằng code (không còn file `.ui`).
 
 ---
 
@@ -144,7 +162,7 @@ PersonalFinanceManager_Group10/
 
 | Công cụ     | Phiên bản tối thiểu | Ghi chú                                  |
 |:-----------|:--------------------:|:------------------------------------------|
-| Qt         | 6.5+                 | Bao gồm Qt Widgets, Qt SQL               |
+| Qt         | 6.5+                 | Bao gồm Qt Widgets, Qt SQL, Qt Charts   |
 | CMake      | 3.19+                | Thường đi kèm khi cài Qt                 |
 | C++ Compiler | C++17              | MinGW (Windows) hoặc Clang (macOS)       |
 | SQLite     | 3.x                  | Đã tích hợp sẵn trong Qt SQL module      |
@@ -153,10 +171,11 @@ PersonalFinanceManager_Group10/
 
 1. Tải **Qt Online Installer** tại: https://www.qt.io/download-open-source
 2. Chạy installer, chọn cài đặt:
-   - ✅ Qt 6.x (phiên bản mới nhất, ví dụ: Qt 6.11.1)
+   - ✅ Qt 6.x (ví dụ: Qt 6.11.1)
    - ✅ Qt Creator (IDE)
    - ✅ MinGW 64-bit (Windows) hoặc Desktop gcc (Linux) — macOS dùng Clang mặc định
    - ✅ Qt 6 → Additional Libraries → **Qt SQL** (để dùng SQLite)
+   - ✅ Qt 6 → Additional Libraries → **Qt Charts** (để hiển thị biểu đồ Dashboard)
 
 ### Bước 2: Clone dự án
 
@@ -173,13 +192,13 @@ cd PersonalFinanceManager_Group10
 2. Chọn `File` → `Open File or Project...`
 3. Trỏ tới file `CMakeLists.txt` trong thư mục gốc dự án
 4. Chọn Kit build (ví dụ: `Desktop Qt 6.11.1 MinGW 64-bit`)
-5. Nhấn nút **Run** ▶️ (hoặc `Ctrl+R` / `Cmd+R`)
+5. Nhấn nút **Run** ▶️
 
 #### Cách B: Dùng Terminal (Command Line)
 
 ```bash
-# Tạo thư mục build & cấu hình
-cmake -B build -DCMAKE_PREFIX_PATH=<đường-dẫn-tới-Qt>
+# Cấu hình (thay <Qt-dir> bằng đường dẫn cài Qt)
+cmake -B build -DCMAKE_PREFIX_PATH=<Qt-dir>
 
 # Biên dịch
 cmake --build build
@@ -187,27 +206,38 @@ cmake --build build
 # Chạy ứng dụng
 # Windows:
 .\build\PersonalFinanceManager_Group10.exe
-
 # macOS:
 ./build/PersonalFinanceManager_Group10.app/Contents/MacOS/PersonalFinanceManager_Group10
-
 # Linux:
 ./build/PersonalFinanceManager_Group10
 ```
+
+Database được tạo tự động tại `data/finance.db` khi app chạy lần đầu.
+
+### ✨ Tính năng chính
+
+| Tính năng | Mô tả |
+|:----------|:------|
+| 📊 **Dashboard** | 6 thẻ thống kê (tài khoản, danh mục, giao dịch, tổng thu/chi/số dư), thu/chi/balance tháng này, cảnh báo ngân sách (≥80% amber, ≥100% đỏ), Top 5 danh mục chi, 10 giao dịch gần đây, biểu đồ donut + cột (Qt Charts) |
+| 💳 **Tài khoản / Danh mục** | Thêm/sửa/xóa, double-click để sửa nhanh, hiển thị số dư |
+| 🧾 **Giao dịch** | Thêm/sửa/xóa + thanh lọc: loại (thu/chi), tài khoản, danh mục, tìm kiếm ghi chú, khoảng thời gian |
+| 🎯 **Ngân sách** | Theo dõi chi tiêu theo danh mục, thanh tiến trình so với ngân sách |
+| 📈 **Báo cáo** | Thu/chi/balance theo tháng, donut chi theo danh mục, **Export CSV** |
+| 🔁 **Giao dịch định kỳ** | Daily/Weekly/Monthly/Yearly, ngày kết thúc tùy chọn; nút **Generate due now** + tự sinh các giao dịch đến hạn khi khởi động |
+| 🌙 **Light/Dark mode** | Chuyển theme nhanh trong Settings, lưu lại qua QSettings |
+| 🎨 **Giao diện** | 6 preset màu accent, mật độ bảng (density), bật/tắt charts |
+| 💾 **Backup/Restore DB** | Sao lưu và khôi phục `finance.db` ngay trong Settings |
+| 🖱️ **Sidebar icon** | Tooltip tùy biến, avatar, điều hướng trực quan |
 
 ---
 
 ## 5. 🎨 Design Patterns sử dụng (có code mẫu)
 
-Dự án OOP này sử dụng **5 Design Patterns** chính. Dưới đây là giải thích và code mẫu cụ thể cho từng pattern trong dự án.
-
----
+Dự án OOP này sử dụng **5 Design Patterns** chính. Code mẫu dưới đây đã khớp 100% với code thực tế trong dự án.
 
 ### 5.1 Singleton Pattern — `AppContext`
 
-**Mục đích:** Đảm bảo chỉ có **duy nhất một instance** của `AppContext` trong toàn bộ ứng dụng. `AppContext` giữ tham chiếu tới tất cả các Service, giúp mọi nơi đều truy cập được cùng một bộ Service.
-
-**Ai viết:** An Khang (System Architect)
+**Mục đích:** Đảm bảo chỉ có **duy nhất một instance** của `AppContext` trong toàn bộ ứng dụng. `AppContext` giữ toàn bộ Service/Repository, giúp mọi nơi truy cập được cùng một bộ dữ liệu.
 
 **File:** `src/app/AppContext.h` + `src/app/AppContext.cpp`
 
@@ -219,147 +249,83 @@ Dự án OOP này sử dụng **5 Design Patterns** chính. Dưới đây là gi
 #ifndef APPCONTEXT_H
 #define APPCONTEXT_H
 
+#include "../core/database/DatabaseManager.h"
+#include "../core/repositories/AccountRepository.h"
+#include "../core/repositories/TransactionRepository.h"
 #include "../core/services/TransactionService.h"
 #include "../core/services/BudgetService.h"
 #include "../core/services/ReportService.h"
-#include "../core/database/DatabaseManager.h"
+#include "../core/services/RecurringTransactionService.h"
 
-class AppContext {
+class AppContext
+{
 public:
-    // Truy cập instance duy nhất (Singleton)
-    static AppContext& getInstance() {
-        static AppContext instance;   // Khởi tạo 1 lần duy nhất
-        return instance;
-    }
+    // ★ Truy cập instance duy nhất (Singleton)
+    static AppContext& instance();
 
-    // Khởi tạo tất cả thành phần
-    void initialize(const QString& dbPath);
+    DatabaseManager& database();
 
-    // Getter cho các Service
-    TransactionService* getTransactionService() { return m_transactionService; }
-    BudgetService*      getBudgetService()      { return m_budgetService; }
-    ReportService*      getReportService()       { return m_reportService; }
-    DatabaseManager*    getDatabaseManager()     { return m_dbManager; }
+    AccountRepository& accountRepository();
+    TransactionRepository& transactionRepository();
+    // ... (CategoryRepository, BudgetRepository, RecurringTransactionRepository)
+
+    TransactionService& transactionService();
+    BudgetService& budgetService();
+    ReportService& reportService();
+    RecurringTransactionService& recurringTransactionService();
 
 private:
     // ★ Constructor private — không cho phép tạo từ bên ngoài
-    AppContext() = default;
+    AppContext();
+    ~AppContext();
 
     // ★ Xóa copy constructor & assignment — không cho phép sao chép
     AppContext(const AppContext&) = delete;
     AppContext& operator=(const AppContext&) = delete;
 
-    // Các thành phần được quản lý
-    DatabaseManager*     m_dbManager = nullptr;
-    TransactionService*  m_transactionService = nullptr;
-    BudgetService*       m_budgetService = nullptr;
-    ReportService*       m_reportService = nullptr;
+private:
+    AccountRepository m_accountRepository;
+    TransactionService m_transactionService;
+    // ... (các repository + service còn lại)
 };
 
 #endif // APPCONTEXT_H
 ```
 
-```cpp
-// ============================================
-// File: src/app/AppContext.cpp
-// ============================================
-#include "AppContext.h"
-
-void AppContext::initialize(const QString& dbPath) {
-    // Tạo các đối tượng theo đúng thứ tự phụ thuộc
-    m_dbManager          = new DatabaseManager(dbPath);
-    m_transactionService = new TransactionService(m_dbManager);
-    m_budgetService      = new BudgetService(m_dbManager);
-    m_reportService      = new ReportService(m_dbManager);
-}
-```
-
 **Cách sử dụng ở bất kỳ đâu trong dự án:**
 ```cpp
 // Truy cập TransactionService từ bất kỳ file nào
-auto* txService = AppContext::getInstance().getTransactionService();
-auto transactions = txService->getAllTransactions();
+auto& txService = AppContext::instance().transactionService();
+auto transactions = txService.getAllTransactions();
 ```
-
----
 
 ### 5.2 Repository Pattern — Tách biệt Logic và Database
 
-**Mục đích:** Tạo một tầng trung gian giữa **Business Logic** (Service) và **Database**. Service không cần biết dữ liệu lưu ở đâu (SQLite, file text, hay cloud) — chỉ cần gọi hàm của Repository.
+**Mục đích:** Tạo một tầng trung gian giữa **Business Logic** (Service) và **Database**. Service không cần biết dữ liệu lưu ở đâu — chỉ cần gọi hàm của Repository.
 
-**Ai viết:** Hữu Lam (Data + Database)
-
-**File mẫu:** `src/core/repositories/TransactionRepository.h`
+**File:** `src/core/repositories/TransactionRepository.h`
 
 ```cpp
 // ============================================
 // File: src/core/repositories/TransactionRepository.h
 // Pattern: Repository
 // ============================================
-#ifndef TRANSACTIONREPOSITORY_H
-#define TRANSACTIONREPOSITORY_H
-
-#include "../models/Transaction.h"
-#include "../database/DatabaseManager.h"
-#include <vector>
-#include <QString>
-
-class TransactionRepository {
+class TransactionRepository
+{
 public:
-    explicit TransactionRepository(DatabaseManager* dbManager)
-        : m_db(dbManager) {}
-
     // ★ CRUD Operations (Create, Read, Update, Delete)
+    int addTransaction(const Transaction& transaction);   // → trả về ID mới (0 nếu lỗi)
+    bool updateTransaction(const Transaction& transaction);
+    bool deleteTransaction(int id);
 
-    // Thêm giao dịch mới → trả về ID
-    int add(const Transaction& transaction);
-
-    // Lấy tất cả giao dịch
-    std::vector<Transaction> getAll();
-
-    // Lấy giao dịch theo ID
-    Transaction getById(int id);
-
-    // Lấy giao dịch theo khoảng thời gian
-    std::vector<Transaction> getByDateRange(const QString& startDate,
-                                            const QString& endDate);
-
-    // Lấy giao dịch theo danh mục
-    std::vector<Transaction> getByCategoryId(int categoryId);
-
-    // Cập nhật giao dịch
-    bool update(const Transaction& transaction);
-
-    // Xóa giao dịch theo ID
-    bool remove(int id);
-
-private:
-    DatabaseManager* m_db;  // Con trỏ tới DatabaseManager (không sở hữu)
+    QVector<Transaction> getAllTransactions();
+    Transaction getTransactionById(int id);
 };
-
-#endif // TRANSACTIONREPOSITORY_H
 ```
-
----
 
 ### 5.3 MVC Pattern (Model-View-Controller) — Cấu trúc Qt
 
-**Mục đích:** Tách biệt 3 thành phần: **Model** (dữ liệu), **View** (giao diện), **Controller** (xử lý sự kiện). Trong Qt, Controller thường được tích hợp vào View thông qua cơ chế **Signals & Slots**.
-
-**Ai viết:** Việt Tường (GUI Developer) phối hợp với An Khang
-
-```
-┌─────────────────┐     Signal/Slot     ┌──────────────────┐
-│      VIEW       │ ◄─────────────────► │   CONTROLLER     │
-│  (Qt Widgets)   │                     │ (Page class với  │
-│  .ui file       │                     │  slots xử lý)    │
-└─────────────────┘                     └───────┬──────────┘
-                                                │ gọi
-                                        ┌───────▼──────────┐
-                                        │     MODEL        │
-                                        │ (Service Layer)  │
-                                        └──────────────────┘
-```
+**Mục đích:** Tách biệt 3 thành phần: **Model** (dữ liệu/Service), **View** (giao diện widget), **Controller** (slots xử lý sự kiện, tích hợp vào Page class). Trong Qt, Controller thường được tích hợp vào View thông qua cơ chế **Signals & Slots**.
 
 **File mẫu:** `src/ui/pages/TransactionPage.h`
 
@@ -368,57 +334,41 @@ private:
 // File: src/ui/pages/TransactionPage.h
 // Pattern: MVC (View + Controller kết hợp trong Qt)
 // ============================================
-#ifndef TRANSACTIONPAGE_H
-#define TRANSACTIONPAGE_H
-
-#include <QWidget>
-#include <QTableWidget>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include "../../core/services/TransactionService.h"
-
-class TransactionPage : public QWidget {
+class TransactionPage : public QWidget
+{
     Q_OBJECT
 
 public:
-    explicit TransactionPage(TransactionService* service,
-                             QWidget* parent = nullptr);
+    explicit TransactionPage(QWidget* parent = nullptr);
 
 private slots:
     // ★ Controller: Xử lý sự kiện từ giao diện
-    void onAddButtonClicked();       // Bấm nút "Thêm giao dịch"
-    void onEditButtonClicked();      // Bấm nút "Sửa"
-    void onDeleteButtonClicked();    // Bấm nút "Xóa"
-    void onSearchTextChanged(const QString& text);  // Gõ ô tìm kiếm
+    void onAddTransaction();
+    void onEditTransaction();
+    void onDeleteTransaction();
 
 private:
-    void setupUI();       // Khởi tạo giao diện
-    void loadData();      // Tải dữ liệu từ Service lên bảng
+    void setupUI();    // Khởi tạo giao diện
+    void loadData();   // Tải dữ liệu từ Service lên bảng
 
     // ★ View: Các widget giao diện
-    QTableWidget*  m_table;
-    QPushButton*   m_addButton;
-    QPushButton*   m_editButton;
-    QPushButton*   m_deleteButton;
+    QTableWidget* m_table;
+    QPushButton*  m_btnAdd;
+    // ...
 
-    // ★ Model: Tham chiếu tới Service Layer
-    TransactionService* m_service;
+    // ★ Model: thao tác qua AppContext → TransactionService
 };
-
-#endif // TRANSACTIONPAGE_H
 ```
-
----
 
 ### 5.4 Inheritance & Polymorphism — Hệ thống Model
 
-**Mục đích:** Thể hiện tính **kế thừa** và **đa hình** — yêu cầu cốt lõi của OOP. Tất cả Model đều kế thừa từ một lớp cơ sở `BaseModel` chứa các thuộc tính chung.
+**Mục đích:** Thể hiện tính **kế thừa** và **đa hình** — yêu cầu cốt lõi của OOP. Tất cả Model đều kế thừa từ lớp cơ sở `BaseModel`.
 
-**Ai viết:** An Khang (OOP Core)
+**File:** `src/core/models/BaseModel.h`
 
 ```cpp
 // ============================================
-// File: src/core/models/BaseModel.h (NÊN TẠO THÊM)
+// File: src/core/models/BaseModel.h
 // Pattern: Inheritance + Polymorphism
 // ============================================
 #ifndef BASEMODEL_H
@@ -426,13 +376,16 @@ private:
 
 #include <QString>
 
-class BaseModel {
+class BaseModel
+{
+protected:
+    int m_id;
+
 public:
     BaseModel() : m_id(0) {}
     explicit BaseModel(int id) : m_id(id) {}
     virtual ~BaseModel() = default;   // ★ Virtual destructor — BẮT BUỘC cho OOP
 
-    // Getter / Setter chung
     int getId() const { return m_id; }
     void setId(int id) { m_id = id; }
 
@@ -441,9 +394,6 @@ public:
 
     // ★ Virtual — lớp con CÓ THỂ override
     virtual QString getDisplayName() const { return "BaseModel"; }
-
-protected:
-    int m_id;
 };
 
 #endif // BASEMODEL_H
@@ -454,173 +404,76 @@ protected:
 // File: src/core/models/Transaction.h
 // Kế thừa từ BaseModel
 // ============================================
-#ifndef TRANSACTION_H
-#define TRANSACTION_H
-
-#include "BaseModel.h"
-#include <QString>
-
-// Enum phân loại loại giao dịch
-enum class TransactionType {
-    INCOME,     // Thu nhập
-    EXPENSE     // Chi tiêu
-};
-
-class Transaction : public BaseModel {
-public:
-    Transaction() : BaseModel(), m_amount(0.0), m_type(TransactionType::EXPENSE) {}
-
-    Transaction(int id, double amount, const QString& description,
-                const QString& date, int categoryId, TransactionType type)
-        : BaseModel(id)
-        , m_amount(amount)
-        , m_description(description)
-        , m_date(date)
-        , m_categoryId(categoryId)
-        , m_type(type) {}
-
-    // ★ Override pure virtual từ BaseModel (Đa hình)
-    QString toString() const override {
-        return QString("[%1] %2: %3 VND - %4")
-            .arg(m_type == TransactionType::INCOME ? "THU" : "CHI")
-            .arg(m_date)
-            .arg(m_amount, 0, 'f', 0)
-            .arg(m_description);
-    }
-
-    QString getDisplayName() const override {
-        return m_description;
-    }
-
-    // Getters
-    double          getAmount()      const { return m_amount; }
-    QString         getDescription() const { return m_description; }
-    QString         getDate()        const { return m_date; }
-    int             getCategoryId()  const { return m_categoryId; }
-    TransactionType getType()        const { return m_type; }
-
-    // Setters
-    void setAmount(double amount)              { m_amount = amount; }
-    void setDescription(const QString& desc)   { m_description = desc; }
-    void setDate(const QString& date)          { m_date = date; }
-    void setCategoryId(int catId)              { m_categoryId = catId; }
-    void setType(TransactionType type)         { m_type = type; }
-
+class Transaction : public BaseModel
+{
 private:
-    double          m_amount;
-    QString         m_description;
-    QString         m_date;
-    int             m_categoryId;
-    TransactionType m_type;
-};
+    int accountId;
+    int categoryId;
+    double amount;
+    QDate transactionDate;
+    QString note;
+    QString type;        // "income" hoặc "expense" (chữ thường)
 
-#endif // TRANSACTION_H
-```
-
-```cpp
-// ============================================
-// File: src/core/models/Category.h
-// Kế thừa từ BaseModel
-// ============================================
-#ifndef CATEGORY_H
-#define CATEGORY_H
-
-#include "BaseModel.h"
-
-class Category : public BaseModel {
 public:
-    Category() : BaseModel() {}
-    Category(int id, const QString& name, const QString& icon)
-        : BaseModel(id), m_name(name), m_icon(icon) {}
+    Transaction(int id, int accountId, int categoryId, double amount,
+                const QDate& date, const QString& note, const QString& type);
 
-    // ★ Override (Đa hình)
-    QString toString() const override {
-        return QString("Category [%1]: %2").arg(m_id).arg(m_name);
-    }
+    int getAccountId() const;
+    int getCategoryId() const;
+    double getAmount() const;
+    QDate getDate() const;
+    QString getNote() const;
+    QString getType() const;
 
-    QString getDisplayName() const override { return m_name; }
+    // ★ Helper: nguồn chân lý về loại giao dịch
+    bool isIncome() const { return type == "income"; }
+    bool isExpense() const { return type == "expense"; }
 
-    // Getters & Setters
-    QString getName() const { return m_name; }
-    QString getIcon() const { return m_icon; }
-    void setName(const QString& name) { m_name = name; }
-    void setIcon(const QString& icon) { m_icon = icon; }
-
-private:
-    QString m_name;
-    QString m_icon;
+    QString toString() const override;
+    QString getDisplayName() const override { return note; }
 };
-
-#endif // CATEGORY_H
 ```
 
 **Minh họa Đa hình (Polymorphism) trong thực tế:**
 ```cpp
-// Tạo mảng con trỏ BaseModel — chứa nhiều loại đối tượng khác nhau
-std::vector<BaseModel*> items;
-items.push_back(new Transaction(1, 50000, "Ăn trưa", "2026-07-24", 1, TransactionType::EXPENSE));
-items.push_back(new Category(1, "Ăn uống", "🍔"));
+// Tạo mảng con trỏ BaseModel* — chứa nhiều loại đối tượng khác nhau
+QVector<BaseModel*> items;
+items.push_back(new Transaction(1, 1, 2, 50000, QDate(2026, 7, 24),
+                                "Ăn trưa", "expense"));
+items.push_back(new Category(1, "Ăn uống", CategoryType::Expense, "#ff5733", ""));
 
 // ★ Đa hình: cùng gọi toString() nhưng kết quả khác nhau
-for (const auto* item : items) {
+for (const auto* item : items)
     qDebug() << item->toString();
-    // Transaction → "[CHI] 2026-07-24: 50000 VND - Ăn trưa"
-    // Category   → "Category [1]: Ăn uống"
-}
+// Transaction → "[CHI] 2026-07-24: 50000 VND - Ăn trưa"
+// Category   → "Category [1]: Ăn uống"
 ```
-
----
 
 ### 5.5 Observer Pattern (Signals & Slots) — Giao tiếp giữa các thành phần
 
-**Mục đích:** Khi dữ liệu thay đổi ở một nơi (ví dụ: thêm giao dịch), các nơi khác (Dashboard, Report) tự động cập nhật mà không cần kiểm tra thủ công. Qt hỗ trợ sẵn qua cơ chế **Signals & Slots**.
+**Mục đích:** Khi dữ liệu thay đổi ở một nơi (ví dụ: thêm giao dịch), các nơi khác (Dashboard, Budget) tự động cập nhật mà không cần kiểm tra thủ công. Qt hỗ trợ sẵn qua cơ chế **Signals & Slots**.
 
-**Ai viết:** Việt Tường (GUI) kết hợp Minh Hạo (Logic)
+**File:** `src/core/services/TransactionService.h`
 
 ```cpp
 // ============================================
 // File: src/core/services/TransactionService.h
 // Pattern: Observer (Qt Signals & Slots)
 // ============================================
-#ifndef TRANSACTIONSERVICE_H
-#define TRANSACTIONSERVICE_H
-
-#include <QObject>
-#include "../models/Transaction.h"
-#include "../repositories/TransactionRepository.h"
-#include <vector>
-
-class TransactionService : public QObject {
+class TransactionService : public QObject
+{
     Q_OBJECT    // ★ Macro bắt buộc để dùng Signals & Slots
 
 public:
-    explicit TransactionService(DatabaseManager* db, QObject* parent = nullptr)
-        : QObject(parent), m_repo(db) {}
+    explicit TransactionService(QObject* parent = nullptr);
 
-    // Thêm giao dịch mới
-    int addTransaction(const Transaction& t) {
-        int id = m_repo.add(t);
-        if (id > 0) {
-            emit transactionAdded(t);    // ★ Phát signal thông báo
-        }
-        return id;
-    }
+    // CRUD — tự cập nhật số dư account và phát signal
+    bool addTransaction(const Transaction& transaction, QString* errorMessage = nullptr);
+    bool updateTransaction(const Transaction& transaction, QString* errorMessage = nullptr);
+    bool removeTransaction(int id, QString* errorMessage = nullptr);
 
-    // Xóa giao dịch
-    bool removeTransaction(int id) {
-        bool ok = m_repo.remove(id);
-        if (ok) {
-            emit transactionRemoved(id);  // ★ Phát signal thông báo
-        }
-        return ok;
-    }
+    QVector<Transaction> getAllTransactions();
 
-    // Lấy tất cả giao dịch
-    std::vector<Transaction> getAllTransactions() {
-        return m_repo.getAll();
-    }
-
-    // Tính tổng thu/chi
     double getTotalIncome();
     double getTotalExpense();
     double getBalance();
@@ -632,26 +485,23 @@ signals:
     void transactionRemoved(int transactionId);
 
 private:
-    TransactionRepository m_repo;
+    TransactionRepository m_transactionRepo;
+    AccountRepository m_accountRepo;
 };
-
-#endif // TRANSACTIONSERVICE_H
 ```
 
 **Cách sử dụng Observer (kết nối Signal → Slot):**
 ```cpp
 // Trong DashboardPage — tự động cập nhật khi có giao dịch mới
-auto* txService = AppContext::getInstance().getTransactionService();
+auto& txService = AppContext::instance().transactionService();
 
-// ★ Kết nối: Khi transactionAdded() được phát, gọi refreshDashboard()
-connect(txService, &TransactionService::transactionAdded,
-        this,      &DashboardPage::refreshDashboard);
+// ★ Kết nối: Khi transactionAdded() được phát, gọi loadData()
+connect(&txService, &TransactionService::transactionAdded,
+        this, &DashboardPage::loadData);
 
 // Bây giờ, mỗi khi bất kỳ nơi nào gọi addTransaction(),
-// DashboardPage sẽ TỰ ĐỘNG gọi refreshDashboard() để cập nhật giao diện!
+// DashboardPage sẽ TỰ ĐỘNG gọi loadData() để cập nhật giao diện!
 ```
-
----
 
 ### 5.6 Tóm tắt Design Patterns
 
@@ -667,56 +517,29 @@ connect(txService, &TransactionService::transactionAdded,
 
 ## 6. 📝 Coding Convention (Quy tắc đặt tên)
 
+> Chi tiết đầy đủ: [docs/coding-convention.md](docs/coding-convention.md)
+
 ### 6.1 Đặt tên biến & hàm
 
 | Loại                | Quy tắc                | Ví dụ                         |
 |:--------------------|:------------------------|:-------------------------------|
 | Tên class           | `PascalCase`            | `TransactionService`, `DashboardPage` |
-| Tên hàm / method    | `camelCase`             | `getAll()`, `addTransaction()` |
-| Biến member (private)| `m_camelCase`          | `m_amount`, `m_dbManager`      |
-| Biến local          | `camelCase`             | `totalIncome`, `startDate`     |
-| Hằng số / Enum      | `UPPER_SNAKE_CASE`      | `MAX_AMOUNT`, `TransactionType::INCOME` |
+| Tên hàm / method    | `camelCase`             | `getAllTransactions()`, `addTransaction()` |
+| Biến member (private)| `m_camelCase`          | `m_transactionRepo`, `m_accountRepo` |
+| Biến local          | `camelCase`             | `totalIncome`, `errorMessage` |
 | Tên file header     | `PascalCase.h`          | `Transaction.h`, `BudgetService.h` |
 | Tên file source     | `PascalCase.cpp`        | `DatabaseManager.cpp`          |
 
-### 6.2 Cấu trúc file Header (.h)
-
-```cpp
-#ifndef CLASSNAME_H          // Include guard
-#define CLASSNAME_H
-
-#include <...>               // Thư viện chuẩn / Qt trước
-#include "../local/file.h"   // File nội bộ dự án sau
-
-class ClassName {
-public:
-    // Constructor / Destructor
-    ClassName();
-    ~ClassName();
-
-    // Public methods (giao diện công khai)
-    void doSomething();
-
-signals:                      // (Chỉ có nếu dùng Q_OBJECT)
-    void somethingHappened();
-
-private slots:                // (Chỉ có nếu dùng Q_OBJECT)
-    void onButtonClicked();
-
-private:
-    // Private members
-    int m_value;
-};
-
-#endif // CLASSNAME_H
-```
-
-### 6.3 Quy tắc chung
+### 6.2 Quy tắc chung
 
 - ✅ Mỗi class nằm trong **một file .h riêng** (hoặc .h + .cpp nếu cần implementation)
 - ✅ Comment bằng **tiếng Việt hoặc tiếng Anh** đều được, nhưng **nhất quán** trong từng file
 - ✅ Dùng `const` khi biến không bị thay đổi
 - ✅ Dùng `override` khi ghi đè hàm virtual
+- ✅ **Chỉ CRUD qua Service layer**: thêm/sửa/xóa giao dịch phải qua `TransactionService`
+  (để số dư account và signal được xử lý đúng), không gọi repository trực tiếp từ UI
+- ✅ Loại giao dịch dùng chuỗi **chữ thường** `"income"`/`"expense"`, so sánh bằng
+  `isIncome()/isExpense()`
 - ❌ **KHÔNG** dùng `using namespace std;` trong file header
 - ❌ **KHÔNG** commit file trong thư mục `build/`
 
@@ -761,7 +584,7 @@ Ví dụ:
 [DB] Hoàn thành DatabaseManager với CRUD operations
 [UI] Tạo TransactionPage với QTableWidget
 [Service] Thêm hàm tính tổng thu/chi trong TransactionService
-[Test] Viết unit test cho TransactionService::addTransaction
+[Test] Viết unit test cho TransactionService
 [Fix] Sửa lỗi crash khi xóa giao dịch không tồn tại
 [Docs] Cập nhật README với hướng dẫn chạy dự án
 ```
@@ -773,8 +596,8 @@ Ví dụ:
 git checkout Hung
 
 # ② Kéo code mới nhất của thành viên cần ghép
-git pull origin AnKhang      # Pull code của An Khang
-git pull origin HuuLam       # Pull code của Hữu Lam
+git pull origin AnKhang
+git pull origin HuuLam
 
 # ③ Merge từng branch vào Hung
 git merge AnKhang
@@ -784,7 +607,7 @@ git commit -m "[Merge] Ghép code AnKhang vào Hung"
 
 # ④ Build & Test trên branch Hung
 cmake --build build
-./build/PersonalFinanceManager_Group10
+./build/PersonalFinanceManager_Group10.app/Contents/MacOS/PersonalFinanceManager_Group10
 
 # ⑤ Khi mọi thứ ổn → Merge vào main
 git checkout main
@@ -819,7 +642,7 @@ int value = 200;
 
 | Người        | Công việc                                         | File                                    | Trạng thái |
 |:-------------|:--------------------------------------------------|:----------------------------------------|:----------:|
-| **An Khang** | Tạo `BaseModel.h` với virtual destructor & toString | `src/core/models/BaseModel.h`          | ⬜ TODO     |
+| **An Khang** | Tạo `BaseModel.h` với virtual destructor & toString | `src/core/models/BaseModel.h`          | ✅ DONE     |
 | **An Khang** | Hoàn thành `Transaction.h` kế thừa BaseModel      | `src/core/models/Transaction.h`         | ✅ DONE     |
 | **An Khang** | Hoàn thành `Category.h` kế thừa BaseModel         | `src/core/models/Category.h`            | ✅ DONE     |
 | **An Khang** | Hoàn thành `Account.h` kế thừa BaseModel          | `src/core/models/Account.h`             | ✅ DONE     |
@@ -832,34 +655,37 @@ int value = 200;
 
 | Người         | Công việc                                          | File                                     | Trạng thái |
 |:--------------|:---------------------------------------------------|:-----------------------------------------|:----------:|
-| **Hữu Lam**  | Viết `TransactionRepository.h` (CRUD giao dịch)    | `src/core/repositories/TransactionRepository.h` | ✅ DONE |
-| **Hữu Lam**  | Viết `CategoryRepository.h` (CRUD danh mục)        | `src/core/repositories/CategoryRepository.h`    | ✅ DONE |
-| **Hữu Lam**  | Viết `AccountRepository.h` (CRUD tài khoản)        | `src/core/repositories/AccountRepository.h`     | ✅ DONE |
-| **Minh Hạo**  | Viết `TransactionService.h` (thêm/xóa/sửa + signal) | `src/core/services/TransactionService.h`     | ✅ DONE |
-| **Minh Hạo**  | Viết `BudgetService.h` (kiểm tra ngân sách)        | `src/core/services/BudgetService.h`           | ✅ DONE |
-| **Minh Hạo**  | Viết `ReportService.h` (thống kê thu/chi)           | `src/core/services/ReportService.h`           | ✅ DONE |
-| **Minh Hạo**  | Viết `DateUtils.h` + `MoneyUtils.h`                 | `src/utils/DateUtils.h`, `MoneyUtils.h`       | ✅ DONE |
+| **Hữu Lam**  | Viết `TransactionRepository` (CRUD giao dịch)      | `src/core/repositories/TransactionRepository.*` | ✅ DONE |
+| **Hữu Lam**  | Viết `CategoryRepository` (CRUD danh mục)          | `src/core/repositories/CategoryRepository.*`    | ✅ DONE |
+| **Hữu Lam**  | Viết `AccountRepository` (CRUD tài khoản)          | `src/core/repositories/AccountRepository.*`     | ✅ DONE |
+| **Hữu Lam**  | Viết `BudgetRepository` (CRUD ngân sách)           | `src/core/repositories/BudgetRepository.*`      | ✅ DONE |
+| **Minh Hạo**  | Viết `TransactionService` (thêm/xóa/sửa + signal)  | `src/core/services/TransactionService.*`     | ✅ DONE |
+| **Minh Hạo**  | Viết `BudgetService` (kiểm tra ngân sách)          | `src/core/services/BudgetService.*`           | ✅ DONE |
+| **Minh Hạo**  | Viết `ReportService` (thống kê thu/chi)            | `src/core/services/ReportService.*`           | ✅ DONE |
+| **Minh Hạo**  | Viết `DateUtils.h` + `MoneyUtils.h`                | `src/utils/`                                  | ✅ DONE |
 
 ### Giai đoạn 3: Giao diện (UI) — Cần GĐ2 xong trước
 
 | Người           | Công việc                                         | File                                     | Trạng thái |
 |:----------------|:--------------------------------------------------|:-----------------------------------------|:----------:|
-| **Việt Tường**  | Thiết kế `DashboardPage` (tổng quan tài chính)     | `src/ui/pages/DashboardPage.h`           | ✅ DONE     |
-| **Việt Tường**  | Thiết kế `TransactionPage` (danh sách giao dịch)   | `src/ui/pages/TransactionPage.h`         | ✅ DONE     |
-| **Việt Tường**  | Thiết kế `CategoryPage` (quản lý danh mục)         | `src/ui/pages/CategoryPage.h`            | ✅ DONE     |
-| **Việt Tường**  | Thiết kế `ReportPage` (biểu đồ thống kê)           | `src/ui/pages/ReportPage.h`              | ✅ DONE     |
-| **Việt Tường**  | Thiết kế `TransactionDialog` (popup thêm/sửa)      | `src/ui/dialogs/TransactionDialog.h`     | ✅ DONE     |
-| **Việt Tường**  | Thiết kế `CategoryDialog` (popup thêm/sửa danh mục)| `src/ui/dialogs/CategoryDialog.h`        | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `DashboardPage` (tổng quan tài chính)     | `src/ui/pages/DashboardPage.*`           | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `AccountPage` (quản lý tài khoản)         | `src/ui/pages/AccountPage.*`             | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `TransactionPage` (danh sách giao dịch)   | `src/ui/pages/TransactionPage.*`         | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `CategoryPage` (quản lý danh mục)         | `src/ui/pages/CategoryPage.*`            | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `BudgetPage` (quản lý ngân sách)          | `src/ui/pages/BudgetPage.*`              | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `ReportPage` (biểu đồ thống kê)           | `src/ui/pages/ReportPage.*`              | ✅ DONE     |
+| **Việt Tường**  | Thiết kế các Dialog thêm/sửa (Account/Category/Transaction/Budget) | `src/ui/dialogs/*.cpp` | ✅ DONE     |
+| **Việt Tường**  | Thiết kế `MainWindow` (sidebar + QStackedWidget)   | `src/ui/mainwindow.*`                    | ✅ DONE     |
 
 ### Giai đoạn 4: Ghép code & Kiểm thử — Song song với GĐ3
 
 | Người          | Công việc                                          | File / Hành động                          | Trạng thái |
 |:---------------|:---------------------------------------------------|:------------------------------------------|:----------:|
 | **Gia Hưng**   | Ghép code GĐ1 + GĐ2 + GĐ3 vào branch Hung        | Merge branches                            | ✅ DONE     |
-| **Gia Hưng**   | Cập nhật `CMakeLists.txt` thêm tất cả file .cpp     | `CMakeLists.txt`                          | ⬜ TODO     |
-| **Gia Hưng**   | Viết unit test cho `TransactionService`              | `tests/TransactionServiceTest.cpp`        | ⬜ TODO     |
-| **Gia Hưng**   | Viết unit test cho `BudgetService`                   | `tests/BudgetServiceTest.cpp`             | ⬜ TODO     |
-| **Gia Hưng**   | Build & chạy thử toàn bộ ứng dụng                   | Terminal / Qt Creator                     | ⬜ TODO     |
+| **Gia Hưng**   | Cập nhật `CMakeLists.txt` thêm tất cả file .cpp     | `CMakeLists.txt`                          | ✅ DONE     |
+| **Gia Hưng**   | Viết unit test cho `TransactionService`              | `tests/TransactionServiceTest.cpp`        | ✅ DONE     |
+| **Gia Hưng**   | Viết unit test cho `BudgetService`                   | `tests/BudgetServiceTest.cpp`             | ✅ DONE     |
+| **Gia Hưng**   | Build & chạy thử toàn bộ ứng dụng                   | Terminal / Qt Creator                     | ✅ DONE     |
 | **Gia Hưng**   | Chuẩn bị slide & demo sản phẩm                      | Presentation                              | ⬜ TODO     |
 
 ---
@@ -868,7 +694,8 @@ int value = 200;
 
 ### 9.1 Cấu hình CMake cho Tests
 
-File `tests/CMakeLists.txt` cần có nội dung sau:
+`tests/CMakeLists.txt` định nghĩa 2 executable test. Mỗi test **link trực tiếp** các file
+`.cpp` của service/repository/model mà nó sử dụng (không phụ thuộc target chính):
 
 ```cmake
 # tests/CMakeLists.txt
@@ -876,12 +703,12 @@ find_package(Qt6 REQUIRED COMPONENTS Test)
 
 qt_add_executable(TransactionServiceTest
     TransactionServiceTest.cpp
-    ../src/core/services/TransactionService.h
-    ../src/core/repositories/TransactionRepository.h
-    ../src/core/database/DatabaseManager.h
+    ../src/core/services/TransactionService.cpp
+    ../src/core/repositories/TransactionRepository.cpp
+    ../src/core/repositories/AccountRepository.cpp
+    ../src/core/repositories/CategoryRepository.cpp
     ../src/core/database/DatabaseManager.cpp
-    ../src/core/models/Transaction.h
-    ../src/core/models/BaseModel.h
+    # ... (models: Transaction.cpp, Account.cpp, Category.cpp, ...)
 )
 
 target_link_libraries(TransactionServiceTest PRIVATE
@@ -894,82 +721,86 @@ target_link_libraries(TransactionServiceTest PRIVATE
 Thêm dòng sau vào `CMakeLists.txt` ở thư mục gốc:
 
 ```cmake
-# Thêm ở cuối CMakeLists.txt gốc
 add_subdirectory(tests)
 ```
 
 ### 9.2 Viết Unit Test với Qt Test
 
+Test dùng DB tạm (`QTemporaryDir`) nên **không đụng** tới dữ liệu thật `data/finance.db`:
+
 ```cpp
 // ============================================
 // File: tests/TransactionServiceTest.cpp
-// Hướng dẫn viết Unit Test với Qt Test
 // ============================================
 #include <QtTest/QtTest>
+#include <QTemporaryDir>
+#include <QSqlQuery>
 #include "../src/core/services/TransactionService.h"
+#include "../src/core/repositories/AccountRepository.h"
 #include "../src/core/database/DatabaseManager.h"
 
-class TransactionServiceTest : public QObject {
+class TransactionServiceTest : public QObject
+{
     Q_OBJECT
 
 private:
-    TransactionService* service;
-    DatabaseManager*    dbManager;
+    QTemporaryDir m_tempDir;
+    TransactionService *service;
 
 private slots:
-    // ★ Chạy TRƯỚC tất cả test — chuẩn bị môi trường
-    void initTestCase() {
-        dbManager = new DatabaseManager(":memory:");  // DB trong RAM, không tạo file
-        service = new TransactionService(dbManager);
-        qDebug() << "=== Bắt đầu chạy test TransactionService ===";
+    // ★ Chạy TRƯỚC tất cả test — mở DB tạm
+    void initTestCase()
+    {
+        QVERIFY(m_tempDir.isValid());
+        QVERIFY(DatabaseManager::instance().openDatabase(
+            m_tempDir.filePath("test.db")));
+        DatabaseManager::instance().initializeDatabase();
     }
 
-    // ★ Chạy SAU tất cả test — dọn dẹp
-    void cleanupTestCase() {
+    // ★ Chạy trước MỖI test — xóa dữ liệu để test độc lập
+    void init()
+    {
+        QSqlQuery query;
+        query.exec("DELETE FROM Transactions");
+        query.exec("DELETE FROM Account");
+        query.exec("DELETE FROM Category");
+        service = new TransactionService();
+    }
+
+    // ★ Chạy SAU mỗi test
+    void cleanup()
+    {
         delete service;
-        delete dbManager;
-        qDebug() << "=== Kết thúc test ===";
     }
 
-    // --- CÁC HÀM TEST ---
+    void testAddTransaction()
+    {
+        // Tạo account + category hợp lệ (thỏa khóa ngoại)
+        AccountRepository accountRepo;
+        Account acc(0, "Cash", 0);
+        accountRepo.addAccount(acc);
 
-    void testAddTransaction() {
-        Transaction t(0, 50000, "Ăn trưa", "2026-07-24", 1, TransactionType::EXPENSE);
+        Transaction tx(0, 1, 1, 100000, QDate(2026, 7, 10), "Lương", "income");
 
-        int id = service->addTransaction(t);
+        QString errorMessage;
+        QVERIFY(service->addTransaction(tx, &errorMessage));
 
-        QVERIFY(id > 0);                          // Kiểm tra: ID phải > 0
-        qDebug() << "✅ testAddTransaction PASSED";
+        QCOMPARE(service->getAllTransactions().size(), 1);
     }
 
-    void testGetAllTransactions() {
-        auto list = service->getAllTransactions();
-
-        QVERIFY(list.size() >= 1);                 // Kiểm tra: danh sách không rỗng
-        QCOMPARE(list[0].getDescription(), QString("Ăn trưa"));
-        qDebug() << "✅ testGetAllTransactions PASSED";
-    }
-
-    void testTotalExpense() {
-        double total = service->getTotalExpense();
-
-        QCOMPARE(total, 50000.0);                  // Kiểm tra: tổng chi = 50000
-        qDebug() << "✅ testTotalExpense PASSED";
-    }
-
-    void testRemoveTransaction() {
-        bool ok = service->removeTransaction(1);
-
-        QVERIFY(ok == true);                       // Kiểm tra: xóa thành công
-        auto list = service->getAllTransactions();
-        QVERIFY(list.empty());                     // Kiểm tra: danh sách rỗng
-        qDebug() << "✅ testRemoveTransaction PASSED";
+    void testTotalExpense()
+    {
+        // ...
+        QCOMPARE(service->getTotalExpense(), 20000.0);
     }
 };
 
 QTEST_MAIN(TransactionServiceTest)
 #include "TransactionServiceTest.moc"
 ```
+
+> ⚠️ **Lưu ý:** Schema có `FOREIGN KEY` + `PRAGMA foreign_keys = ON`, nên test phải tạo
+> `Account` và `Category` thật trước khi thêm `Transaction` để không vi phạm ràng buộc.
 
 ### 9.3 Chạy Unit Test
 
@@ -978,19 +809,32 @@ QTEST_MAIN(TransactionServiceTest)
 cmake -B build
 cmake --build build
 
-# Chạy test
+# Chạy 2 bộ test
 ./build/tests/TransactionServiceTest
+./build/tests/BudgetServiceTest
 ```
 
 **Kết quả mong đợi:**
 ```
 ********* Start testing of TransactionServiceTest *********
+PASS   : TransactionServiceTest::initTestCase()
 PASS   : TransactionServiceTest::testAddTransaction()
-PASS   : TransactionServiceTest::testGetAllTransactions()
-PASS   : TransactionServiceTest::testTotalExpense()
+PASS   : TransactionServiceTest::testValidate()
+PASS   : TransactionServiceTest::testTotals()
+PASS   : TransactionServiceTest::testUpdateTransaction()
 PASS   : TransactionServiceTest::testRemoveTransaction()
-Totals: 4 passed, 0 failed, 0 skipped
+PASS   : TransactionServiceTest::testSignalEmitted()
+PASS   : TransactionServiceTest::cleanupTestCase()
+Totals: 8 passed, 0 failed, 0 skipped
 ********* Finished testing of TransactionServiceTest *********
+
+********* Start testing of BudgetServiceTest *********
+PASS   : BudgetServiceTest::testAddBudget()
+PASS   : BudgetServiceTest::testCalculateSpent()
+PASS   : BudgetServiceTest::testIsOverBudget()
+PASS   : BudgetServiceTest::testRemoveBudget()
+Totals: 6 passed, 0 failed, 0 skipped
+********* Finished testing of BudgetServiceTest *********
 ```
 
 ---
@@ -1009,5 +853,5 @@ Totals: 4 passed, 0 failed, 0 skipped
 
 ---
 
-> 📅 **Cập nhật lần cuối:** 24/07/2026  
+> 📅 **Cập nhật lần cuối:** 02/08/2026
 > ✍️ **Tác giả:** Gia Hưng (Tester + Integration)

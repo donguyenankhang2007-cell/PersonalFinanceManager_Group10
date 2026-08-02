@@ -1,13 +1,28 @@
+// ============================================
+// File: src/ui/pages/TransactionPage.cpp
+// Mo ta: Lich su giao dich dang bang + thanh loc
+//        (loai, account, category, khoang thoi gian, tim ghi chu).
+//        Moi hang co icon Edit/Delete, double-click de sua nhanh.
+// ============================================
 #include "TransactionPage.h"
 #include "../dialogs/TransactionDialog.h"
+#include "../RowActions.h"
+#include "../theme/ThemeManager.h"
 #include "../../app/AppContext.h"
+#include "../../utils/MoneyUtils.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPushButton>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QDateEdit>
+#include <QCheckBox>
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QMap>
+#include <QColor>
 
 TransactionPage::TransactionPage(QWidget *parent)
     : QWidget(parent)
@@ -17,50 +32,160 @@ TransactionPage::TransactionPage(QWidget *parent)
     layout->setSpacing(15);
 
     // Tiêu đề
-    QLabel *title = new QLabel("Transaction History");
-    title->setStyleSheet(
-        "font-size: 22px;"
-        "font-weight: bold;"
-        "color: #1e272e;"
-        "padding-bottom: 10px;");
+    QHBoxLayout *header = new QHBoxLayout();
+    QVBoxLayout *titleBox = new QVBoxLayout();
+    titleBox->setSpacing(2);
+    QLabel *title = new QLabel("Giao Dịch");
+    title->setObjectName("pageTitle");
+    QLabel *subtitle = new QLabel("Lịch sử giao dịch chi tiết");
+    subtitle->setObjectName("pageSubtitle");
+    titleBox->addWidget(title);
+    titleBox->addWidget(subtitle);
 
-    // Buttons
-    QHBoxLayout *btnLayout = new QHBoxLayout();
-    btnAdd = new QPushButton("+ Add Transaction");
-    btnDelete = new QPushButton("Delete Selected");
-    btnDelete->setStyleSheet(
-        "background-color: #ff3f34; color: white;"
-        "border: none; padding: 10px 20px;"
-        "font-size: 13px; font-weight: bold; border-radius: 5px;");
-    btnLayout->addWidget(btnAdd);
-    btnLayout->addWidget(btnDelete);
-    btnLayout->addStretch();
+    btnAdd = new QPushButton("+ Thêm Giao Dịch");
+    btnAdd->setObjectName("primaryBtn");
+    btnAdd->setCursor(Qt::PointingHandCursor);
+    header->addLayout(titleBox);
+    header->addStretch();
+    header->addWidget(btnAdd);
+    layout->addLayout(header);
+
+    // === Thanh lọc ===
+    QWidget *filterBar = new QWidget();
+    filterBar->setObjectName("card");
+    QHBoxLayout *filterLayout = new QHBoxLayout(filterBar);
+    filterLayout->setContentsMargins(12, 10, 12, 10);
+    filterLayout->setSpacing(8);
+
+    filterType = new QComboBox();
+    filterType->addItems({"Tất cả loại", "Thu Nhập", "Chi Tiêu"});
+
+    filterAccount = new QComboBox();
+    filterAccount->addItem("Tất cả tài khoản");
+
+    filterCategory = new QComboBox();
+    filterCategory->addItem("Tất cả danh mục");
+
+    searchEdit = new QLineEdit();
+    searchEdit->setPlaceholderText("Tìm ghi chú...");
+    searchEdit->setClearButtonEnabled(true);
+
+    periodCheck = new QCheckBox("Lọc ngày");
+    periodCheck->setToolTip("Bật/tắt lọc theo khoảng thời gian");
+    periodCheck->setCursor(Qt::PointingHandCursor);
+
+    QFrame *dateRangeFrame = new QFrame();
+    dateRangeFrame->setObjectName("dateRangeFrame");
+    QHBoxLayout *dateLayout = new QHBoxLayout(dateRangeFrame);
+    dateLayout->setContentsMargins(8, 0, 8, 0);
+    dateLayout->setSpacing(4);
+
+    fromDate = new QDateEdit();
+    fromDate->setCalendarPopup(true);
+    fromDate->setDisplayFormat("dd/MM/yyyy");
+    fromDate->setDate(QDate::currentDate().addMonths(-1));
+    fromDate->setObjectName("dateRangeInput");
+    
+    QLabel *dash = new QLabel("-");
+    
+    toDate = new QDateEdit();
+    toDate->setCalendarPopup(true);
+    toDate->setDisplayFormat("dd/MM/yyyy");
+    toDate->setDate(QDate::currentDate());
+    toDate->setObjectName("dateRangeInput");
+
+    dateLayout->addWidget(fromDate);
+    dateLayout->addWidget(dash);
+    dateLayout->addWidget(toDate);
+
+    btnClear = new QPushButton("Xóa bộ lọc");
+    btnClear->setObjectName("ghostBtn");
+    btnClear->setCursor(Qt::PointingHandCursor);
+
+    filterLayout->addWidget(filterType);
+    filterLayout->addWidget(filterAccount);
+    filterLayout->addWidget(filterCategory);
+    filterLayout->addWidget(searchEdit, 1);
+    filterLayout->addWidget(periodCheck);
+    filterLayout->addWidget(dateRangeFrame);
+    filterLayout->addWidget(btnClear);
+    layout->addWidget(filterBar);
 
     // Bảng giao dịch
     table = new QTableWidget();
-    table->setColumnCount(6);
+    table->setColumnCount(8);
     table->setHorizontalHeaderLabels(
-        {"ID", "Date", "Account", "Category", "Amount (VND)", "Type"});
-    table->horizontalHeader()->setStretchLastSection(true);
-    table->horizontalHeader()->setSectionResizeMode(
-        QHeaderView::Stretch);
+        {"ID", "Ngày", "Tài Khoản", "Danh Mục", "Số Tiền (VND)",
+         "Loại", "Ghi Chú", "Hành Động"});
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(7, QHeaderView::Fixed);
+    table->setColumnWidth(7, 92);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->setAlternatingRowColors(true);
+    table->verticalHeader()->setVisible(false);
 
-    layout->addWidget(title);
-    layout->addLayout(btnLayout);
     layout->addWidget(table);
 
     setLayout(layout);
 
     // Kết nối signals
-    connect(btnAdd, &QPushButton::clicked,
-            this, &TransactionPage::onAddTransaction);
-    connect(btnDelete, &QPushButton::clicked,
-            this, &TransactionPage::onDeleteTransaction);
+    connect(btnAdd, &QPushButton::clicked, this, &TransactionPage::onAddTransaction);
+    connect(btnClear, &QPushButton::clicked, this, &TransactionPage::clearFilters);
+    connect(filterType, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &TransactionPage::applyFilters);
+    connect(filterAccount, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &TransactionPage::applyFilters);
+    connect(filterCategory, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &TransactionPage::applyFilters);
+    connect(searchEdit, &QLineEdit::textChanged,
+            this, &TransactionPage::applyFilters);
+    connect(periodCheck, &QCheckBox::toggled,
+            this, &TransactionPage::applyFilters);
+    connect(fromDate, &QDateEdit::dateChanged,
+            this, &TransactionPage::applyFilters);
+    connect(toDate, &QDateEdit::dateChanged,
+            this, &TransactionPage::applyFilters);
 
-    // Load dữ liệu
+    // Double-click hàng → sửa nhanh
+    connect(table, &QTableWidget::cellDoubleClicked,
+            this, [this](int row, int) {
+                if (row >= 0) {
+                    int id = table->item(row, 0)->text().toInt();
+                    editTransactionById(id);
+                }
+            });
+
+    // Tự cập nhật bảng khi service phát signal (Observer)
+    TransactionService &txService = AppContext::instance().transactionService();
+    connect(&txService, &TransactionService::transactionAdded,
+            this, &TransactionPage::loadTransactions);
+    connect(&txService, &TransactionService::transactionUpdated,
+            this, &TransactionPage::loadTransactions);
+    connect(&txService, &TransactionService::transactionRemoved,
+            this, &TransactionPage::loadTransactions);
+
+    // Đổi mật độ bảng → áp chiều cao hàng
+    connect(&ThemeManager::instance(), &ThemeManager::densityChanged,
+            this, &TransactionPage::loadTransactions);
+
+    loadTransactions();
+}
+
+void TransactionPage::clearFilters()
+{
+    filterType->setCurrentIndex(0);
+    filterAccount->setCurrentIndex(0);
+    filterCategory->setCurrentIndex(0);
+    searchEdit->clear();
+    periodCheck->setChecked(false);
+    applyFilters();
+}
+
+void TransactionPage::applyFilters()
+{
     loadTransactions();
 }
 
@@ -69,27 +194,97 @@ void TransactionPage::loadTransactions()
     table->setRowCount(0);
 
     QVector<Transaction> transactions =
-        AppContext::instance().transactionRepository().getAllTransactions();
+        AppContext::instance().transactionService().getAllTransactions();
 
-    // Load category names for display
+    // Tải tên danh mục để hiển thị
     QVector<Category> categories =
-        AppContext::instance().categoryRepository().getAllCategories();
+        AppContext::instance().categoryService().getAllCategories();
     QMap<int, QString> categoryNames;
     for (const Category &c : categories) {
         categoryNames[c.getId()] = c.getName();
     }
 
-    // Load account names for display
+    // Tải tên tài khoản để hiển thị
     QVector<Account> accounts =
-        AppContext::instance().accountRepository().getAllAccounts();
+        AppContext::instance().accountService().getAllAccounts();
     QMap<int, QString> accountNames;
     for (const Account &a : accounts) {
         accountNames[a.getId()] = a.getName();
     }
 
-    for (const Transaction &t : transactions) {
+    // Cập nhật danh sách filter (giữ lựa chọn hiện tại)
+    QString selAccount = filterAccount->currentText();
+    QString selCategory = filterCategory->currentText();
+    filterAccount->blockSignals(true);
+    filterAccount->clear();
+    filterAccount->addItem("Tất cả tài khoản");
+    for (const Account &a : accounts) {
+        filterAccount->addItem(a.getName(), a.getId());
+    }
+    int accIdx = filterAccount->findText(selAccount);
+    filterAccount->setCurrentIndex(accIdx < 0 ? 0 : accIdx);
+    filterAccount->blockSignals(false);
+
+    filterCategory->blockSignals(true);
+    filterCategory->clear();
+    filterCategory->addItem("Tất cả danh mục");
+    for (const Category &c : categories) {
+        filterCategory->addItem(c.getName(), c.getId());
+    }
+    int catIdx = filterCategory->findText(selCategory);
+    filterCategory->setCurrentIndex(catIdx < 0 ? 0 : catIdx);
+    filterCategory->blockSignals(false);
+
+    // === Áp dụng bộ lọc ===
+    QList<Transaction> list(transactions.begin(), transactions.end());
+    TransactionService &txService = AppContext::instance().transactionService();
+
+    int typeIdx = filterType->currentIndex();
+    if (typeIdx == 1) {
+        QList<Transaction> tmp;
+        for (const Transaction &t : list)
+            if (t.isIncome()) tmp.append(t);
+        list = tmp;
+    } else if (typeIdx == 2) {
+        QList<Transaction> tmp;
+        for (const Transaction &t : list)
+            if (t.isExpense()) tmp.append(t);
+        list = tmp;
+    }
+
+    int accountId = filterAccount->currentData().toInt();
+    if (accountId > 0)
+        list = txService.filterByAccount(list, accountId);
+
+    int categoryId = filterCategory->currentData().toInt();
+    if (categoryId > 0)
+        list = txService.filterByCategory(list, categoryId);
+
+    if (periodCheck->isChecked() && fromDate->date() <= toDate->date()) {
+        list = txService.filterByDateRange(list, fromDate->date(), toDate->date());
+    }
+
+    QString keyword = searchEdit->text().trimmed();
+    if (!keyword.isEmpty()) {
+        QList<Transaction> tmp;
+        for (const Transaction &t : list) {
+            QString account = accountNames.value(t.getAccountId(), "");
+            QString category = categoryNames.value(t.getCategoryId(), "");
+            if (t.getNote().contains(keyword, Qt::CaseInsensitive) ||
+                account.contains(keyword, Qt::CaseInsensitive) ||
+                category.contains(keyword, Qt::CaseInsensitive)) {
+                tmp.append(t);
+            }
+        }
+        list = tmp;
+    }
+
+    int rowHeight = ThemeManager::instance().tableRowHeight();
+
+    for (const Transaction &t : list) {
         int row = table->rowCount();
         table->insertRow(row);
+        table->setRowHeight(row, rowHeight);
 
         table->setItem(row, 0,
                        new QTableWidgetItem(QString::number(t.getId())));
@@ -98,17 +293,32 @@ void TransactionPage::loadTransactions()
                            t.getDate().toString("dd/MM/yyyy")));
         table->setItem(row, 2,
                        new QTableWidgetItem(
-                           accountNames.value(t.getAccountId(),
-                                              "Unknown")));
+                           accountNames.value(t.getAccountId(), "Không xác định")));
         table->setItem(row, 3,
                        new QTableWidgetItem(
-                           categoryNames.value(t.getCategoryId(),
-                                               "Unknown")));
-        table->setItem(row, 4,
-                       new QTableWidgetItem(
-                           QString::number(t.getAmount(), 'f', 0)));
-        table->setItem(row, 5,
-                       new QTableWidgetItem(t.getType()));
+                           categoryNames.value(t.getCategoryId(), "Không xác định")));
+
+        QTableWidgetItem *amountItem = new QTableWidgetItem(
+            MoneyUtils::formatVND(t.getAmount()));
+        amountItem->setForeground(t.isIncome()
+                                      ? QColor("#059669")
+                                      : QColor("#E11D48"));
+        table->setItem(row, 4, amountItem);
+
+        QTableWidgetItem *typeItem = new QTableWidgetItem(
+            t.isIncome() ? "Thu Nhập" : "Chi Tiêu");
+        typeItem->setForeground(t.isIncome()
+                                    ? QColor("#059669")
+                                    : QColor("#E11D48"));
+        table->setItem(row, 5, typeItem);
+
+        table->setItem(row, 6, new QTableWidgetItem(t.getNote()));
+
+        table->setCellWidget(row, 7,
+            RowActions::create(t.getId(),
+                [this](int id) { editTransactionById(id); },
+                [this](int id) { deleteTransactionById(id); },
+                this));
     }
 }
 
@@ -119,62 +329,50 @@ void TransactionPage::onAddTransaction()
     if (dialog.exec() == QDialog::Accepted) {
         Transaction t = dialog.getTransaction();
 
-        if (t.getAmount() <= 0) {
-            QMessageBox::warning(this, "Error",
-                                 "Amount must be greater than 0!");
-            return;
+        QString errorMessage;
+        if (!AppContext::instance()
+                 .transactionService()
+                 .addTransaction(t, &errorMessage)) {
+            QMessageBox::warning(this, "Lỗi", errorMessage);
         }
-
-        if (t.getAccountId() <= 0) {
-            QMessageBox::warning(this, "Error",
-                                 "Please select an account! "
-                                 "You need to have at least one account.");
-            return;
-        }
-
-        if (t.getCategoryId() <= 0) {
-            QMessageBox::warning(this, "Error",
-                                 "Please select a category! "
-                                 "Add categories first.");
-            return;
-        }
-
-        if (AppContext::instance()
-                .transactionRepository()
-                .addTransaction(t)) {
-            loadTransactions();
-        } else {
-            QMessageBox::warning(this, "Error",
-                                 "Failed to add transaction!");
-        }
+        // Bảng tự cập nhật qua signal transactionAdded
     }
 }
 
-void TransactionPage::onDeleteTransaction()
+void TransactionPage::editTransactionById(int id)
 {
-    int row = table->currentRow();
+    Transaction t =
+        AppContext::instance().transactionService().getTransactionById(id);
 
-    if (row < 0) {
-        QMessageBox::information(this, "Info",
-                                 "Please select a transaction to delete.");
-        return;
+    TransactionDialog dialog(t, this);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        Transaction updated = dialog.getTransaction();
+
+        QString errorMessage;
+        if (!AppContext::instance()
+                 .transactionService()
+                 .updateTransaction(updated, &errorMessage)) {
+            QMessageBox::warning(this, "Lỗi", errorMessage);
+        }
+        // Bảng tự cập nhật qua signal transactionUpdated
     }
+}
 
-    int id = table->item(row, 0)->text().toInt();
-
+void TransactionPage::deleteTransactionById(int id)
+{
     QMessageBox::StandardButton reply = QMessageBox::question(
-        this, "Confirm",
-        "Are you sure you want to delete this transaction?",
+        this, "Xác nhận",
+        "Bạn có chắc chắn muốn xóa giao dịch này?",
         QMessageBox::Yes | QMessageBox::No);
 
     if (reply == QMessageBox::Yes) {
-        if (AppContext::instance()
-                .transactionRepository()
-                .deleteTransaction(id)) {
-            loadTransactions();
-        } else {
-            QMessageBox::warning(this, "Error",
-                                 "Failed to delete transaction!");
+        QString errorMessage;
+        if (!AppContext::instance()
+                 .transactionService()
+                 .removeTransaction(id, &errorMessage)) {
+            QMessageBox::warning(this, "Lỗi", errorMessage);
         }
+        // Bảng tự cập nhật qua signal transactionRemoved
     }
 }

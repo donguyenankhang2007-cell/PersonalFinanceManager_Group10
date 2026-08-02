@@ -5,7 +5,7 @@
 #include "BaseModel.h"
 
 
-enum class CategoryType 
+enum class CategoryType
 {
     Income,
     Expense
@@ -14,7 +14,6 @@ enum class CategoryType
 class Category : public BaseModel
 {
 private:
-    int id;
     QString name;
     CategoryType type;
     QString color;
@@ -29,23 +28,21 @@ public:
              const QString& color,
              const QString& icon);
 
-    int getId() const;
     QString getName() const;
     CategoryType getType() const;
     QString getColor() const;
     QString getIcon() const;
 
-    void setId(int id);
     void setName(const QString& name);
     void setType(CategoryType type);
     void setColor(const QString& color);
     void setIcon(const QString& icon);
 
-    
     QString typeToString() const;
     static CategoryType stringToType(const QString &type);
 
     QString toString() const override;
+    QString getDisplayName() const override { return name; }
 };
 
 #endif
