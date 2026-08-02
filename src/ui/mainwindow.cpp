@@ -363,6 +363,7 @@ static void updateNavButtons(QPushButton* buttons[], int count, int active)
 
 void MainWindow::showDashboard()
 {
+    dashboard->loadData();
     stackedWidget->setCurrentIndex(0);
     QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
     updateNavButtons(btns, 6, 0);
@@ -370,6 +371,7 @@ void MainWindow::showDashboard()
 
 void MainWindow::showAccounts()
 {
+    accountPage->loadAccounts();
     stackedWidget->setCurrentIndex(1);
     QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
     updateNavButtons(btns, 6, 1);
@@ -377,6 +379,7 @@ void MainWindow::showAccounts()
 
 void MainWindow::showCategory()
 {
+    category->loadCategories();
     stackedWidget->setCurrentIndex(2);
     QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
     updateNavButtons(btns, 6, 2);
@@ -384,6 +387,7 @@ void MainWindow::showCategory()
 
 void MainWindow::showTransaction()
 {
+    transaction->loadTransactions();
     stackedWidget->setCurrentIndex(3);
     QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
     updateNavButtons(btns, 6, 3);
@@ -391,6 +395,7 @@ void MainWindow::showTransaction()
 
 void MainWindow::showBudget()
 {
+    budget->loadBudgets();
     stackedWidget->setCurrentIndex(4);
     QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
     updateNavButtons(btns, 6, 4);
@@ -398,6 +403,7 @@ void MainWindow::showBudget()
 
 void MainWindow::showReport()
 {
+    report->loadReport();
     stackedWidget->setCurrentIndex(5);
     QPushButton* btns[] = {btnDashboard, btnAccounts, btnCategory, btnTransaction, btnBudget, btnReport};
     updateNavButtons(btns, 6, 5);
