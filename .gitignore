@@ -13,8 +13,8 @@ Makefile
 *.user
 *.pro.user
 
-# SQLite database (dữ liệu cá nhân, không commit)
-data/finance.db
+# SQLite database
+# data/finance.db
 
 # VS Code
 .vscode/
