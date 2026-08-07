@@ -7,7 +7,6 @@
 class Account : public BaseModel
 {
 private:
-    int id;
     QString name;
     double balance;
     QString description;
@@ -22,12 +21,10 @@ public:
 
     ~Account() = default;
 
-    int getId() const;
     QString getName() const;
     double getBalance() const;
     QString getDescription() const;
 
-    void setId(int id);
     void setName(const QString& name);
     void setBalance(double balance);
     void setDescription(const QString& description);
@@ -35,7 +32,8 @@ public:
     void deposit(double amount);
     bool withdraw(double amount);
 
-    QString toString() const override; 
+    QString toString() const override;
+    QString getDisplayName() const override { return name; }
 };
 
 #endif

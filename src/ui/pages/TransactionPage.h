@@ -3,7 +3,12 @@
 
 #include <QWidget>
 #include <QTableWidget>
-#include <QPushButton>
+
+class QPushButton;
+class QComboBox;
+class QLineEdit;
+class QDateEdit;
+class QCheckBox;
 
 class TransactionPage : public QWidget
 {
@@ -17,12 +22,24 @@ public slots:
 
 private slots:
     void onAddTransaction();
-    void onDeleteTransaction();
+    void applyFilters();
+    void clearFilters();
 
 private:
+    void editTransactionById(int id);
+    void deleteTransactionById(int id);
+
     QTableWidget *table;
     QPushButton *btnAdd;
-    QPushButton *btnDelete;
+
+    QComboBox *filterType;
+    QComboBox *filterAccount;
+    QComboBox *filterCategory;
+    QLineEdit *searchEdit;
+    QCheckBox *periodCheck;
+    QDateEdit *fromDate;
+    QDateEdit *toDate;
+    QPushButton *btnClear;
 };
 
 #endif // TRANSACTIONPAGE_H

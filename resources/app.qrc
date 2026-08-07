@@ -2,4 +2,33 @@
     <qresource prefix="/">
         <file alias="database_schema.sql">../data/database_schema.sql</file>
     </qresource>
+    <qresource prefix="/styles">
+        <file alias="theme.qss">styles/theme.qss</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="dashboard.svg">icons/dashboard.svg</file>
+        <file alias="transaction.svg">icons/transaction.svg</file>
+        <file alias="category.svg">icons/category.svg</file>
+        <file alias="budget.svg">icons/budget.svg</file>
+        <file alias="report.svg">icons/report.svg</file>
+        <file alias="settings.svg">icons/settings.svg</file>
+        <file alias="user.svg">icons/user.svg</file>
+        <file alias="edit.svg">icons/edit.svg</file>
+        <file alias="delete.svg">icons/delete.svg</file>
+        <file alias="up-arrow.svg">icons/up-arrow.svg</file>
+        <file alias="down-arrow.svg">icons/down-arrow.svg</file>
+        <file alias="down-arrow-dark.svg">icons/down-arrow-dark.svg</file>
+        <file alias="repeat.svg">icons/repeat.svg</file>
+        <file alias="cow.svg">icons/cow.svg</file>
+        <file alias="crow.svg">icons/crow.svg</file>
+        <file alias="dog.svg">icons/dog.svg</file>
+        <file alias="dragon.svg">icons/dragon.svg</file>
+        <file alias="fish.svg">icons/fish.svg</file>
+        <file alias="fish-fins.svg">icons/fish-fins.svg</file>
+        <file alias="hippo.svg">icons/hippo.svg</file>
+        <file alias="otter.svg">icons/otter.svg</file>
+        <file alias="shield-cat.svg">icons/shield-cat.svg</file>
+        <file alias="shrimp.svg">icons/shrimp.svg</file>
+        <file alias="worm.svg">icons/worm.svg</file>
+    </qresource>
 </RCC>

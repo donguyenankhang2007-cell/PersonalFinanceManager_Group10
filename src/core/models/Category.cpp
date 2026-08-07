@@ -1,11 +1,11 @@
 #include "Category.h"
 
 Category::Category()
-    : id(0),
-    name(""),
-    type(CategoryType::Expense),
-    color(""),
-    icon("")
+    : BaseModel(),
+      name(""),
+      type(CategoryType::Expense),
+      color(""),
+      icon("")
 {
 }
 
@@ -14,17 +14,12 @@ Category::Category(int id,
                    CategoryType type,
                    const QString& color,
                    const QString& icon)
-    : id(id),
-    name(name),
-    type(type),
-    color(color),
-    icon(icon)
+    : BaseModel(id),
+      name(name),
+      type(type),
+      color(color),
+      icon(icon)
 {
-}
-
-int Category::getId() const
-{
-    return id;
 }
 
 QString Category::getName() const
@@ -45,11 +40,6 @@ QString Category::getColor() const
 QString Category::getIcon() const
 {
     return icon;
-}
-
-void Category::setId(int id)
-{
-    this->id = id;
 }
 
 void Category::setName(const QString& name)
@@ -81,7 +71,7 @@ QString Category::typeToString() const
 
 CategoryType Category::stringToType(const QString &type)
 {
-    if (type == "Income")
+    if (type.compare("income", Qt::CaseInsensitive) == 0)
         return CategoryType::Income;
 
     return CategoryType::Expense;
@@ -90,7 +80,7 @@ CategoryType Category::stringToType(const QString &type)
 QString Category::toString() const
 {
     return QString("Category [%1] %2 | Type: %3")
-            .arg(id)
+            .arg(m_id)
             .arg(name)
             .arg(typeToString());
 }

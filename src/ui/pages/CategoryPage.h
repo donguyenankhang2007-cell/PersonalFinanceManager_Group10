@@ -2,8 +2,9 @@
 #define CATEGORYPAGE_H
 
 #include <QWidget>
-#include <QListWidget>
-#include <QPushButton>
+#include <QTableWidget>
+
+class QPushButton;
 
 class CategoryPage : public QWidget
 {
@@ -17,12 +18,15 @@ public slots:
 
 private slots:
     void onAddCategory();
-    void onDeleteCategory();
 
 private:
-    QListWidget *categoryList;
+    void editCategoryById(int id);
+    void deleteCategoryById(int id);
+
+    QTableWidget *table;
     QPushButton *btnAdd;
-    QPushButton *btnDelete;
+    class QLabel *titleLabel;
+    class QLabel *subtitleLabel;
 };
 
 #endif // CATEGORYPAGE_H

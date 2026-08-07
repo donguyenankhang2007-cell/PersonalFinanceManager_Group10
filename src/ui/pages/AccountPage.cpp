@@ -1,13 +1,22 @@
+// ============================================
+// File: src/ui/pages/AccountPage.cpp
+// Mo ta: Quan ly tai khoan. Moi hang co icon Edit/Delete
+//        (RowActions) thay vi nut tren dau bang.
+// ============================================
 #include "AccountPage.h"
 #include "../dialogs/AccountDialog.h"
+#include "../RowActions.h"
+#include "../theme/ThemeManager.h"
 #include "../../app/AppContext.h"
+#include "../../utils/MoneyUtils.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPushButton>
 #include <QHeaderView>
 #include <QMessageBox>
-#include <QLocale>
+#include <QGraphicsDropShadowEffect>
 
 AccountPage::AccountPage(QWidget *parent)
     : QWidget(parent)
@@ -17,75 +26,111 @@ AccountPage::AccountPage(QWidget *parent)
     layout->setSpacing(15);
 
     // Tiêu đề
-    QLabel *title = new QLabel("Account Management");
-    title->setStyleSheet(
-        "font-size: 22px;"
-        "font-weight: bold;"
-        "color: #1e272e;"
-        "padding-bottom: 10px;");
+    QHBoxLayout *header = new QHBoxLayout();
+    QVBoxLayout *titleBox = new QVBoxLayout();
+    titleBox->setSpacing(2);
+    m_titleLabel = new QLabel("Tài Khoản");
+    m_titleLabel->setObjectName("pageTitle");
+    m_subtitleLabel = new QLabel("Quản lý tài khoản và số dư");
+    m_subtitleLabel->setObjectName("pageSubtitle");
+    titleBox->addWidget(m_titleLabel);
+    titleBox->addWidget(m_subtitleLabel);
 
-    // Buttons
-    QHBoxLayout *btnLayout = new QHBoxLayout();
-    btnAdd = new QPushButton("+ Add Account");
-    btnDelete = new QPushButton("Delete Selected");
-    btnDelete->setStyleSheet(
-        "background-color: #ff3f34; color: white;"
-        "border: none; padding: 10px 20px;"
-        "font-size: 13px; font-weight: bold; border-radius: 5px;");
-    btnLayout->addWidget(btnAdd);
-    btnLayout->addWidget(btnDelete);
-    btnLayout->addStretch();
+    m_btnAdd = new QPushButton("+ Thêm Tài Khoản");
+    m_btnAdd->setObjectName("primaryBtn");
+    m_btnAdd->setCursor(Qt::PointingHandCursor);
+    header->addLayout(titleBox);
+    header->addStretch();
+    header->addWidget(m_btnAdd);
+    layout->addLayout(header);
 
     // Bảng danh sách accounts
-    table = new QTableWidget();
-    table->setColumnCount(4);
-    table->setHorizontalHeaderLabels(
-        {"ID", "Name", "Balance (VND)", "Description"});
-    table->horizontalHeader()->setStretchLastSection(true);
-    table->horizontalHeader()->setSectionResizeMode(
+    m_table = new QTableWidget();
+    m_table->setColumnCount(5);
+    m_table->setHorizontalHeaderLabels(
+        {"ID", "Tên", "Số Dư (VND)", "Mô Tả", "Hành Động"});
+    m_table->horizontalHeader()->setSectionResizeMode(
         QHeaderView::Stretch);
-    table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    table->setAlternatingRowColors(true);
+    m_table->horizontalHeader()->setSectionResizeMode(
+        4, QHeaderView::Fixed);
+    m_table->setColumnWidth(4, 110);
+    m_table->horizontalHeader()->setSectionResizeMode(
+        0, QHeaderView::ResizeToContents);
+    m_table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_table->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_table->setAlternatingRowColors(true);
+    m_table->verticalHeader()->setVisible(false);
 
-    layout->addWidget(title);
-    layout->addLayout(btnLayout);
-    layout->addWidget(table);
+    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect();
+    shadow->setBlurRadius(20);
+    shadow->setColor(QColor(0, 0, 0, 15));
+    shadow->setOffset(0, 4);
+    m_table->setGraphicsEffect(shadow);
+
+    layout->addWidget(m_table);
 
     setLayout(layout);
 
     // Kết nối signals
-    connect(btnAdd, &QPushButton::clicked,
-            this, &AccountPage::onAddAccount);
-    connect(btnDelete, &QPushButton::clicked,
-            this, &AccountPage::onDeleteAccount);
+    connect(m_btnAdd, &QPushButton::clicked, this, &AccountPage::onAddAccount);
 
-    // Load dữ liệu
+    // Double-click hàng → sửa nhanh
+    connect(m_table, &QTableWidget::cellDoubleClicked,
+            this, [this](int row, int) {
+                if (row >= 0) {
+                    int id = m_table->item(row, 0)->text().toInt();
+                    editAccountById(id);
+                }
+            });
+
+    // Tự cập nhật số dư khi giao dịch thay đổi
+    TransactionService &txService = AppContext::instance().transactionService();
+    connect(&txService, &TransactionService::transactionAdded,
+            this, &AccountPage::loadAccounts);
+    connect(&txService, &TransactionService::transactionUpdated,
+            this, &AccountPage::loadAccounts);
+    connect(&txService, &TransactionService::transactionRemoved,
+            this, &AccountPage::loadAccounts);
+
+    // Đổi mật độ bảng → áp chiều cao hàng
+    connect(&ThemeManager::instance(), &ThemeManager::densityChanged,
+            this, &AccountPage::loadAccounts);
+
     loadAccounts();
 }
 
 void AccountPage::loadAccounts()
 {
-    table->setRowCount(0);
+    m_table->setHorizontalHeaderLabels({
+        "ID", "Tên", "Số Dư (VND)", "Mô Tả", "Hành Động"
+    });
+
+    m_table->setRowCount(0);
 
     QVector<Account> accounts =
-        AppContext::instance().accountRepository().getAllAccounts();
+        AppContext::instance().accountService().getAllAccounts();
 
-    QLocale locale(QLocale::Vietnamese, QLocale::Vietnam);
+    int rowHeight = ThemeManager::instance().tableRowHeight();
 
     for (const Account &acc : accounts) {
-        int row = table->rowCount();
-        table->insertRow(row);
+        int row = m_table->rowCount();
+        m_table->insertRow(row);
+        m_table->setRowHeight(row, rowHeight);
 
-        table->setItem(row, 0,
-                       new QTableWidgetItem(QString::number(acc.getId())));
-        table->setItem(row, 1,
-                       new QTableWidgetItem(acc.getName()));
-        table->setItem(row, 2,
-                       new QTableWidgetItem(
-                           locale.toString(acc.getBalance(), 'f', 0)));
-        table->setItem(row, 3,
+        m_table->setItem(row, 0,
+                       new QTableWidgetItem(QString::number(row + 1)));
+        m_table->setItem(row, 1, new QTableWidgetItem(acc.getName()));
+        m_table->setItem(row, 2,
+                       new QTableWidgetItem(MoneyUtils::formatVND(acc.getBalance())));
+        m_table->setItem(row, 3,
                        new QTableWidgetItem(acc.getDescription()));
+
+        m_table->setCellWidget(row, 4,
+            RowActions::create(acc.getId(),
+                [this](int id) { editAccountById(id); },
+                [this](int id) { deleteAccountById(id); },
+                this));
     }
 }
 
@@ -97,46 +142,77 @@ void AccountPage::onAddAccount()
         Account acc = dialog.getAccount();
 
         if (acc.getName().trimmed().isEmpty()) {
-            QMessageBox::warning(this, "Error",
-                                 "Account name cannot be empty!");
+            QMessageBox::warning(this, "Lỗi",
+                                 "Tên tài khoản không được để trống!");
             return;
         }
 
-        if (AppContext::instance().accountRepository().addAccount(acc)) {
+        if (AppContext::instance().accountService().addAccount(acc)) {
             loadAccounts();
         } else {
-            QMessageBox::warning(this, "Error",
-                                 "Failed to add account!");
+            QMessageBox::warning(this, "Lỗi",
+                                 "Thêm tài khoản thất bại!");
         }
     }
 }
 
-void AccountPage::onDeleteAccount()
+void AccountPage::editAccountById(int id)
 {
-    int row = table->currentRow();
+    Account account =
+        AppContext::instance().accountService().getAccountById(id);
 
-    if (row < 0) {
-        QMessageBox::information(this, "Info",
-                                 "Please select an account to delete.");
+    AccountDialog dialog(account, this);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        Account updated = dialog.getAccount();
+
+        if (updated.getName().trimmed().isEmpty()) {
+            QMessageBox::warning(this, "Lỗi",
+                                 "Tên tài khoản không được để trống!");
+            return;
+        }
+
+        if (AppContext::instance().accountService().updateAccount(updated)) {
+            loadAccounts();
+        } else {
+            QMessageBox::warning(this, "Lỗi",
+                                 "Cập nhật tài khoản thất bại!");
+        }
+    }
+}
+
+void AccountPage::deleteAccountById(int id)
+{
+    Account account =
+        AppContext::instance().accountService().getAccountById(id);
+    QString name = account.getName();
+
+    // Bảo vệ dữ liệu: không cho xóa account đang có giao dịch
+    int txCount = AppContext::instance()
+                      .transactionService()
+                      .countTransactionsForAccount(id);
+
+    if (txCount > 0) {
+        QMessageBox::warning(
+            this, "Không thể xóa",
+            QString("Tài khoản '%1' đang có %2 giao dịch liên quan.\n"
+                    "Vui lòng xóa các giao dịch đó trước.")
+                .arg(name)
+                .arg(txCount));
         return;
     }
 
-    int id = table->item(row, 0)->text().toInt();
-    QString name = table->item(row, 1)->text();
-
     QMessageBox::StandardButton reply = QMessageBox::question(
-        this, "Confirm",
-        QString("Are you sure you want to delete account '%1'?\n"
-                "All transactions linked to this account may be affected.")
-            .arg(name),
+        this, "Xác nhận",
+        QString("Bạn có chắc chắn muốn xóa tài khoản '%1' không?").arg(name),
         QMessageBox::Yes | QMessageBox::No);
 
     if (reply == QMessageBox::Yes) {
-        if (AppContext::instance().accountRepository().deleteAccount(id)) {
+        if (AppContext::instance().accountService().removeAccount(id)) {
             loadAccounts();
         } else {
-            QMessageBox::warning(this, "Error",
-                                 "Failed to delete account!");
+            QMessageBox::warning(this, "Lỗi",
+                                 "Xóa tài khoản thất bại!");
         }
     }
 }

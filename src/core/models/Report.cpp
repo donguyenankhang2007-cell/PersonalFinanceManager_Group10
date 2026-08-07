@@ -1,7 +1,8 @@
 #include "Report.h"
 
 Report::Report()
-    : totalIncome(0.0),
+    : BaseModel(),
+      totalIncome(0.0),
       totalExpense(0.0),
       remainingBalance(0.0)
 {
@@ -10,7 +11,8 @@ Report::Report()
 Report::Report(double totalIncome,
                double totalExpense,
                double remainingBalance)
-    : totalIncome(totalIncome),
+    : BaseModel(),
+      totalIncome(totalIncome),
       totalExpense(totalExpense),
       remainingBalance(remainingBalance)
 {

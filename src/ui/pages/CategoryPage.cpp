@@ -1,11 +1,22 @@
+// ============================================
+// File: src/ui/pages/CategoryPage.cpp
+// Mo ta: Quan ly danh muc dang bang voi mau cham mau
+//        va icon Edit/Delete tren moi hang.
+// ============================================
 #include "CategoryPage.h"
 #include "../dialogs/CategoryDialog.h"
+#include "../RowActions.h"
+#include "../theme/ThemeManager.h"
 #include "../../app/AppContext.h"
+#include "../../utils/StyleUtils.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPushButton>
+#include <QHeaderView>
 #include <QMessageBox>
+#include <QGraphicsDropShadowEffect>
 
 CategoryPage::CategoryPage(QWidget *parent)
     : QWidget(parent)
@@ -15,60 +26,108 @@ CategoryPage::CategoryPage(QWidget *parent)
     layout->setSpacing(15);
 
     // Tiêu đề
-    QLabel *title = new QLabel("Category Management");
-    title->setStyleSheet(
-        "font-size: 22px;"
-        "font-weight: bold;"
-        "color: #1e272e;"
-        "padding-bottom: 10px;");
+    QHBoxLayout *header = new QHBoxLayout();
+    QVBoxLayout *titleBox = new QVBoxLayout();
+    titleBox->setSpacing(2);
+    titleLabel = new QLabel("Danh Mục");
+    titleLabel->setObjectName("pageTitle");
+    subtitleLabel = new QLabel("Quản lý danh mục thu chi");
+    subtitleLabel->setObjectName("pageSubtitle");
+    titleBox->addWidget(titleLabel);
+    titleBox->addWidget(subtitleLabel);
 
-    // Buttons
-    QHBoxLayout *btnLayout = new QHBoxLayout();
-    btnAdd = new QPushButton("+ Add Category");
-    btnDelete = new QPushButton("Delete Selected");
-    btnDelete->setStyleSheet(
-        "background-color: #ff3f34; color: white;"
-        "border: none; padding: 10px 20px;"
-        "font-size: 13px; font-weight: bold; border-radius: 5px;");
+    btnAdd = new QPushButton("+ Thêm Danh Mục");
+    btnAdd->setObjectName("primaryBtn");
+    btnAdd->setCursor(Qt::PointingHandCursor);
+    header->addLayout(titleBox);
+    header->addStretch();
+    header->addWidget(btnAdd);
+    layout->addLayout(header);
 
-    btnLayout->addWidget(btnAdd);
-    btnLayout->addWidget(btnDelete);
-    btnLayout->addStretch();
+    // Bảng danh sách categories
+    table = new QTableWidget();
+    table->setColumnCount(3);
+    table->setHorizontalHeaderLabels({"Tên Danh Mục", "Loại", "Hành Động"});
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
+    table->setColumnWidth(2, 110);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->setAlternatingRowColors(true);
+    table->verticalHeader()->setVisible(false);
 
-    // Danh sách
-    categoryList = new QListWidget();
+    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect();
+    shadow->setBlurRadius(20);
+    shadow->setColor(QColor(0, 0, 0, 15));
+    shadow->setOffset(0, 4);
+    table->setGraphicsEffect(shadow);
 
-    layout->addWidget(title);
-    layout->addLayout(btnLayout);
-    layout->addWidget(categoryList);
+    layout->addWidget(table);
 
     setLayout(layout);
 
     // Kết nối signals
-    connect(btnAdd, &QPushButton::clicked,
-            this, &CategoryPage::onAddCategory);
-    connect(btnDelete, &QPushButton::clicked,
-            this, &CategoryPage::onDeleteCategory);
+    connect(btnAdd, &QPushButton::clicked, this, &CategoryPage::onAddCategory);
 
-    // Load dữ liệu từ DB
+    // Double-click hàng → sửa nhanh
+    connect(table, &QTableWidget::cellDoubleClicked,
+            this, [this](int row, int) {
+                if (row >= 0) {
+                    QTableWidgetItem *nameItem = table->item(row, 0);
+                    if (nameItem)
+                        editCategoryById(nameItem->data(Qt::UserRole).toInt());
+                }
+            });
+
+    // Đổi mật độ bảng → áp chiều cao hàng
+    connect(&ThemeManager::instance(), &ThemeManager::densityChanged,
+            this, &CategoryPage::loadCategories);
+
     loadCategories();
 }
 
 void CategoryPage::loadCategories()
 {
-    categoryList->clear();
+    table->setHorizontalHeaderLabels({
+        "Tên Danh Mục", "Loại", "Hành Động"
+    });
+
+    table->setRowCount(0);
 
     QVector<Category> categories =
-        AppContext::instance().categoryRepository().getAllCategories();
+        AppContext::instance().categoryService().getAllCategories();
+
+    int rowHeight = ThemeManager::instance().tableRowHeight();
 
     for (const Category &cat : categories) {
-        QString display = QString("%1  (%2)")
-                              .arg(cat.getName())
-                              .arg(cat.typeToString());
+        int row = table->rowCount();
+        table->insertRow(row);
+        table->setRowHeight(row, rowHeight);
 
-        QListWidgetItem *item = new QListWidgetItem(display);
-        item->setData(Qt::UserRole, cat.getId());
-        categoryList->addItem(item);
+        // Tên kèm chấm màu theo màu của category
+        QTableWidgetItem *nameItem =
+            new QTableWidgetItem(QString("   %1").arg(cat.getName()));
+        nameItem->setData(Qt::UserRole, cat.getId());
+        QColor dotColor = StyleUtils::getCategoryColor(cat.getId());
+        if (dotColor.isValid())
+            nameItem->setForeground(dotColor);
+        table->setItem(row, 0, nameItem);
+
+        // Loại: thu nhập (xanh) / chi tiêu (đỏ)
+        bool isInc = (cat.getType() == CategoryType::Income);
+        QTableWidgetItem *typeItem = new QTableWidgetItem(
+            isInc ? "Thu Nhập" : "Chi Tiêu");
+        typeItem->setForeground(isInc
+                                    ? QColor("#059669")
+                                    : QColor("#E11D48"));
+        table->setItem(row, 1, typeItem);
+
+        table->setCellWidget(row, 2,
+            RowActions::create(cat.getId(),
+                [this](int id) { editCategoryById(id); },
+                [this](int id) { deleteCategoryById(id); },
+                this));
     }
 }
 
@@ -80,43 +139,72 @@ void CategoryPage::onAddCategory()
         Category cat = dialog.getCategory();
 
         if (cat.getName().trimmed().isEmpty()) {
-            QMessageBox::warning(this, "Error",
-                                 "Category name cannot be empty!");
+            QMessageBox::warning(this, "Lỗi",
+                                 "Tên danh mục không được để trống!");
             return;
         }
 
-        if (AppContext::instance().categoryRepository().addCategory(cat)) {
+        if (AppContext::instance().categoryService().addCategory(cat)) {
             loadCategories();
         } else {
-            QMessageBox::warning(this, "Error",
-                                 "Failed to add category!");
+            QMessageBox::warning(this, "Lỗi",
+                                 "Thêm danh mục thất bại!");
         }
     }
 }
 
-void CategoryPage::onDeleteCategory()
+void CategoryPage::editCategoryById(int id)
 {
-    QListWidgetItem *current = categoryList->currentItem();
+    Category category =
+        AppContext::instance().categoryService().getCategoryById(id);
 
-    if (!current) {
-        QMessageBox::information(this, "Info",
-                                 "Please select a category to delete.");
+    CategoryDialog dialog(category, this);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        Category updated = dialog.getCategory();
+
+        if (updated.getName().trimmed().isEmpty()) {
+            QMessageBox::warning(this, "Lỗi",
+                                 "Tên danh mục không được để trống!");
+            return;
+        }
+
+        if (AppContext::instance().categoryService().updateCategory(updated)) {
+            loadCategories();
+        } else {
+            QMessageBox::warning(this, "Lỗi",
+                                 "Cập nhật danh mục thất bại!");
+        }
+    }
+}
+
+void CategoryPage::deleteCategoryById(int id)
+{
+    // Bảo vệ dữ liệu: không cho xóa category đang được dùng bởi giao dịch
+    int txCount = AppContext::instance()
+                      .transactionService()
+                      .countTransactionsForCategory(id);
+
+    if (txCount > 0) {
+        QMessageBox::warning(
+            this, "Không thể xóa",
+            QString("Danh mục này đang được dùng trong %1 giao dịch.\n"
+                    "Vui lòng xóa các giao dịch đó trước.")
+                .arg(txCount));
         return;
     }
 
-    int id = current->data(Qt::UserRole).toInt();
-
     QMessageBox::StandardButton reply = QMessageBox::question(
-        this, "Confirm",
-        "Are you sure you want to delete this category?",
+        this, "Xác nhận",
+        "Bạn có chắc chắn muốn xóa danh mục này không?",
         QMessageBox::Yes | QMessageBox::No);
 
     if (reply == QMessageBox::Yes) {
-        if (AppContext::instance().categoryRepository().deleteCategory(id)) {
+        if (AppContext::instance().categoryService().removeCategory(id)) {
             loadCategories();
         } else {
-            QMessageBox::warning(this, "Error",
-                                 "Failed to delete category!");
+            QMessageBox::warning(this, "Lỗi",
+                                 "Xóa danh mục thất bại!");
         }
     }
 }

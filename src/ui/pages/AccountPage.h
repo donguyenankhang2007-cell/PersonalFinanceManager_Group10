@@ -3,7 +3,8 @@
 
 #include <QWidget>
 #include <QTableWidget>
-#include <QPushButton>
+
+class QPushButton;
 
 class AccountPage : public QWidget
 {
@@ -17,12 +18,15 @@ public slots:
 
 private slots:
     void onAddAccount();
-    void onDeleteAccount();
 
 private:
-    QTableWidget *table;
-    QPushButton *btnAdd;
-    QPushButton *btnDelete;
+    void editAccountById(int id);
+    void deleteAccountById(int id);
+
+    QTableWidget *m_table;
+    QPushButton *m_btnAdd;
+    class QLabel *m_titleLabel;
+    class QLabel *m_subtitleLabel;
 };
 
 #endif // ACCOUNTPAGE_H

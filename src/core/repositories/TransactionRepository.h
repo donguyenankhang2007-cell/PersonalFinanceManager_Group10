@@ -10,7 +10,8 @@ class TransactionRepository
 public:
     TransactionRepository();
 
-    bool addTransaction(const Transaction &transaction);
+    // Tra ve id vua them (> 0), tra ve 0 neu that bai
+    int addTransaction(const Transaction &transaction);
 
     bool updateTransaction(const Transaction &transaction);
 

@@ -3,13 +3,13 @@
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QLabel>
-#include <QPushButton>
 #include <QDialogButtonBox>
 
 CategoryDialog::CategoryDialog(QWidget *parent)
     : QDialog(parent)
+    , m_id(0)
 {
-    setWindowTitle("Add Category");
+    setWindowTitle("Thêm Danh Mục");
     setMinimumWidth(350);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -17,20 +17,63 @@ CategoryDialog::CategoryDialog(QWidget *parent)
     QFormLayout *formLayout = new QFormLayout();
 
     nameEdit = new QLineEdit();
-    nameEdit->setPlaceholderText("Enter category name");
+    nameEdit->setPlaceholderText("Nhập tên danh mục");
 
     typeCombo = new QComboBox();
-    typeCombo->addItems({"Expense", "Income"});
+    typeCombo->addItem("Chi Tiêu", "Expense");
+    typeCombo->addItem("Thu Nhập", "Income");
 
     colorEdit = new QLineEdit();
     colorEdit->setPlaceholderText("#ff5733");
 
     iconEdit = new QLineEdit();
-    iconEdit->setPlaceholderText("icon name (optional)");
+    iconEdit->setPlaceholderText("tên icon (tùy chọn)");
 
-    formLayout->addRow("Name:", nameEdit);
-    formLayout->addRow("Type:", typeCombo);
-    formLayout->addRow("Color:", colorEdit);
+    formLayout->addRow("Tên:", nameEdit);
+    formLayout->addRow("Loại:", typeCombo);
+    formLayout->addRow("Màu sắc:", colorEdit);
+    formLayout->addRow("Icon:", iconEdit);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(
+        QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+    layout->addLayout(formLayout);
+    layout->addWidget(buttonBox);
+
+    setLayout(layout);
+}
+
+CategoryDialog::CategoryDialog(const Category& category, QWidget *parent)
+    : QDialog(parent)
+    , m_id(category.getId())
+{
+    setWindowTitle("Sửa Danh Mục");
+    setMinimumWidth(350);
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+
+    QFormLayout *formLayout = new QFormLayout();
+
+    nameEdit = new QLineEdit();
+    nameEdit->setText(category.getName());
+
+    typeCombo = new QComboBox();
+    typeCombo->addItem("Chi Tiêu", "Expense");
+    typeCombo->addItem("Thu Nhập", "Income");
+    typeCombo->setCurrentIndex(category.getType() == CategoryType::Income ? 1 : 0);
+
+    colorEdit = new QLineEdit();
+    colorEdit->setText(category.getColor());
+
+    iconEdit = new QLineEdit();
+    iconEdit->setText(category.getIcon());
+
+    formLayout->addRow("Tên:", nameEdit);
+    formLayout->addRow("Loại:", typeCombo);
+    formLayout->addRow("Màu sắc:", colorEdit);
     formLayout->addRow("Icon:", iconEdit);
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(
@@ -47,10 +90,10 @@ CategoryDialog::CategoryDialog(QWidget *parent)
 
 Category CategoryDialog::getCategory() const
 {
-    CategoryType type = (typeCombo->currentText() == "Income")
+    CategoryType type = (typeCombo->currentData().toString() == "Income")
                             ? CategoryType::Income
                             : CategoryType::Expense;
 
-    return Category(0, nameEdit->text(), type,
+    return Category(m_id, nameEdit->text(), type,
                     colorEdit->text(), iconEdit->text());
 }

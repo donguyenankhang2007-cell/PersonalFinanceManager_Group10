@@ -60,3 +60,32 @@ CREATE TABLE IF NOT EXISTS Budget
     FOREIGN KEY(categoryId)
         REFERENCES Category(id)
 );
+
+CREATE TABLE IF NOT EXISTS RecurringTransactions
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    note TEXT NOT NULL,
+
+    amount REAL NOT NULL,
+
+    type TEXT NOT NULL DEFAULT 'expense',
+
+    accountId INTEGER NOT NULL,
+
+    categoryId INTEGER NOT NULL,
+
+    frequency TEXT NOT NULL DEFAULT 'monthly',
+
+    nextDate TEXT NOT NULL,
+
+    endDate TEXT,
+
+    active INTEGER NOT NULL DEFAULT 1,
+
+    FOREIGN KEY(accountId)
+        REFERENCES Account(id),
+
+    FOREIGN KEY(categoryId)
+        REFERENCES Category(id)
+);

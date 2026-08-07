@@ -57,6 +57,20 @@ bool DatabaseManager::openDatabase()
     }
 
     QString databasePath = QDir(dataDirPath).filePath("finance.db");
+    return openDatabase(databasePath);
+}
+
+bool DatabaseManager::openDatabase(const QString& databasePath)
+{
+    if (QSqlDatabase::contains("qt_sql_default_connection"))
+    {
+        db = QSqlDatabase::database("qt_sql_default_connection");
+    }
+    else
+    {
+        db = QSqlDatabase::addDatabase("QSQLITE");
+    }
+
     db.setDatabaseName(databasePath);
 
     if (!db.open())
@@ -66,6 +80,10 @@ bool DatabaseManager::openDatabase()
         return false;
     }
 
+    // Bật kiểm tra khóa ngoại (SQLite mặc định tắt)
+    QSqlQuery fkQuery(db);
+    fkQuery.exec("PRAGMA foreign_keys = ON");
+
     qDebug() << "Database opened successfully at:" << databasePath;
     return true;
 }
@@ -73,7 +91,7 @@ bool DatabaseManager::openDatabase()
 bool DatabaseManager::initializeDatabase()
 {
     QString sql;
-    
+
     // Thử đọc từ Qt Resource trước
     QFile file(":/database_schema.sql");
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -112,6 +130,7 @@ bool DatabaseManager::initializeDatabase()
                 CREATE TABLE IF NOT EXISTS Category (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, type TEXT NOT NULL, color TEXT, icon TEXT);
                 CREATE TABLE IF NOT EXISTS Transactions (id INTEGER PRIMARY KEY AUTOINCREMENT, accountId INTEGER NOT NULL, categoryId INTEGER NOT NULL, amount REAL NOT NULL, transactionDate TEXT NOT NULL, note TEXT, type TEXT NOT NULL DEFAULT 'expense');
                 CREATE TABLE IF NOT EXISTS Budget (id INTEGER PRIMARY KEY AUTOINCREMENT, categoryId INTEGER NOT NULL, amount REAL NOT NULL, month INTEGER NOT NULL, year INTEGER NOT NULL);
+                CREATE TABLE IF NOT EXISTS RecurringTransactions (id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT NOT NULL, amount REAL NOT NULL, type TEXT NOT NULL DEFAULT 'expense', accountId INTEGER NOT NULL, categoryId INTEGER NOT NULL, frequency TEXT NOT NULL DEFAULT 'monthly', nextDate TEXT NOT NULL, endDate TEXT, active INTEGER NOT NULL DEFAULT 1);
             )";
         }
     }

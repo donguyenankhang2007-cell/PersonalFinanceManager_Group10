@@ -1,7 +1,7 @@
 #include "Transaction.h"
 
 Transaction::Transaction()
-    : id(0),
+    : BaseModel(),
       accountId(0),
       categoryId(0),
       amount(0.0),
@@ -18,7 +18,7 @@ Transaction::Transaction(int id,
                          const QDate& date,
                          const QString& note,
                          const QString& type)
-    : id(id),
+    : BaseModel(id),
       accountId(accountId),
       categoryId(categoryId),
       amount(amount),
@@ -26,11 +26,6 @@ Transaction::Transaction(int id,
       note(note),
       type(type)
 {
-}
-
-int Transaction::getId() const
-{
-    return id;
 }
 
 int Transaction::getAccountId() const
@@ -66,11 +61,6 @@ QString Transaction::getNote() const
 QString Transaction::getType() const
 {
     return type;
-}
-
-void Transaction::setId(int id)
-{
-    this->id = id;
 }
 
 void Transaction::setAccountId(int accountId)

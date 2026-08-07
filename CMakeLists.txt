@@ -8,6 +8,7 @@ find_package(Qt6 REQUIRED COMPONENTS
     Core
     Widgets
     Sql
+    Charts
 )
 
 qt_standard_project_setup()
@@ -40,6 +41,8 @@ qt_add_executable(PersonalFinanceManager_Group10
     src/core/models/Category.h
     src/core/models/Report.cpp
     src/core/models/Report.h
+    src/core/models/RecurringTransaction.cpp
+    src/core/models/RecurringTransaction.h
     src/core/models/Transaction.cpp
     src/core/models/Transaction.h
 
@@ -50,27 +53,42 @@ qt_add_executable(PersonalFinanceManager_Group10
     src/core/repositories/BudgetRepository.h
     src/core/repositories/CategoryRepository.cpp
     src/core/repositories/CategoryRepository.h
+    src/core/repositories/RecurringTransactionRepository.cpp
+    src/core/repositories/RecurringTransactionRepository.h
     src/core/repositories/TransactionRepository.cpp
     src/core/repositories/TransactionRepository.h
 
     # services
+    src/core/services/AccountService.cpp
+    src/core/services/AccountService.h
+    src/core/services/CategoryService.cpp
+    src/core/services/CategoryService.h
     src/core/services/BudgetService.cpp
     src/core/services/BudgetService.h
     src/core/services/ReportService.cpp
     src/core/services/ReportService.h
+    src/core/services/RecurringTransactionService.cpp
+    src/core/services/RecurringTransactionService.h
     src/core/services/TransactionService.cpp
     src/core/services/TransactionService.h
 
     # ui
     src/ui/mainwindow.cpp
     src/ui/mainwindow.h
-    src/ui/mainwindow.ui
+    src/ui/RowActions.cpp
+    src/ui/RowActions.h
+    src/ui/theme/ThemeManager.cpp
+    src/ui/theme/ThemeManager.h
     src/ui/dialogs/AccountDialog.h
     src/ui/dialogs/AccountDialog.cpp
+    src/ui/dialogs/BudgetDialog.h
+    src/ui/dialogs/BudgetDialog.cpp
     src/ui/dialogs/CategoryDialog.h
     src/ui/dialogs/CategoryDialog.cpp
     src/ui/dialogs/TransactionDialog.h
     src/ui/dialogs/TransactionDialog.cpp
+    src/ui/dialogs/RecurringTransactionDialog.h
+    src/ui/dialogs/RecurringTransactionDialog.cpp
     src/ui/pages/AccountPage.cpp
     src/ui/pages/AccountPage.h
     src/ui/pages/BudgetPage.cpp
@@ -79,14 +97,17 @@ qt_add_executable(PersonalFinanceManager_Group10
     src/ui/pages/CategoryPage.h
     src/ui/pages/DashboardPage.cpp
     src/ui/pages/DashboardPage.h
-    src/ui/pages/ReportPage.cpp
-    src/ui/pages/ReportPage.h
+    src/ui/pages/RecurringPage.cpp
+    src/ui/pages/RecurringPage.h
+    src/ui/pages/SettingsPage.cpp
+    src/ui/pages/SettingsPage.h
     src/ui/pages/TransactionPage.cpp
     src/ui/pages/TransactionPage.h
 
     # utils and resources
     src/utils/DateUtils.h
     src/utils/MoneyUtils.h
+    src/utils/StyleUtils.h
     resources/app.qrc
 )
 
@@ -95,6 +116,7 @@ target_link_libraries(PersonalFinanceManager_Group10
         Qt::Core
         Qt::Widgets
         Qt::Sql
+        Qt::Charts
 )
 
 target_include_directories(PersonalFinanceManager_Group10
@@ -118,5 +140,5 @@ install(SCRIPT ${deploy_script})
 
 qt_finalize_executable(PersonalFinanceManager_Group10)
 
-# # Thêm cấu hình build cho thư mục tests
-# add_subdirectory(tests)
+# Cấu hình build cho thư mục tests
+add_subdirectory(tests)

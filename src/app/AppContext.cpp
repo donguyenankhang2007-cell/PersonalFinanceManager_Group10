@@ -2,6 +2,8 @@
 
 AppContext::AppContext()
 {
+    // RecurringService cần TransactionService để tạo giao dịch thật
+    m_recurringTransactionService.setTransactionService(&m_transactionService);
 }
 
 AppContext::~AppContext()
@@ -16,12 +18,7 @@ AppContext& AppContext::instance()
 
 DatabaseManager& AppContext::database()
 {
-    return m_database;
-}
-
-AccountRepository& AppContext::accountRepository()
-{
-    return m_accountRepository;
+    return DatabaseManager::instance();
 }
 
 BudgetRepository& AppContext::budgetRepository()
@@ -29,14 +26,24 @@ BudgetRepository& AppContext::budgetRepository()
     return m_budgetRepository;
 }
 
-CategoryRepository& AppContext::categoryRepository()
-{
-    return m_categoryRepository;
-}
-
 TransactionRepository& AppContext::transactionRepository()
 {
     return m_transactionRepository;
+}
+
+RecurringTransactionRepository& AppContext::recurringTransactionRepository()
+{
+    return m_recurringTransactionRepository;
+}
+
+AccountService& AppContext::accountService()
+{
+    return m_accountService;
+}
+
+CategoryService& AppContext::categoryService()
+{
+    return m_categoryService;
 }
 
 BudgetService& AppContext::budgetService()
@@ -52,4 +59,9 @@ ReportService& AppContext::reportService()
 TransactionService& AppContext::transactionService()
 {
     return m_transactionService;
+}
+
+RecurringTransactionService& AppContext::recurringTransactionService()
+{
+    return m_recurringTransactionService;
 }

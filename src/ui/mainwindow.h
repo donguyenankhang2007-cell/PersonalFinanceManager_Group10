@@ -7,16 +7,12 @@
 
 #include "pages/AccountPage.h"
 #include "pages/DashboardPage.h"
-#include "pages/TransactionPage.h"
 #include "pages/CategoryPage.h"
+#include "pages/TransactionPage.h"
 #include "pages/BudgetPage.h"
-#include "pages/ReportPage.h"
+#include "pages/RecurringPage.h"
+#include "pages/SettingsPage.h"
 
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
-QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -25,35 +21,50 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
+    // Chỉ mục các trang trong QStackedWidget
+    enum PageIndex {
+        DashboardIndex = 0,
+        AccountIndex   = 1,
+        CategoryIndex  = 2,
+        TransactionIndex = 3,
+        BudgetIndex    = 4,
+        RecurringIndex = 5,
+        SettingsIndex  = 6
+    };
+
 private slots:
-    void showDashboard();
-    void showAccounts();
-    void showTransaction();
-    void showCategory();
-    void showBudget();
-    void showReport();
+    void showPage(int index);
 
 private:
-    Ui::MainWindow *ui;
+    void setupPages();
+    void setupConnections();
+
+    void buildNavButton(QPushButton *btn, const QString &icon,
+                        const QString &tooltip);
+    void syncNav(int activeIndex);
 
     QStackedWidget *stackedWidget;
 
     DashboardPage *dashboard;
-    AccountPage *accountPage;
+    AccountPage   *accountPage;
+    CategoryPage  *category;
     TransactionPage *transaction;
-    CategoryPage *category;
-    BudgetPage *budget;
-    ReportPage *report;
+    BudgetPage    *budget;
+    RecurringPage *recurringPage;
+    SettingsPage  *settingsPage;
 
     QPushButton *btnDashboard;
-    QPushButton *btnAccounts;
-    QPushButton *btnTransaction;
     QPushButton *btnCategory;
+    QPushButton *btnTransaction;
     QPushButton *btnBudget;
-    QPushButton *btnReport;
+    QPushButton *btnRecurring;
+    QPushButton *btnSettings;
+    QPushButton *avatarButton;
 
-    void setupPages();
-    void setupConnections();
+    class QLabel *hoverTooltip;
 };
 
 #endif // MAINWINDOW_H

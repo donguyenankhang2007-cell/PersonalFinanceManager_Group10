@@ -3,9 +3,6 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
-#include <QComboBox>
-#include <QSpinBox>
-#include <QDoubleSpinBox>
 #include <QPushButton>
 
 class BudgetPage : public QWidget
@@ -17,18 +14,21 @@ public:
 
 public slots:
     void loadBudgets();
+    void onFilterChanged();
 
 private slots:
     void onAddBudget();
-    void onDeleteBudget();
 
 private:
+    void editBudgetById(int id);
+    void deleteBudgetById(int id);
+
     QVBoxLayout *budgetListLayout;
-    QComboBox *categoryCombo;
-    QDoubleSpinBox *amountSpin;
-    QSpinBox *monthSpin;
-    QSpinBox *yearSpin;
+    class QComboBox *monthFilterCb;
+    class QComboBox *sortCb;
     QPushButton *btnAdd;
+    class QLabel *titleLabel;
+    class QLabel *subtitleLabel;
 
     QWidget *budgetListWidget;
 };

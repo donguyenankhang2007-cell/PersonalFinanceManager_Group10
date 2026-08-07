@@ -15,9 +15,13 @@ public:
     // Constructor cho THEM MOI
     explicit CategoryDialog(QWidget *parent = nullptr);
 
+    // Constructor cho SUA (pre-fill du lieu)
+    CategoryDialog(const Category& category, QWidget *parent = nullptr);
+
     Category getCategory() const;
 
 private:
+    int m_id;
     QLineEdit *nameEdit;
     QComboBox *typeCombo;
     QLineEdit *colorEdit;

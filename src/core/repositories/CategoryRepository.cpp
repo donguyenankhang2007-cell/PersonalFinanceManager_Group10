@@ -20,7 +20,7 @@ bool CategoryRepository::addCategory(const Category &category)
         "VALUES(:name, :type, :color, :icon)");
 
     query.bindValue(":name", category.getName());
-    query.bindValue(":type", category.typeToString());
+    query.bindValue(":type", (category.getType() == CategoryType::Income) ? "income" : "expense");
     query.bindValue(":color", category.getColor());
     query.bindValue(":icon", category.getIcon());
 
@@ -47,7 +47,7 @@ bool CategoryRepository::updateCategory(const Category &category)
 
     query.bindValue(":id", category.getId());
     query.bindValue(":name", category.getName());
-    query.bindValue(":type", category.typeToString());
+    query.bindValue(":type", (category.getType() == CategoryType::Income) ? "income" : "expense");
     query.bindValue(":color", category.getColor());
     query.bindValue(":icon", category.getIcon());
 

@@ -8,7 +8,6 @@
 class Transaction : public BaseModel
 {
 private:
-    int id;
     int accountId;
     int categoryId;
     double amount;
@@ -30,7 +29,6 @@ public:
 
     ~Transaction() = default;
 
-    int getId() const;
     int getAccountId() const;
     int getCategoryId() const;
     double getAmount() const;
@@ -39,7 +37,9 @@ public:
     QString getNote() const;
     QString getType() const;
 
-    void setId(int id);
+    bool isIncome() const { return type == "income"; }
+    bool isExpense() const { return type == "expense"; }
+
     void setAccountId(int accountId);
     void setCategoryId(int categoryId);
     void setAmount(double amount);
@@ -49,7 +49,7 @@ public:
     void setType(const QString& type);
 
     QString toString() const override;
+    QString getDisplayName() const override { return note; }
 };
 
 #endif // TRANSACTION_H
-
