@@ -119,7 +119,7 @@ void AccountPage::loadAccounts()
         m_table->setRowHeight(row, rowHeight);
 
         m_table->setItem(row, 0,
-                       new QTableWidgetItem(QString::number(acc.getId())));
+                       new QTableWidgetItem(QString::number(row + 1)));
         m_table->setItem(row, 1, new QTableWidgetItem(acc.getName()));
         m_table->setItem(row, 2,
                        new QTableWidgetItem(MoneyUtils::formatVND(acc.getBalance())));

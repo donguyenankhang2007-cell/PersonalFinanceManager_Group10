@@ -287,7 +287,7 @@ void TransactionPage::loadTransactions()
         table->setRowHeight(row, rowHeight);
 
         table->setItem(row, 0,
-                       new QTableWidgetItem(QString::number(t.getId())));
+                       new QTableWidgetItem(QString::number(row + 1)));
         table->setItem(row, 1,
                        new QTableWidgetItem(
                            t.getDate().toString("dd/MM/yyyy")));

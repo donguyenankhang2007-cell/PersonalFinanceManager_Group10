@@ -126,7 +126,7 @@ void RecurringPage::loadRecurring()
         table->setRowHeight(row, rowHeight);
 
         table->setItem(row, 0,
-                       new QTableWidgetItem(QString::number(r.getId())));
+                       new QTableWidgetItem(QString::number(row + 1)));
         table->setItem(row, 1, new QTableWidgetItem(r.getNote()));
         table->setItem(row, 2,
                        new QTableWidgetItem(catNames.value(r.getCategoryId(), "Không xác định")));
